@@ -1,6 +1,10 @@
-{ config, options, lib, pkgs, ... }:
-
-let
+{
+  config,
+  options,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (builtins) isAttrs;
   inherit (lib) attrValues mkIf mkMerge mkOption;
   inherit (lib.types) nullOr enum;
@@ -10,7 +14,7 @@ let
 in {
   options.modules.desktop = {
     envProto = mkOption {
-      type = nullOr (enum [ "x11" "wayland" ]);
+      type = nullOr (enum ["x11" "wayland"]);
       description = "What display protocol to use.";
       default = null;
     };
@@ -24,16 +28,20 @@ in {
           message = "Prevent DE/WM > 1 from being enabled.";
         }
         {
-          assertion = let srv = config.services;
-          in srv.xserver.enable || srv.sway.enable || !(anyAttrs
-            (n: v: isAttrs v && anyAttrs (n: v: isAttrs v && v.enable)) cfg);
-          message =
-            "Prevent desktop applications from enabling without a DE/WM.";
+          assertion = let
+            srv = config.services;
+          in
+            srv.xserver.enable
+            || srv.sway.enable
+            || !(anyAttrs
+              (n: v: isAttrs v && anyAttrs (n: v: isAttrs v && v.enable))
+              cfg);
+          message = "Prevent desktop applications from enabling without a DE/WM.";
         }
       ];
 
       env = {
-        GTK_DATA_PREFIX = [ "${config.system.path}" ];
+        GTK_DATA_PREFIX = ["${config.system.path}"];
         QT_QPA_PLATFORMTHEME = "gnome";
         QT_STYLE_OVERRIDE = "Adwaita";
       };
@@ -45,29 +53,33 @@ in {
         popd
       '';
 
-      user.packages = attrValues ({
-        inherit (pkgs)
-          hyperfine gucharmap qgnomeplatform # Qt -> GTK Theme
-          kalker;
+      user.packages = attrValues {
+        inherit
+          (pkgs)
+          hyperfine
+          gucharmap
+          qgnomeplatform # Qt -> GTK Theme
+          kalker
+          ;
 
         kalker-launcher = pkgs.makeDesktopItem {
           name = "Kalker";
           desktopName = "Kalker";
           icon = "calc";
           exec = "${config.modules.desktop.terminal.default} start kalker";
-          categories = [ "Education" "Science" "Math" ];
+          categories = ["Education" "Science" "Math"];
         };
-      });
+      };
 
       fonts = {
         fontDir.enable = true;
         enableGhostscriptFonts = true;
-        fonts = attrValues ({ inherit (pkgs) sarasa-gothic scheherazade-new; });
+        fonts = attrValues {inherit (pkgs) sarasa-gothic scheherazade-new;};
       };
 
       xdg.portal = {
         enable = true;
-        extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+        extraPortals = [pkgs.xdg-desktop-portal-gtk];
       };
 
       # Retain secrets inside Gnome Keyring
@@ -80,16 +92,18 @@ in {
       programs.kdeconnect.enable = true;
 
       systemd.user.services.kdeconnect-indicator = {
-        serviceConfig.ExecStart =
-          "${pkgs.plasma5Packages.kdeconnect-kde}/bin/kdeconnect-indicator";
-        wantedBy = [ "graphical-session.target" ];
-        partOf = [ "graphical-session.target" ];
+        serviceConfig.ExecStart = "${pkgs.plasma5Packages.kdeconnect-kde}/bin/kdeconnect-indicator";
+        wantedBy = ["graphical-session.target"];
+        partOf = ["graphical-session.target"];
       };
     }
 
     (mkIf (cfg.envProto == "x11") {
       services.xserver = {
         enable = true;
+        # xkbOptions = {
+        #         "eurosign:e";
+        #     };
         displayManager.lightdm = {
           enable = true;
           greeters.mini = {
@@ -103,18 +117,6 @@ in {
         enable = true;
         numlock.enable = true;
         preferStatusNotifierItems = true;
-      };
-    })
-
-    (mkIf (cfg.envProto == "wayland") {
-      xdg.portal.wlr.enable = true;
-
-      services.xserver = {
-        enable = true;
-        displayManager.gdm = {
-          enable = true;
-          wayland = true;
-        };
       };
     })
   ];

@@ -21,27 +21,20 @@ in {
     options = ["x-gvfs-hide"];
   };
 
-  swapDevices = [{device = "/dev/disk/by-label/swap";}];
-
   boot = {
     initrd = {
       availableKernelModules = [
         "ahci"
-        "amdgpu"
-        "rtsx_pci_sdmmc"
-        "sd_mod"
-        "usb_storage"
-        "usbhid"
         "xhci_pci"
+        "sr_mod"
+        "virtio_blk"
+        "virtio_pci"
       ];
       kernelModules = [];
     };
-    extraModulePackages = [config.boot.kernelPackages.acpi_call];
-    kernelModules = ["thinkpad_acpi" "acpi_call" "kvm_amd"];
-    kernelParams = ["pcie_aspm.policy=performance"];
-    kernel.sysctl = {
-      "net.ipv4.icmp_echo_ignore_broadcasts" = 1; # Refuse ICMP echo requests
-    };
+    extraModulePackages = [];
+    kernelModules = ["kvm-intel:"];
+    kernelParams = [];
   };
 
   nix.settings.max-jobs = mkDefault 4;
@@ -65,7 +58,6 @@ in {
       enable = true;
       lowLatency.enable = true;
     };
-    bluetooth.enable = true;
     kmonad.deviceID = "/dev/input/by-path/platform-i8042-serio-0-event-kbd";
     pointer.enable = true;
     printer.enable = true;
@@ -79,9 +71,16 @@ in {
       deviceSection = ''
         Option "TearFree" "true"
       '';
-      libinput.touchpad = {
-        accelSpeed = "0.5";
-        accelProfile = "adaptive";
+      libinput = {
+        enable = true;
+        touchpad = {
+          accelSpeed = "0.5";
+          accelProfile = "adaptive";
+          disableWhileTyping = true;
+          naturalScrolling = true;
+          scrollMethod = "twofinger";
+          tapping = true;
+        };
       };
     };
   };
