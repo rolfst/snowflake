@@ -1,11 +1,15 @@
-{ config, options, lib, pkgs, ... }:
-
-let
+{
+  config,
+  options,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (builtins) toString;
   inherit (lib) mkIf mkMerge;
   inherit (lib.my) mkBoolOpt;
 in {
-  options.modules.desktop.terminal.kitty = { enable = mkBoolOpt false; };
+  options.modules.desktop.terminal.kitty = {enable = mkBoolOpt false;};
 
   config = mkIf config.modules.desktop.terminal.kitty.enable {
     environment.variables = {
@@ -24,7 +28,7 @@ in {
         shell_integration = "no-cursor";
         confirm_os_window_close = -1;
 
-        background_opacity = 0.8;
+        background_opacity = "0.8";
         repaint_delay = 10;
         disable_ligatures = "cursor";
         adjust_line_height = "113%";
@@ -93,13 +97,16 @@ in {
         "ctrl+shift+page_down" = "previous_tab";
       };
 
-      extraConfig = let inherit (config.modules.themes) active;
-      in mkIf (active != null) ''
-        include ~/.config/kitty/config/${active}.conf
-      '';
+      extraConfig = let
+        inherit (config.modules.themes) active;
+      in
+        mkIf (active != null) ''
+          include ~/.config/kitty/config/${active}.conf
+        '';
     };
 
-    home.configFile = let inherit (config.modules.themes) active;
+    home.configFile = let
+      inherit (config.modules.themes) active;
     in (mkMerge [
       {
         tab-bar = {
@@ -120,7 +127,7 @@ in {
             italic_font               Victor Mono SemiBold Italic Nerd Font Complete
             bold_font                 Victor Mono Bold Nerd Font Complete
             bold_italic_font          Victor Mono Bold Italic Nerd Font Complete
-            font_size                 ${toString (size)}
+            font_size                 ${toString size}
 
             foreground                ${types.fg}
             background                ${types.bg}
