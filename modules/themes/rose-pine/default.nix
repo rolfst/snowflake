@@ -18,7 +18,7 @@ in {
         gtk = {
           name = "rose-pine-moon";
           package =
-            pkgs.rose-pine-gtk-theme.override {themeVariants = ["moon"];};
+            pkgs.rose-pine-gtk-theme;
         };
 
         iconTheme = {
