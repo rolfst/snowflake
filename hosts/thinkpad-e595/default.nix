@@ -1,5 +1,10 @@
-{ pkgs, config, lib, ... }: {
-  imports = [ ./hardware.nix ];
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}: {
+  imports = [./hardware.nix];
 
   modules = {
     shell = {
@@ -10,16 +15,9 @@
 
     networking = {
       networkManager.enable = true;
-      # borsippaNET.enable = true;
     };
 
-    services = { ssh.enable = true; };
-
-    containers.transmission = {
-      enable = false; # TODO: Once fixed -> enable = true;
-      username = "alonzo";
-      #  password = builtins.readFile config.age.secrets.torBylon.path;
-    };
+    services = {ssh.enable = true;};
 
     develop = {
       dart.enable = true;
@@ -33,7 +31,7 @@
     desktop = {
       xmonad.enable = true;
       terminal = {
-        default = "alacritty";
+        default = "kitty";
         alacritty.enable = true;
       };
       editors = {
@@ -51,18 +49,11 @@
         vidcom.enable = true;
       };
       toolset = {
-        downloader.transmission.enable = true;
-        # graphics = {
-        #   raster.enable = true;
-        #   vector.enable = true;
-        # };
         player = {
           music.enable = true;
           video.enable = true;
         };
         social.base.enable = true;
-        # docView.sioyek.enable = true;
-        docView.zathura.enable = true;
       };
     };
   };

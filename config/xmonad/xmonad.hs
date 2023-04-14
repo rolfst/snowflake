@@ -102,7 +102,7 @@ main =
 
 myConfig =
     def { modMask            = mod4Mask
-        , terminal           = "alacritty"
+        , terminal           = "kitty"
         , manageHook         = namedScratchpadManageHook scratchpads
         , layoutHook         = myLayoutHook
         , borderWidth        = 2
@@ -222,7 +222,7 @@ myDmenu = DM.menuArgs "rofi" myDmenuArgs
 getWorkspaceDmenu = myDmenu (workspaces myConfig)
 
 -- Selectors
-isProtonMailTitle t = isInfixOf "@proton.me" t && isInfixOf "Proton Mail" t
+isProtonMailTitle t = isInfixOf "@gmail.com" t -- && isInfixOf "Proton Mail" t
 
 isChromiumClass = isInfixOf "Chromium"
 
@@ -238,7 +238,7 @@ firefoxSelector = className =? "firefox-aurora" <&&> appName =? "Navigator"
 protonMailSelector = chromiumSelectorBase <&&> fmap isProtonMailTitle title
 
 virtualClasses =
-    [(protonMailSelector, "Proton Mail"), (chromiumSelector, "Chromium")]
+    [(chromiumSelector, "Chromium")]
 
 -- Startup hook
 hostNameToAction = M.fromList [("my-hostname", return ())]
@@ -750,44 +750,19 @@ scratchpads =
         (className =? "Element")
         nearFullFloat
     , NS
-        "GalaxyBudsClient"
-        "GalaxyBudsClient"
-        (className =? "GalaxyBudsClient")
-        nearFullFloat
-    , NS
-        "Emacs"
-        "emacsclient -c"
-        (className =? "Emacs")
-        nearFullFloat
-    , NS
         "Picture-in-Picture"
         "Picture-in-Picture"
         (title =? "Picture-in-Picture")
         defaultFloating
     , NS
         "ProtonMail"
-        "chromium --new-window https://mail.proton.me/u/1/inbox"
+        "chromium --new-window https://mail.google.com/mail/u/0/"
         protonMailSelector
         nearFullFloat
     , NS
-        "Spotify"
-        "spotify"
-        (className =? "Spotify")
-        nearFullFloat
-    , NS
         "System Monitor"
-        "alacritty -t 'System Monitor' -e btop"
+        "kitty -t 'System Monitor' -e btop"
         (title =? "System Monitor")
-        nearFullFloat
-    , NS
-        "Telegram"
-        "telegram-desktop"
-        (className =? "TelegramDesktop")
-        nearFullFloat
-    , NS
-        "Transmission"
-        "transmission-gtk"
-        (className =? "Transmission-gtk")
         nearFullFloat
     ]
 
@@ -936,13 +911,10 @@ addKeys conf@XConfig { modMask = modm } =
 
              -- ScratchPad(s)
            , ((modalt, xK_b), doScratchpad "System Monitor")
-           , ((modalt, xK_e), doScratchpad "Emacs")
            , ((modalt, xK_h), doScratchpad "Telegram")
            , ((modalt, xK_j), doScratchpad "Discord")
            , ((modalt, xK_k), doScratchpad "Element")
            , ((modalt, xK_m), doScratchpad "ProtonMail")
-           , ((modalt, xK_s), doScratchpad "Spotify")
-           , ((modalt, xK_t), doScratchpad "Transmission")
            , ((modalt, xK_v), doScratchpad "EasyEffects")
 
              -- Rofi(s)
