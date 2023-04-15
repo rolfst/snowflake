@@ -1,6 +1,11 @@
-{ inputs, options, config, lib, pkgs, ... }:
-
-let
+{
+  inputs,
+  options,
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (lib) attrValues mkIf mkOption;
   inherit (lib.strings) optionalString;
   inherit (lib.types) enum nullOr path package;
@@ -22,7 +27,7 @@ in {
     };
 
     backend = mkOption {
-      type = enum [ "x11" "wayland" ];
+      type = enum ["x11" "wayland"];
       default = "x11";
     };
   };
@@ -30,7 +35,7 @@ in {
   config = mkIf cfg.enable {
     modules.desktop = {
       envProto = cfg.backend;
-      toolset.fileBrowse = { nautilus.enable = true; };
+      toolset.fileBrowse = {nautilus.enable = true;};
       extensions = {
         fcitx5.enable = true;
         mimeApps.enable = true; # mimeApps -> default launch application
@@ -39,25 +44,27 @@ in {
         rofi.enable = true;
       };
     };
-    modules.hardware.kmonad.enable = true;
+    # modules.hardware.kmonad.enable = true;
 
-    environment.systemPackages = attrValues ({
+    environment.systemPackages = attrValues {
       inherit (pkgs) libnotify playerctl gxmessage xdotool xclip feh;
       qtilePkg = cfg.package.unwrapped or cfg.package;
-    });
+    };
 
     services.xserver = {
       displayManager.defaultSession = "none+qtile";
-      windowManager.session = [{
-        name = "qtile";
-        start = ''
-          ${cfg.package}/bin/qtile start -b ${cfg.backend} \
-          ${
-            optionalString (cfg.configFile != null)
-            "--config ${cfg.configFile} "
-          } & waitPID=$!
-        '';
-      }];
+      windowManager.session = [
+        {
+          name = "qtile";
+          start = ''
+            ${cfg.package}/bin/qtile start -b ${cfg.backend} \
+            ${
+              optionalString (cfg.configFile != null)
+              "--config ${cfg.configFile} "
+            } & waitPID=$!
+          '';
+        }
+      ];
     };
   };
 }
