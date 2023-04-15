@@ -1,6 +1,10 @@
-{ config, options, lib, pkgs, ... }:
-
-let
+{
+  config,
+  options,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (lib) attrValues mkIf mkMerge mkOption;
   inherit (lib.types) str;
 
@@ -11,29 +15,61 @@ in {
       type = str;
       default = "nvim";
       description = "Default editor for text manipulation";
-      example = "emacs";
+      example = "nvim";
     };
   };
 
   config = mkMerge [
-    (mkIf (cfg.default != null) { env.EDITOR = cfg.default; })
+    (mkIf (cfg.default != null) {env.EDITOR = cfg.default;})
 
     (mkIf (cfg.default == "nvim" || cfg.default == "emacs") {
-      user.packages = attrValues ({
-        inherit (pkgs)
-          imagemagick editorconfig-core-c sqlite deno pandoc texlab typst;
-        aspellPlusDict = pkgs.aspellWithDicts
-          (dict: with dict; [ en en-computers en-science ]);
-        tex = pkgs.texlive.combine { # FIXME: completely replace with typst
-          inherit (pkgs.texlive)
-            scheme-basic capt-of dvipng dvisvgm fancyvrb fontspec hyperref
-            latexmk ulem koma-script greek-inputenc trimspaces
+      user.packages = attrValues {
+        inherit
+          (pkgs)
+          imagemagick
+          editorconfig-core-c
+          sqlite
+          deno
+          pandoc
+          texlab
+          typst
+          ;
+        aspellPlusDict =
+          pkgs.aspellWithDicts
+          (dict: with dict; [en en-computers en-science]);
+        tex = pkgs.texlive.combine {
+          # FIXME: completely replace with typst
+          inherit
+            (pkgs.texlive)
+            scheme-basic
+            capt-of
+            dvipng
+            dvisvgm
+            fancyvrb
+            fontspec
+            hyperref
+            latexmk
+            ulem
+            koma-script
+            greek-inputenc
+            trimspaces
             # Mathematics
-            amsmath cancel mathtools
+            
+            amsmath
+            cancel
+            mathtools
             # Graphics
-            parskip pgf pgfplots svg transparent wrapfig xcolor;
+            
+            parskip
+            pgf
+            pgfplots
+            svg
+            transparent
+            wrapfig
+            xcolor
+            ;
         };
-      });
+      };
     })
   ];
 }

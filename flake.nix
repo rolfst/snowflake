@@ -20,29 +20,18 @@
     };
 
     # Window Manager(s) + Extensions
-    xmonad-contrib.url =
-      "github:icy-thought/xmonad-contrib"; # TODO: replace with official after #582 == merged!
+    xmonad-contrib.url = "github:icy-thought/xmonad-contrib"; # TODO: replace with official after #582 == merged!
     hyprland.url = "github:hyprwm/Hyprland";
 
     # Toolset ++ Application(s)
-    emacs.url = "github:nix-community/emacs-overlay";
-    doomemacs.url = "github:nix-community/nix-doom-emacs/";
     nvim-nightly = {
       url = "github:nix-community/neovim-nightly-overlay";
       # WARN: temporary solution until #164 solved...
-      inputs.nixpkgs.url =
-        "github:nixos/nixpkgs?rev=fad51abd42ca17a60fc1d4cb9382e2d79ae31836";
+      inputs.nixpkgs.url = "github:nixos/nixpkgs?rev=fad51abd42ca17a60fc1d4cb9382e2d79ae31836";
     };
     rust.url = "github:oxalica/rust-overlay";
     spicetify-nix.url = "github:the-argus/spicetify-nix";
 
-    # Submodules (temporary) # TODO
-    emacs-dir = {
-      url = "https://github.com/Icy-Thought/emacs.d.git";
-      type = "git";
-      submodules = true;
-      flake = false;
-    };
     nvim-dir = {
       url = "https://github.com/Icy-Thought/nvim.d.git";
       type = "git";
@@ -51,57 +40,67 @@
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, ... }:
-    let
-      inherit (lib.my) mapModules mapModulesRec mapHosts;
-      system = "x86_64-linux";
+  outputs = inputs @ {
+    self,
+    nixpkgs,
+    nixpkgs-unstable,
+    ...
+  }: let
+    inherit (lib.my) mapModules mapModulesRec mapHosts;
+    system = "x86_64-linux";
 
-      mkPkgs = pkgs: extraOverlays:
-        import pkgs {
-          inherit system;
-          config.allowUnfree = true;
-          overlays = extraOverlays ++ (lib.attrValues self.overlays);
-        };
-      pkgs = mkPkgs nixpkgs [ self.overlays.default ];
-      pkgs' = mkPkgs nixpkgs-unstable [ ];
+    mkPkgs = pkgs: extraOverlays:
+      import pkgs {
+        inherit system;
+        config.allowUnfree = true;
+        overlays = extraOverlays ++ (lib.attrValues self.overlays);
+      };
+    pkgs = mkPkgs nixpkgs [self.overlays.default];
+    pkgs' = mkPkgs nixpkgs-unstable [];
 
-      lib = nixpkgs.lib.extend (final: prev: {
-        my = import ./lib {
-          inherit pkgs inputs;
-          lib = final;
-        };
-      });
-    in {
-      lib = lib.my;
+    lib = nixpkgs.lib.extend (final: prev: {
+      my = import ./lib {
+        inherit pkgs inputs;
+        lib = final;
+      };
+    });
+  in {
+    lib = lib.my;
 
-      overlays = (mapModules ./overlays import) // {
+    overlays =
+      (mapModules ./overlays import)
+      // {
         default = final: prev: {
           unstable = pkgs';
           my = self.packages.${system};
         };
       };
 
-      packages."${system}" = mapModules ./packages (p: pkgs.callPackage p { });
+    packages."${system}" = mapModules ./packages (p: pkgs.callPackage p {});
 
-      nixosModules = {
+    nixosModules =
+      {
         snowflake = import ./.;
-      } // mapModulesRec ./modules import;
+      }
+      // mapModulesRec ./modules import;
 
-      nixosConfigurations = mapHosts ./hosts { };
+    nixosConfigurations = mapHosts ./hosts {};
 
-      devShells."${system}".default = import ./shell.nix { inherit pkgs; };
+    devShells."${system}".default = import ./shell.nix {inherit pkgs;};
 
-      templates.full = {
+    templates.full =
+      {
         path = ./.;
         description = "λ well-tailored and configureable NixOS system!";
-      } // import ./templates;
+      }
+      // import ./templates;
 
-      templates.default = self.templates.full;
+    templates.default = self.templates.full;
 
-      # TODO: deployment + template tool.
-      # apps."${system}" = {
-      #   type = "app";
-      #   program = ./bin/hagel;
-      # };
-    };
+    # TODO: deployment + template tool.
+    # apps."${system}" = {
+    #   type = "app";
+    #   program = ./bin/hagel;
+    # };
+  };
 }
