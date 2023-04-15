@@ -73,7 +73,7 @@ in {
   system = {
     stateVersion = "22.11";
     configurationRevision = with inputs; mkIf (self ? rev) self.rev;
-    autoupgrade = {
+    autoUpgrade = {
       enable = true;
       channel = "https://nixos.org/channels/nixos-unstable";
     };
@@ -88,6 +88,7 @@ in {
     kernelPackages = mkDefault pkgs.linuxPackages_latest;
     kernelParams = ["pcie_aspm.policy=performance"];
     loader = {
+      systemd-boot.enable = true;
       efi.efiSysMountPoint = "/boot";
       efi.canTouchEfiVariables = mkDefault true;
     };
