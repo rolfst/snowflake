@@ -67,7 +67,7 @@ in {
   services = {
     upower.enable = true;
     xserver = {
-      videoDrivers = ["amdgpu"];
+      videoDrivers = [];
       deviceSection = ''
         Option "TearFree" "true"
       '';
