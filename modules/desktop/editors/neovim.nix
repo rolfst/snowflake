@@ -1,6 +1,11 @@
-{ config, options, lib, pkgs, inputs, ... }:
-
-let
+{
+  config,
+  options,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}: let
   inherit (lib) attrValues optionalAttrs mkIf mkMerge;
   inherit (lib.my) mkBoolOpt;
 
@@ -13,13 +18,14 @@ in {
 
   config = mkMerge [
     {
-      nixpkgs.overlays = [ inputs.nvim-nightly.overlay ];
+      nixpkgs.overlays = [inputs.nvim-nightly.overlay];
 
       user.packages = attrValues ({
-        inherit (pkgs) neovide;
-      } // optionalAttrs (config.modules.develop.cc.enable == false) {
-        inherit (pkgs) gcc; # Treesitter
-      });
+          inherit (pkgs) neovide;
+        }
+        // optionalAttrs (config.modules.develop.cc.enable == false) {
+          inherit (pkgs) gcc; # Treesitter
+        });
 
       hm.programs.neovim = {
         enable = true;
@@ -30,7 +36,7 @@ in {
       };
 
       # Required API key for ChatGPT:
-      env.OPENAI_API_KEY = "$(cat /run/agenix/closedAI)";
+      # env.OPENAI_API_KEY = "$(cat /run/agenix/closedAI)";
     }
 
     (mkIf cfg.agasaya.enable {

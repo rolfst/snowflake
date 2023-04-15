@@ -10,10 +10,10 @@
     };
 
     # System application(s)
-    agenix = {
-      url = "github:ryantm/agenix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # agenix = {
+    #   url = "github:ryantm/agenix";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
     # kmonad = {
     #   url = "github:kmonad/kmonad?dir=nix";
     #   inputs.nixpkgs.follows = "nixpkgs";
