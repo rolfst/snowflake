@@ -1,6 +1,11 @@
-{ inputs, options, config, lib, pkgs, ... }:
-
-let
+{
+  inputs,
+  options,
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (lib) attrValues mkIf mkMerge;
   inherit (lib.my) mkBoolOpt;
 
@@ -13,20 +18,23 @@ in {
 
   config = mkMerge [
     (mkIf cfg.music.enable {
-      hm.imports = [ inputs.spicetify-nix.homeManagerModules.default ];
+      hm.imports = [inputs.spicetify-nix.homeManagerModules.default];
 
       hm.programs.spicetify = let
-        inherit (inputs.spicetify-nix.packages.${pkgs.system}.default)
-          apps extensions themes;
+        inherit
+          (inputs.spicetify-nix.packages.${pkgs.system}.default)
+          apps
+          extensions
+          themes
+          ;
       in {
         enable = true;
-        spotifyPackage = pkgs.spotify-unwrapped;
         spicetifyPackage = pkgs.spicetify-cli;
 
         theme = themes.catppuccin-mocha;
         colorScheme = "flamingo";
 
-        enabledCustomApps = [ apps.new-releases apps.lyrics-plus ];
+        enabledCustomApps = [apps.new-releases apps.lyrics-plus];
         enabledExtensions = [
           extensions.adblock
           extensions.fullAppDisplay
@@ -42,9 +50,9 @@ in {
     (mkIf cfg.video.enable {
       hm.programs.mpv = {
         enable = true;
-        scripts = attrValues ({
+        scripts = attrValues {
           inherit (pkgs.mpvScripts) autoload mpris sponsorblock thumbnail;
-        });
+        };
         config = {
           profile = "gpu-hq";
           force-window = true;
@@ -58,7 +66,7 @@ in {
         };
       };
 
-      user.packages = [ pkgs.mpvc ];
+      user.packages = [pkgs.mpvc];
     })
   ];
 }
