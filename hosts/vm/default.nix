@@ -20,10 +20,11 @@
     services = {ssh.enable = true;};
 
     develop = {
-      dart.enable = true;
+      node.enable = true;
       haskell.enable = true;
       python.enable = true;
       rust.enable = true;
+      lua.enable = true;
     };
 
     themes.active = "rose-pine";

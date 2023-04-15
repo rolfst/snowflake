@@ -54,13 +54,14 @@ in {
         nixpkgs.flake = inputs.nixpkgs;
       };
 
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than-2d";
+    };
+
     settings = {
       auto-optimise-store = true;
-      gc = {
-        automatic = true;
-        dates = "weekly";
-        options = "--delete-older-than-2d";
-      };
 
       substituters = ["https://nix-community.cachix.org" "https://hyprland.cachix.org"];
       trusted-public-keys = [
