@@ -1,15 +1,20 @@
-{ inputs, options, config, lib, pkgs, ... }:
-
-let
+{
+  inputs,
+  options,
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (lib) attrValues mkIf getExe;
   inherit (lib.my) mkBoolOpt;
 in {
-  options.modules.desktop.xmonad = { enable = mkBoolOpt false; };
+  options.modules.desktop.xmonad = {enable = mkBoolOpt false;};
 
   config = mkIf config.modules.desktop.xmonad.enable {
     modules.desktop = {
       envProto = "x11";
-      toolset.fileBrowse = { nautilus.enable = true; };
+      toolset.fileBrowse = {nautilus.enable = true;};
       extensions = {
         fcitx5.enable = true;
         mimeApps.enable = true; # mimeApps -> default launch application
@@ -22,23 +27,25 @@ in {
         taffybar.enable = true;
       };
     };
-    modules.hardware.kmonad.enable = true;
+    # modules.hardware.kmonad.enable = true;
 
-    nixpkgs.overlays = [ inputs.xmonad-contrib.overlay ];
+    nixpkgs.overlays = [inputs.xmonad-contrib.overlay];
 
-    environment.systemPackages = attrValues ({
+    environment.systemPackages = attrValues {
       inherit (pkgs) libnotify playerctl gxmessage xdotool xclip feh;
-    });
+    };
 
     services.xserver = {
       displayManager.defaultSession = "none+xmonad";
-      windowManager.session = [{
-        name = "xmonad";
-        start = ''
-          /usr/bin/env birostrisWM &
-          waitPID=$!
-        '';
-      }];
+      windowManager.session = [
+        {
+          name = "xmonad";
+          start = ''
+            /usr/bin/env birostrisWM &
+            waitPID=$!
+          '';
+        }
+      ];
     };
 
     hm.xsession.windowManager = {

@@ -58,7 +58,7 @@ in {
       enable = true;
       lowLatency.enable = true;
     };
-    kmonad.deviceID = "/dev/input/by-path/platform-i8042-serio-0-event-kbd";
+    # kmonad.deviceID = "/dev/input/by-path/platform-i8042-serio-0-event-kbd";
     pointer.enable = true;
     printer.enable = true;
     razer.enable = true;
