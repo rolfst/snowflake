@@ -79,7 +79,6 @@ in {
     # home.configFile  ->  home-manager.users.icy-thought.home.xdg.configFile
     # home.dataFile    ->  home-manager.users.icy-thought.home.xdg.dataFile
     hm.home = {
-      useGlobalPkgs = true;
       activation = mkAliasDefinitions options.home.activation;
       file = mkAliasDefinitions options.home.file;
       pointerCursor = mkAliasDefinitions options.home.pointerCursor;
