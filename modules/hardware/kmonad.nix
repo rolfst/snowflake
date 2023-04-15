@@ -10,8 +10,7 @@
   inherit (lib) mkIf mkOption;
   inherit (lib.types) nullOr path;
   inherit (lib.my) mkBoolOpt;
-
-  cfg = config.modules.hardware.kmonad;
+  #  cfg = config.modules.hardware.kmonad;
 in {
   # options.modules.hardware.kmonad = {
   #   enable = mkBoolOpt false;
