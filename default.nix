@@ -1,16 +1,29 @@
-{ inputs, config, lib, pkgs, ... }:
-
-let
+{
+  inputs,
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (builtins) toString;
-  inherit (lib)
-    attrValues filterAttrs mkDefault mkIf mkAliasOptionModule mapAttrs
-    mapAttrsToList;
+  inherit
+    (lib)
+    attrValues
+    filterAttrs
+    mkDefault
+    mkIf
+    mkAliasOptionModule
+    mapAttrs
+    mapAttrsToList
+    ;
   inherit (lib.my) mapModulesRec';
 in {
-  imports = [
-    inputs.home-manager.nixosModules.home-manager
-    (mkAliasOptionModule [ "hm" ] [ "home-manager" "users" config.user.name ])
-  ] ++ (mapModulesRec' (toString ./modules) import);
+  imports =
+    [
+      inputs.home-manager.nixosModules.home-manager
+      (mkAliasOptionModule ["hm"] ["home-manager" "users" config.user.name])
+    ]
+    ++ (mapModulesRec' (toString ./modules) import);
 
   # Common config for all nixos machines;
   environment.variables = {
@@ -22,22 +35,34 @@ in {
   nix = let
     filteredInputs = filterAttrs (n: _: n != "self") inputs;
     nixPathInputs = mapAttrsToList (n: v: "${n}=${v}") filteredInputs;
-    registryInputs = mapAttrs (_: v: { flake = v; }) filteredInputs;
+    registryInputs = mapAttrs (_: v: {flake = v;}) filteredInputs;
   in {
-    package = pkgs.nixVersions.stable;
+    package = pkgs.nixVersions.unstable;
     extraOptions = "experimental-features = nix-command flakes";
 
-    nixPath = nixPathInputs ++ [
-      "nixpkgs-overlays=${config.snowflake.dir}/overlays"
-      "snowflake=${config.snowflake.dir}"
-    ];
+    nixPath =
+      nixPathInputs
+      ++ [
+        "nixpkgs-overlays=${config.snowflake.dir}/overlays"
+        "snowflake=${config.snowflake.dir}"
+      ];
 
-    registry = registryInputs // { snowflake.flake = inputs.self; };
+    registry =
+      registryInputs
+      // {
+        snowflake.flake = inputs.self;
+        nixpkgs.flake = inputs.nixpkgs;
+      };
 
     settings = {
       auto-optimise-store = true;
-      substituters =
-        [ "https://nix-community.cachix.org" "https://hyprland.cachix.org" ];
+      gc = {
+        automatic = true;
+        dates = "weekly";
+        options = "--delete-older-than-2d";
+      };
+
+      substituters = ["https://nix-community.cachix.org" "https://hyprland.cachix.org"];
       trusted-public-keys = [
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
@@ -48,6 +73,10 @@ in {
   system = {
     stateVersion = "22.11";
     configurationRevision = with inputs; mkIf (self ? rev) self.rev;
+    autoupgrade = {
+      enable = true;
+      channel = "https://nixos.org/channels/nixos-unstable";
+    };
   };
 
   # Some reasonable, global defaults
@@ -57,17 +86,10 @@ in {
 
   boot = {
     kernelPackages = mkDefault pkgs.linuxPackages_latest;
-    kernelParams = [ "pcie_aspm.policy=performance" ];
+    kernelParams = ["pcie_aspm.policy=performance"];
     loader = {
       efi.efiSysMountPoint = "/boot";
       efi.canTouchEfiVariables = mkDefault true;
-      grub = {
-        enable = mkDefault true;
-        version = 2;
-        device = "nodev";
-        efiSupport = mkDefault true;
-        useOSProber = mkDefault true;
-      };
     };
   };
 
@@ -76,13 +98,19 @@ in {
     useXkbConfig = mkDefault true;
   };
 
-  time.timeZone = mkDefault "Europe/Stockholm";
+  time.timeZone = mkDefault "Europe/Amsterdam";
 
-  i18n.defaultLocale = mkDefault "en_US.UTF-8";
+  i18n = {
+    defaultLocale = mkDefault "en_US.UTF-8";
+    extraLocaleSettings = {
+      LC_TIME = "nl_NL.UTF-8";
+      LC_MONETARY = "nl_NL.UTF-8";
+    };
+  };
 
   # WARNING: prevent installing pre-defined packages
-  environment.defaultPackages = [ ];
+  environment.defaultPackages = [];
 
   environment.systemPackages =
-    attrValues ({ inherit (pkgs) cached-nix-shell gnumake unrar unzip; });
+    attrValues {inherit (pkgs) cached-nix-shell gnumake unrar unzip;};
 }
