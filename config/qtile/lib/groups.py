@@ -1,6 +1,5 @@
 from lib.keymaps import keys
 from lib.themes import palette
-
 # Qtile
 from libqtile import bar, layout, widget
 from libqtile.command import lazy
@@ -84,7 +83,7 @@ groups.append(
         [
             DropDown(
                 "SysMon",
-                "alacritty -t 'System Monitor' -e btop",
+                "kitty -t 'System Monitor' -e btop",
                 **next_maximum,
             ),
             DropDown(
@@ -99,21 +98,12 @@ groups.append(
                 match=Match(wm_class="element"),
                 **next_maximum,
             ),
-            DropDown("Galaxy Buds Manager", "GalaxyBudsClient", **next_maximum),
             DropDown(
                 "Neovide",
                 "neovide --multigrid --frame none",
                 match=Match(wm_class="neovide"),
                 **next_maximum,
             ),
-            DropDown("Spotify", "spotify", **next_maximum),
-            DropDown(
-                "Telegram",
-                "telegram-desktop",
-                match=Match(wm_class="TelegramDesktop"),
-                **next_maximum,
-            ),
-            DropDown("Transmission", "transmission-gtk", **next_maximum),
             DropDown("Volume Control", "eassyeffects", **next_maximum),
         ],
     )

@@ -1,10 +1,14 @@
-{ options, config, lib, pkgs, ... }:
-
-let
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (lib) attrValues literalExpression mkIf mkOption;
   inherit (lib.my) mkBoolOpt;
 
-  genYAML = pkgs.formats.yaml { };
+  genYAML = pkgs.formats.yaml {};
   deaddDir = "${config.snowflake.configDir}/deadd-notify";
   cfg = config.modules.desktop.extensions.deadd-notify;
 in {
@@ -12,7 +16,7 @@ in {
     enable = mkBoolOpt false;
     settings = mkOption {
       type = genYAML.type;
-      default = { };
+      default = {};
       description = ''
         Nix-based deadd-notification-center configuration.
         Please visit the original deadd.conf for determening accepted inputs.
@@ -27,7 +31,7 @@ in {
 
   config = mkIf cfg.enable {
     systemd.packages =
-      attrValues ({ inherit (pkgs) deadd-notification-center; });
+      attrValues {inherit (pkgs) deadd-notification-center;};
 
     home.configFile = {
       deadd-notify-conf = {
@@ -92,7 +96,7 @@ in {
         use-markup = true;
         parse-html-entities = true;
 
-        dbus = { send-noti-closed = false; };
+        dbus = {send-noti-closed = false;};
 
         app-icon = {
           guess-icon-from-name = true;
@@ -106,16 +110,6 @@ in {
           margin-left = 15;
           margin-right = 0;
         };
-
-        modifications = [{
-          match = { app-name = "Spotify"; };
-          modify = {
-            image-size = 80;
-            timeout = 1;
-            send-noti-closed = true;
-            class-name = "Spotify";
-          };
-        }];
 
         popup = {
           default-timeout = 500; # expire in ms
