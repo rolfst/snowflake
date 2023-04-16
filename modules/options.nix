@@ -26,6 +26,7 @@ in {
       dir = mkOpt path (findFirst pathExists (toString ../.) [
         "${config.user.home}/snowflake"
         "/etc/snowflake"
+        "/etc/nixos/snowflake"
       ]);
       hostDir =
         mkOpt path
@@ -60,7 +61,7 @@ in {
       user = builtins.getEnv "USER";
       name =
         if elem user ["" "root"]
-        then "icy-thought"
+        then "rolfst"
         else user;
     in {
       inherit name;

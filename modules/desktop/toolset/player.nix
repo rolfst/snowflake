@@ -17,36 +17,6 @@ in {
   };
 
   config = mkMerge [
-    (mkIf cfg.music.enable {
-      hm.imports = [inputs.spicetify-nix.homeManagerModules.default];
-
-      hm.programs.spicetify = let
-        inherit
-          (inputs.spicetify-nix.packages.${pkgs.system}.default)
-          apps
-          extensions
-          themes
-          ;
-      in {
-        enable = true;
-        spicetifyPackage = pkgs.spicetify-cli;
-
-        theme = themes.catppuccin-mocha;
-        colorScheme = "flamingo";
-
-        enabledCustomApps = [apps.new-releases apps.lyrics-plus];
-        enabledExtensions = [
-          extensions.adblock
-          extensions.fullAppDisplay
-          extensions.hidePodcasts
-          extensions.keyboardShortcut
-          extensions.playNext
-          extensions.showQueueDuration
-          extensions.shuffle
-        ];
-      };
-    })
-
     (mkIf cfg.video.enable {
       hm.programs.mpv = {
         enable = true;
