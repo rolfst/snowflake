@@ -128,7 +128,7 @@ icyTheme =
         , inactiveColor       = icyInactive
         , inactiveBorderColor = icyInactive
         , inactiveTextColor   = icyActive
-        , fontName            = "xft:VictorMono Nerd Font:style=SemiBold"
+        , fontName            = "xft:VictorMono:style=SemiBold"
         }
 
 icyActive = "#1abc9c"
@@ -754,11 +754,6 @@ scratchpads =
         "Picture-in-Picture"
         (title =? "Picture-in-Picture")
         defaultFloating
-    , NS
-        "ProtonMail"
-        "chromium --new-window https://mail.google.com/mail/u/0/"
-        protonMailSelector
-        nearFullFloat
     , NS
         "System Monitor"
         "kitty -t 'System Monitor' -e btop"
