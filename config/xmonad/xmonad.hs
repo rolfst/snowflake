@@ -222,20 +222,15 @@ myDmenu = DM.menuArgs "rofi" myDmenuArgs
 getWorkspaceDmenu = myDmenu (workspaces myConfig)
 
 -- Selectors
-isProtonMailTitle t = isInfixOf "@gmail.com" t -- && isInfixOf "Proton Mail" t
-
 isChromiumClass = isInfixOf "Chromium"
 
 noSpecialChromiumTitles = helper <$> title
-    where helper t = not $ ($ t) isProtonMailTitle
 
 chromiumSelectorBase = isChromiumClass <$> className
 
 chromiumSelector = className =? "chromium-browser" <&&> appName =? "Chromium"
 
 firefoxSelector = className =? "firefox-aurora" <&&> appName =? "Navigator"
-
-protonMailSelector = chromiumSelectorBase <&&> fmap isProtonMailTitle title
 
 virtualClasses =
     [(chromiumSelector, "Chromium")]
@@ -740,11 +735,6 @@ scratchpads =
         (className =? "discord")
         nearFullFloat
     , NS
-        "EasyEffects"
-        "easyeffects"
-        (title =? "Easy Effects")
-        nearFullFloat
-    , NS
         "Element"
         "element-desktop"
         (className =? "Element")
@@ -756,7 +746,7 @@ scratchpads =
         defaultFloating
     , NS
         "System Monitor"
-        "kitty -t 'System Monitor' -e btop"
+        "kitty --title 'System Monitor' btop"
         (title =? "System Monitor")
         nearFullFloat
     ]
@@ -909,8 +899,6 @@ addKeys conf@XConfig { modMask = modm } =
            , ((modalt, xK_h), doScratchpad "Telegram")
            , ((modalt, xK_j), doScratchpad "Discord")
            , ((modalt, xK_k), doScratchpad "Element")
-           , ((modalt, xK_m), doScratchpad "ProtonMail")
-           , ((modalt, xK_v), doScratchpad "EasyEffects")
 
              -- Rofi(s)
            , ((modm, xK_p), spawn "rofi -show power-menu")

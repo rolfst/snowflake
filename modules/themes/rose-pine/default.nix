@@ -58,7 +58,7 @@ in {
               green = "#9ccfd8";
               yellow = "#c4a7e7";
               blue = "#21202e";
-              magenta = "#40352";
+              magenta = "#403d52";
               cyan = "#524f67";
               white = "#00f769";
             };
