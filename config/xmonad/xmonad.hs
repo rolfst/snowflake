@@ -224,8 +224,6 @@ getWorkspaceDmenu = myDmenu (workspaces myConfig)
 -- Selectors
 isChromiumClass = isInfixOf "Chromium"
 
-noSpecialChromiumTitles = helper <$> title
-
 chromiumSelectorBase = isChromiumClass <$> className
 
 chromiumSelector = className =? "chromium-browser" <&&> appName =? "Chromium"
