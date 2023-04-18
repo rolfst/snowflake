@@ -6,9 +6,9 @@
 }: let
   openCalendar = "${pkgs.xfce.orage}/bin/orage";
 
-  hdmiBar = pkgs.callPackage ./bar.nix {};
+  hdmiBar = pkgs.callPackage ../../../../config/polybar/bar.nix {};
 
-  laptopBar = pkgs.callPackage ./bar.nix {
+  laptopBar = pkgs.callPackage ../../../../config/polybar/bar.nix {
     font0 = 10;
     font1 = 12;
     font2 = 24;
@@ -32,11 +32,11 @@
   # theme adapted from: https://github.com/adi1090x/polybar-themes#-polybar-5
   # bars = builtins.readFile ./config.ini;
 
-  bluetoothScript = pkgs.callPackage ./scripts/bluetooth.nix {};
-  klsScript = pkgs.callPackage ../../scripts/keyboard-layout-switch.nix {inherit pkgs;};
-  monitorScript = pkgs.callPackage ./scripts/monitor.nix {};
-  mprisScript = pkgs.callPackage ./scripts/mpris.nix {};
-  networkScript = pkgs.callPackage ./scripts/network.nix {};
+  bluetoothScript = pkgs.callPackage ../../../../config/polybar/scripts/bluetooth.nix {};
+  klsScript = pkgs.callPackage ../../../../config/polybar/scripts/keyboard-layout-switch.nix {inherit pkgs;};
+  monitorScript = pkgs.callPackage ../../../../scripts/monitor.nix {};
+  mprisScript = pkgs.callPackage ../../../../scripts/mpris.nix {};
+  networkScript = pkgs.callPackage ../../../../scripts/network.nix {};
 
   bctl = ''
     [module/bctl]
