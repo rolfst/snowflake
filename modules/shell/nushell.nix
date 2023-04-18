@@ -1,6 +1,10 @@
-{ config, options, pkgs, lib, ... }:
-
-let
+{
+  config,
+  options,
+  pkgs,
+  lib,
+  ...
+}: let
   inherit (builtins) map;
   inherit (lib) mapAttrsToList mkIf;
   inherit (lib.strings) concatStrings escapeNixString optionalString;
@@ -19,7 +23,7 @@ in {
     hm.programs.starship.enableNusellIntegration = true;
 
     # Enable completion for sys-packages:
-    environment.pathsToLink = [ "/share/nu" ];
+    environment.pathsToLink = ["/share/nu"];
 
     # Enable nixpkgs suggestions:
     programs.nushell.enable = true;
@@ -27,4 +31,5 @@ in {
     hm.programs.nushell = {
       enable = true;
     };
-};
+  };
+}
