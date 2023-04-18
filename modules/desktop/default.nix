@@ -53,23 +53,32 @@ in {
         popd
       '';
 
-      user.packages = attrValues {
-        inherit
-          (pkgs)
-          hyperfine
-          gucharmap
-          qgnomeplatform # Qt -> GTK Theme
-          kalker
-          ;
-
-        kalker-launcher = pkgs.makeDesktopItem {
-          name = "Kalker";
-          desktopName = "Kalker";
-          icon = "calc";
-          exec = "${config.modules.desktop.terminal.default} start kalker";
-          categories = ["Education" "Science" "Math"];
-        };
-      };
+      user.packages = [
+        attrValues
+        {
+          inherit
+            (pkgs)
+            hyperfine
+            gucharmap
+            qgnomeplatform # Qt -> GTK Theme
+            kalker
+            feh
+            xrandr
+            arandr
+            nitrogen
+            conky
+            xdotool
+            ;
+          kalker-launcher = pkgs.makeDesktopItem {
+            name = "Kalker";
+            desktopName = "Kalker";
+            icon = "calc";
+            exec = "${config.modules.desktop.terminal.default} start kalker";
+            categories = ["Education" "Science" "Math"];
+          };
+        }
+        pkgs.lxde.lxsession
+      ];
 
       fonts = {
         fontDir.enable = true;
