@@ -24,7 +24,7 @@ in {
         };
         dunst.enable = true;
         rofi.enable = true;
-        taffybar.enable = true;
+        polybar.enable = true;
       };
     };
     # modules.hardware.kmonad.enable = true;
