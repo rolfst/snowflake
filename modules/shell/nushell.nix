@@ -27,4 +27,4 @@ in {
     hm.programs.nushell = {
       enable = true;
     };
-}
+};
