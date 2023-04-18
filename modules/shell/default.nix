@@ -1,6 +1,10 @@
-{ options, config, lib, pkgs, ... }:
-
-let
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (lib) attrValues mkIf mkMerge mkOption;
   inherit (lib.types) nullOr enum;
   inherit (lib.my) mkBoolOpt;
@@ -9,7 +13,7 @@ let
 in {
   options.modules.shell = {
     default = mkOption {
-      type = nullOr (enum [ "fish" "zsh" "xonsh" ]);
+      type = nullOr (enum ["fish" "zsh" "xonsh nushell"]);
       default = null;
       description = "Default system shell";
     };
@@ -27,16 +31,16 @@ in {
       hm.programs.direnv = {
         enable = true;
         nix-direnv.enable = true;
-        config.whitelist.prefix = [ "/home" ];
+        config.whitelist.prefix = ["/home"];
       };
 
-      user.packages = attrValues ({
+      user.packages = attrValues {
         inherit (pkgs) any-nix-shell fzf pwgen yt-dlp csview ripdrag;
 
         # GNU Alternatives
-        inherit (pkgs) bat exa fd zoxide;
-        rgFull = pkgs.ripgrep.override { withPCRE2 = true; };
-      });
+        inherit (pkgs) bat exa fd duf zoxide killall pavucontrol tree xsel;
+        rgFull = pkgs.ripgrep.override {withPCRE2 = true;};
+      };
     })
   ];
 }
