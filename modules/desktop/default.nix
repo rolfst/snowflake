@@ -78,6 +78,7 @@ in {
           };
         }
         pkgs.lxde.lxsession
+        pkgs.xfce.orage
       ];
 
       fonts = {

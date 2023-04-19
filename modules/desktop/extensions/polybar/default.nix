@@ -1,9 +1,17 @@
 {
+  inputs,
+  options,
   config,
+  lib,
   pkgs,
   specialArgs,
   ...
 }: let
+  inherit (lib) mkIf;
+  inherit (lib.my) mkBoolOpt;
+
+  cfg = config.modules.desktop.extensions.polybar;
+
   openCalendar = "${pkgs.xfce.orage}/bin/orage";
 
   hdmiBar = pkgs.callPackage ../../../../config/polybar/bar.nix {};
@@ -82,26 +90,34 @@
 
   customMods = mainBar + bctl + cal + keyboard + mpris + xmonad;
 in {
-  hm.packages = with pkgs; [
-    font-awesome # awesome fonts
-    material-design-icons # fonts with glyphs
-    xfce.orage # lightweight calendar
-  ];
+  options.modules.desktop.extensions.polybar = {enable = mkBoolOpt false;};
+  config = mkIf cfg.enable {
+    hm = {
+      packages = with pkgs; [
+        font-awesome # awesome fonts
+        material-design-icons # fonts with glyphs
+        xfce.orage # lightweight calendar
+      ];
+      services = {
+        status-notifier-watcher.enable = true;
 
-  services.polybar = {
-    enable = true;
-    package = mypolybar;
-    config = ./config.ini;
-    extraConfig = customMods;
-    # polybar top -l trace (or info) for debugging purposes
-    script = ''
-      export MONITOR=$(${monitorScript}/bin/monitor)
-      echo "Running polybar on $MONITOR"
-      export ETH_INTERFACE=$(${networkScript}/bin/check-network eth)
-      export WIFI_INTERFACE=$(${networkScript}/bin/check-network wifi)
-      echo "Network interfaces $ETH_INTERFACE & $WIFI_INTERFACE"
-      polybar top 2>${config.xdg.configHome}/polybar/logs/top.log & disown
-      polybar bottom 2>${config.xdg.configHome}/polybar/logs/bottom.log & disown
-    '';
+        polybar = {
+          enable = true;
+          package = mypolybar;
+          config = ../../../../config.ini;
+          extraConfig = customMods;
+          # polybar top -l trace (or info) for debugging purposes
+          script = ''
+            export MONITOR=$(${monitorScript}/bin/monitor)
+            echo "Running polybar on $MONITOR"
+            export ETH_INTERFACE=$(${networkScript}/bin/check-network eth)
+            export WIFI_INTERFACE=$(${networkScript}/bin/check-network wifi)
+            echo "Network interfaces $ETH_INTERFACE & $WIFI_INTERFACE"
+            polybar top 2>${config.xdg.configHome}/polybar/logs/top.log & disown
+            polybar bottom 2>${config.xdg.configHome}/polybar/logs/bottom.log & disown
+          '';
+        };
+      };
+    };
   };
 }
