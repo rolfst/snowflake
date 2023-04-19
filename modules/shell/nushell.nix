@@ -25,9 +25,6 @@ in {
     # Enable completion for sys-packages:
     environment.pathsToLink = ["/share/nu"];
 
-    # Enable nixpkgs suggestions:
-    programs.nushell.enable = true;
-
     hm.programs.nushell = {
       enable = true;
     };

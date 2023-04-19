@@ -13,7 +13,7 @@
 in {
   options.modules.shell = {
     default = mkOption {
-      type = nullOr (enum ["fish" "zsh" "xonsh nushell"]);
+      type = nullOr (enum ["fish" "zsh" "xonsh" "nushell"]);
       default = null;
       description = "Default system shell";
     };
