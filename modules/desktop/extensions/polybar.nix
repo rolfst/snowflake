@@ -22,10 +22,6 @@ in {
 
     services.xserver = {
       gdk-pixbuf.modulePackages = [pkgs.librsvg];
-      displayManager.sessionCommands = ''
-        # 1st-Step polybar workaround
-        systemctl --user import-environment GDK_PIXBUF_MODULE_FILE DBUS_SESSION_BUS_ADDRESS PATH
-      '';
     };
 
     # WARN: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files
