@@ -104,7 +104,7 @@ in {
         polybar = {
           enable = true;
           package = mypolybar;
-          config = ../../../../config.ini;
+          config = ../../../config.ini;
           extraConfig = customMods;
           # polybar top -l trace (or info) for debugging purposes
           script = ''
