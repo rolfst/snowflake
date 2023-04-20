@@ -43,14 +43,14 @@ in {
         colors = {
           main = {
             normal = {
-              black = "#191724";
-              red = "#1f1d2e";
-              green = "#26233a";
-              yellow = "#6e6a86";
-              blue = "#908caa";
-              magenta = "#e0def4";
-              cyan = "#eb6f92";
-              white = "#f6c177";
+              black = "#26233a";
+              red = "#eb6f92";
+              green = "#31748f";
+              yellow = "#f6c177";
+              blue = "#9ccfd8";
+              magenta = "#c4a7e7";
+              cyan = "#ebbcba";
+              white = "#e0def4";
             };
             bright = {
               black = "#ebbcba";
@@ -64,8 +64,8 @@ in {
             };
             types = {
               fg = "#e0def4";
-              bg = "#1a1b26";
-              panelbg = "#1f1d2e";
+              bg = "#191724";
+              panelbg = "#26233a";
               border = "#26233a";
               highlight = "#f6c177";
             };

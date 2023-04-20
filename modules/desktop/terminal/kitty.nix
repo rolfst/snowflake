@@ -165,7 +165,7 @@ in {
             color14                   ${bright.cyan}
 
             color7                    ${normal.white}
-            color15                   ${bright.white}
+            color15                   ${normal.white}
           '';
         };
       })
