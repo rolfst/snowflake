@@ -54,6 +54,7 @@
           video.enable = true;
         };
         social.base.enable = true;
+        keybase.enable = true;
       };
     };
   };
