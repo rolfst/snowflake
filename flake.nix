@@ -32,7 +32,7 @@
     rust.url = "github:oxalica/rust-overlay";
 
     nvim-dir = {
-      url = "https://github.com/Icy-Thought/nvim.d.git";
+      url = "https://github.com/rolfst/nvim.git";
       type = "git";
       submodules = true;
       flake = false;

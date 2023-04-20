@@ -37,7 +37,7 @@
       };
       editors = {
         default = "nvim";
-        neovim.agasaya.enable = true;
+        neovim.rolfst.enable = true;
       };
       browsers = {
         default = "firefox-devedition";
