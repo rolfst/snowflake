@@ -28,6 +28,7 @@ in {
         shell_integration = "no-cursor";
         confirm_os_window_close = -1;
 
+        dynamic_background_opacity = "yes";
         background_opacity = "0.8";
         repaint_delay = 10;
         disable_ligatures = "cursor";
