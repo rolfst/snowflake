@@ -96,10 +96,10 @@ in {
         "*.elc"
       ];
 
-      userName = "Icy-Thought";
-      userEmail = "icy-thought@pm.me";
+      userName = "rolfst";
+      userEmail = "rolfst@gmail.com";
       signing = {
-        key = "B593E438DDAB3C66";
+        key = "7CE0453D6767DBD1";
         signByDefault = true;
       };
 
@@ -112,14 +112,14 @@ in {
 
         tag.gpgSign = true;
         pull.rebase = true;
-        push = {
-          default = "current";
-          gpgSign = "if-asked";
-          autoSquash = true;
-        };
+        # push = {
+        #   default = "current";
+        #   gpgSign = "if-asked";
+        #   autoSquash = true;
+        # };
 
-        github.user = "Icy-Thought";
-        gitlab.user = "Icy-Thought";
+        github.user = "rolfst";
+        gitlab.user = "rolfst";
 
         filter = {
           required = true;
@@ -142,7 +142,7 @@ in {
           "org".xfuncname = "^(\\*+ +.*)$";
         };
 
-        credential.helper = "${pkgs.gitFull}/bin/git-credential-libsecret";
+        # credential.helper = "${pkgs.gitFull}/bin/git-credential-libsecret";
       };
     };
   };
