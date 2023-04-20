@@ -15,7 +15,7 @@ in {
     enable = mkBoolOpt false;
   };
   config = mkMerge [
-    (mkIf cfg.desktop.toolset.keybase.enable {
+    (mkIf cfg.enable {
       environment.systemPackages = attrValues {
         inherit (pkgs) keybase kbfs;
       };
