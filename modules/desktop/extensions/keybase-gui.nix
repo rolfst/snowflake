@@ -9,7 +9,7 @@
   inherit (lib.my) mkBoolOpt;
   cfg = config.modules.desktop.toolset.keybase;
 in {
-  options.modules.desktop.extension.keybase = {
+  options.modules.desktop.extensions.keybase = {
     enable = mkBoolOpt false;
   };
   config = {environment.systemPackages = attrValues {inherit (pkgs) keybase-gui;};};
