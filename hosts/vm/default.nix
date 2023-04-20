@@ -44,6 +44,9 @@
         ungoogled.enable = true;
         firefox.enable = true;
       };
+      extension = {
+        keybase-gui.enable = true;
+      };
       # education = {
       #   memory.enable = true;
       #   vidcom.enable = true;

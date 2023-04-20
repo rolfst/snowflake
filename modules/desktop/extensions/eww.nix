@@ -26,7 +26,6 @@ in {
         mkMerge [
           (mkIf (envProto == "x11") [eww])
           (mkIf (envProto == "wayland") [eww-wayland])
-          (mkIf cfg.desktop.toolset.keybase.enable [pkgs.keybase-gui])
         ];
     };
   };
