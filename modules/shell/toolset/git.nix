@@ -1,19 +1,23 @@
-{ config, options, lib, pkgs, ... }:
-
-let
+{
+  config,
+  options,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (lib) attrValues optionalAttrs mkIf;
   inherit (lib.my) mkBoolOpt;
 in {
-  options.modules.shell.git = { enable = mkBoolOpt false; };
+  options.modules.shell.git = {enable = mkBoolOpt false;};
 
   config = mkIf config.modules.shell.git.enable {
     user.packages = attrValues ({
-      inherit (pkgs) act dura gitui;
-      inherit (pkgs.gitAndTools) gh git-open;
-    } // optionalAttrs config.modules.shell.gnupg.enable {
-      inherit (pkgs.gitAndTools) git-crypt;
-
-    });
+        inherit (pkgs) act dura gitui sad;
+        inherit (pkgs.gitAndTools) gh git-open;
+      }
+      // optionalAttrs config.modules.shell.gnupg.enable {
+        inherit (pkgs.gitAndTools) git-crypt;
+      });
 
     # Prevent x11 askPass prompt on git push:
     programs.ssh.askPassword = "";
@@ -31,13 +35,14 @@ in {
 
     hm.programs.git = {
       enable = true;
+      delta = {enable = true;};
       package = pkgs.gitFull;
-      difftastic = {
-        enable = true;
-        background = "dark";
-        color = "always";
-        display = "inline";
-      };
+      # difftastic = {
+      #   enable = true;
+      #   background = "dark";
+      #   color = "always";
+      #   display = "inline";
+      # };
 
       aliases = {
         unadd = "reset HEAD";
@@ -52,7 +57,7 @@ in {
         '';
       };
 
-      attributes = [ "*.lisp diff=lisp" "*.el diff=lisp" "*.org diff=org" ];
+      attributes = ["*.lisp diff=lisp" "*.el diff=lisp" "*.org diff=org"];
 
       ignores = [
         # General:
@@ -133,8 +138,7 @@ in {
         };
 
         diff = {
-          "lisp".xfuncname =
-            "^(((;;;+ )|\\(|([ 	]+\\(((cl-|el-patch-)?def(un|var|macro|method|custom)|gb/))).*)$";
+          "lisp".xfuncname = "^(((;;;+ )|\\(|([ 	]+\\(((cl-|el-patch-)?def(un|var|macro|method|custom)|gb/))).*)$";
           "org".xfuncname = "^(\\*+ +.*)$";
         };
 
