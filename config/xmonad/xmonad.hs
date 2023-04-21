@@ -729,7 +729,7 @@ nearFullFloat = customFloating $ W.RationalRect l t w h
 scratchpads =
     [ NS
         "Discord"
-        "discordcanary"
+        "discord"
         (className =? "discord")
         nearFullFloat
     , NS

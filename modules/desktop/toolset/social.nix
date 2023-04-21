@@ -43,7 +43,7 @@ in {
 
     (mkIf cfg.discord.enable {
       home.configFile.openSAR-settings = {
-        target = "discordcanary/settings.json";
+        target = "discord/settings.json";
         text = builtins.toJSON {
           openasar = {
             setup = true;
@@ -81,14 +81,14 @@ in {
           "--enable-webrtc-pipewire-capturer"
         ];
 
-        discord-canary' =
-          (pkgs.discord-canary.override { withOpenASAR = true; }).overrideAttrs
+        discord' =
+          (pkgs.discord.override { withOpenASAR = true; }).overrideAttrs
           (old: {
             preInstall = ''
               gappsWrapperArgs+=("--add-flags" "${concatStringsSep " " flags}")
             '';
           });
-      in [ discord-canary' ];
+      in [ discord' ];
     })
   ];
 }
