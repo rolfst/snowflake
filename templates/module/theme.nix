@@ -163,7 +163,7 @@ in {
 
         theme = let
           inherit (config.hm.lib.formats.rasi) mkLiteral;
-          inherit (cfg.colors.rofi) bg fg ribbon selected urgent transparent;
+          inherit (cfg.colors.rofi) colors bg fg ribbon selected urgent transparent;
         in {
           "*" = {
             fg = mkLiteral "${fg}";
@@ -171,11 +171,29 @@ in {
             bg-alt = mkLiteral "${bg.alt}";
             bg-bar = mkLiteral "${bg.bar}";
 
+            cur = mkLiteral "hsla(247, 23%, 15%, 1)";
+            cmt = mkLiteral "hsla(249, 12%, 47%, 1)";
+            cya = mkLiteral "hsla(189, 43%, 73%, 1)";
+            grn = mkLiteral "hsla(197, 49%, 38%, 1)";
+            ora = mkLiteral "hsla(2, 55%, 83%, 1)";
+            pur = mkLiteral "hsla(267, 57%, 78%, 1)";
+            red = mkLiteral "hsla(343, 76%, 68%, 1)";
+            yel = mkLiteral "hsla(35, 88%, 72%, 1)";
+
             outer-ribbon = mkLiteral "${ribbon.outer}";
             inner-ribbon = mkLiteral "${ribbon.inner}";
             selected = mkLiteral "${selected}";
             urgent = mkLiteral "${urgent}";
             transparent = mkLiteral "${transparent}";
+
+	active-background: @grn;
+	urgent-background: @red;
+
+	selected-background: @active-background;
+	selected-urgent-background: @urgent-background;
+	selected-active-background: @active-background;
+	separatorcolor: @active-background;
+	bordercolor: @ora;
           };
 
           "window" = {

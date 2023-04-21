@@ -101,6 +101,7 @@ in {
           error = mkOpt str red;
           warning = mkOpt str yellow;
           highlight = mkOpt str white;
+          inactive = mkOpt str "#19172";
         };
       };
 
@@ -120,6 +121,18 @@ in {
       };
 
       rofi = {
+        colors = {
+            bg = mkOpt str "hsla(249, 22%, 12%, 1)";
+            cur = mkOpt str "hsla(247, 23%, 15%, 1)";
+            fgd = mkOpt str "hsla(245, 50%, 91%, 1)";
+            cmt = mkOpt str "hsla(249, 12%, 47%, 1)";
+            cya = mkOpt str "hsla(189, 43%, 73%, 1)";
+            grn = mkOpt str "hsla(197, 49%, 38%, 1)";
+            ora = mkOpt str "hsla(2, 55%, 83%, 1)";
+            pur = mkOpt str "hsla(267, 57%, 78%, 1)";
+            red = mkOpt str "hsla(343, 76%, 68%, 1)";
+            yel = mkOpt str "hsla(35, 88%, 72%, 1)";
+        };
         bg = {
           main = mkOpt str "#FFFFFF";
           alt = mkOpt str "#FFFFFF";

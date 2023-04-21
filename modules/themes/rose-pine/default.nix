@@ -53,37 +53,50 @@ in {
               white = "#e0def4";
             };
             bright = {
-              black = "#ebbcba";
-              red = "#31748f";
-              green = "#9ccfd8";
+              black = "#6e6a86";
+              red = "#eb6f92";
+              green = "#31748f";
               yellow = "#c4a7e7";
               blue = "#21202e";
-              magenta = "#403d52";
-              cyan = "#524f67";
-              white = "#00f769";
+              magenta = "#c4a7e7";
+              cyan = "#ebbcba";
+              white = "#e0def4";
             };
             types = {
               fg = "#e0def4";
-              bg = "#191724";
+              bg = "#e0def4";
               panelbg = "#26233a";
-              border = "#26233a";
-              highlight = "#f6c177";
+              border = "#31748f";
+              highlight = "#403d52";
+              inactive = "#19172";
             };
           };
 
           rofi = {
+            colors = {
+                bg = "hsla(249, 22%, 12%, 1)";
+                cur = "hsla(247, 23%, 15%, 1)";
+                fgd = "hsla(245, 50%, 91%, 1)";
+                cmt = "hsla(249, 12%, 47%, 1)";
+                cya = "hsla(189, 43%, 73%, 1)";
+                grn = "hsla(197, 49%, 38%, 1)";
+                ora = "hsla(2, 55%, 83%, 1)";
+                pur = "hsla(267, 57%, 78%, 1)";
+                red = "hsla(343, 76%, 68%, 1)";
+                yel = "hsla(35, 88%, 72%, 1)";
+                };
             bg = {
-              main = "hsla(235, 18%, 12%, 1)";
+              main = "hsla(249, 22%, 12%, 1)";
               alt = "hsla(235, 18%, 12%, 0)";
               bar = "hsla(229, 24%, 18%, 1)";
-            };
-            fg = "hsla(228, 72%, 85%, 1)";
+            }; 	
+            fg = "hsla(245, 50%, 91%, 1)";
             ribbon = {
               outer = "hsla(188, 68%, 27%, 1)";
               inner = "hsla(202, 76%, 24%, 1)";
             };
-            selected = "hsla(220, 88%, 72%, 1)";
-            urgent = "hsl(349, 89%, 72%, 1)";
+            selected = "hsla(197, 49%, 38%, 1)";
+            urgent = "hsla(343, 76%, 68%, 1)";
             transparent = "hsla(0, 0%, 0%, 0)";
           };
         };
