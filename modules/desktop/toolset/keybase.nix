@@ -21,7 +21,8 @@ in {
       };
       hm.services = {
         keybase.enable = true;
-        kbfs.mountPoint = "secure/";
+        kbfs.enable = true;
+        kbfs.mountPoint = "keybase";
       };
     })
   ];
