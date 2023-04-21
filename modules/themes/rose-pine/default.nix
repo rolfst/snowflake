@@ -64,7 +64,7 @@ in {
             };
             types = {
               fg = "#e0def4";
-              bg = "#e0def4";
+              bg = "#191724";
               panelbg = "#26233a";
               border = "#31748f";
               highlight = "#403d52";
