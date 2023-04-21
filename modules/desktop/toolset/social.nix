@@ -83,7 +83,7 @@ in {
 
         discord' =
           # (pkgs.discord.override { withOpenASAR = true; }).overrideAttrs
-          (pkgs.discord.override).overrideAttrs
+          (pkgs.discord).overrideAttrs
           (old: {
             preInstall = ''
               gappsWrapperArgs+=("--add-flags" "${concatStringsSep " " flags}")
