@@ -12,6 +12,7 @@ in {
         inherit (pkgs)
           nil # Nix Expression Language
           manix nix-index nix-init nix-output-monitor nix-tree nixfmt
+          deadnix
           nixpkgs-review;
       });
     })
