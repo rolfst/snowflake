@@ -114,5 +114,5 @@ in {
   environment.defaultPackages = [];
 
   environment.systemPackages =
-    attrValues {inherit (pkgs) cached-nix-shell gnumake unrar unzip;};
+    attrValues {inherit (pkgs) cached-nix-shell gnumake unrar unzip corefonts;};
 }
