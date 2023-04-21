@@ -82,6 +82,7 @@ import           XMonad.Main                           (launch)
 import qualified XMonad.Operations
 import qualified XMonad.StackSet                       as W
 import           XMonad.Util.CustomKeys
+import           XMonad.Util.SpawnOnce
 import qualified XMonad.Util.Dmenu                     as DM
 import qualified XMonad.Util.ExtensibleState           as XS
 import           XMonad.Util.Minimize
@@ -237,10 +238,12 @@ virtualClasses =
 hostNameToAction = M.fromList [("my-hostname", return ())]
 
 myStartup = do
+    spawnOnce "lxsession"
     setToggleActiveAll GAPS        True
     setToggleActiveAll AVOIDSTRUTS True
     hostName <- io getHostName
     M.findWithDefault (return ()) hostName hostNameToAction
+    spawnOnce "feh --randomize --bg-fill ~/backgrounds/*" -- set random wallpaper
 
 -- Magnify
 data DisableOnTabbedCondition = DisableOnTabbedCondition
