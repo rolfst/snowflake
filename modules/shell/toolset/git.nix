@@ -33,9 +33,24 @@ in {
       gitignore = "curl -sL https://www.gitignore.io/api/$argv";
     };
 
-    hm.programs.git = {
-      enable = true;
-      delta = {enable = true;};
+    hm.programs.git = let
+        inherit (config.modules.themes.colors.main) types normal bright;
+        in {
+        enable = true;
+        delta = {
+            enable = true;
+            options = {
+            decorations = {
+                commit-decoration-style = "bold ${normal.yellow} box ${normal.red}";
+                minus-style = "${normal.white} bold ul ${normal.red}";
+                plus-style = "${normal.white} bold ul ${normal.green}";
+                file-decoration-style = "none";
+                file-style = "bold ${normal.yellow} ul";
+            };
+            features = "decorations";
+            whitespace-error-style = "22 reverse";
+            };
+        };
       package = pkgs.gitFull;
       # difftastic = {
       #   enable = true;
