@@ -200,12 +200,8 @@ in {
         };
 
         gtk3.bookmarks = map (dir: "file://${config.user.home}/" + dir) [
-          "git/icy-thought/snowflake"
-          "git/icy-thought/cs-notes"
-          "git/icy-thought/notebook"
-          "Library/unexplored"
-          "Library/unexplored/mathematics"
-          "Library/unexplored/programming"
+          "snowflake"
+          "notes"
         ];
         gtk4.extraConfig = {
           gtk-cursor-blink = false;
