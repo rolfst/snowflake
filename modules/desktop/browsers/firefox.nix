@@ -104,6 +104,10 @@ in {
         # Allow seperate search-engine usage in private mode!
         "browser.search.separatePrivateDefault.ui.enabled" = true;
 
+        # font settings
+        "font.name.monospace.x-western" = "VictorMono Nerd Font Mono";
+        "font.name.serif.x-western" = "VictorMono Nerd Font";
+
         # Security-oriented defaults:
         "security.family_safety.mode" = 0;
         # https://blog.mozilla.org/security/2016/10/18/phasing-out-sha-1-on-the-public-web/

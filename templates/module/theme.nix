@@ -186,14 +186,14 @@ in {
             urgent = mkLiteral "${urgent}";
             transparent = mkLiteral "${transparent}";
 
-	active-background: @grn;
-	urgent-background: @red;
+            active-background = mkLiteral "@grn";
+            urgent-background = mkLiteral "@red";
 
-	selected-background: @active-background;
-	selected-urgent-background: @urgent-background;
-	selected-active-background: @active-background;
-	separatorcolor: @active-background;
-	bordercolor: @ora;
+            selected-background = mkLiteral "@active-background";
+            selected-urgent-background = mkLiteral "@urgent-background";
+            selected-active-background = mkLiteral "@active-background";
+            separatorcolor = mkLiteral "@active-background";
+            bordercolor = mkLiteral "@ora";
           };
 
           "window" = {
