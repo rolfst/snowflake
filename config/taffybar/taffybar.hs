@@ -8,15 +8,15 @@ import Control.Monad
 import Control.Monad.IO.Class
 import Control.Monad.Trans.Class
 import Control.Monad.Trans.Reader
-import Data.ByteString.Char8 qualified as BS
+import qualified Data.ByteString.Char8 as BS
 import Data.List
 import Data.List.Split
-import Data.Map qualified as M
+import qualified Data.Map as M
 import Data.Maybe
-import Data.Text qualified
+import qualified Data.Text
 import Data.Time
-import GI.Gtk qualified as Gtk
-import GI.Gtk.Objects.Overlay qualified as Gtk
+import qualified GI.Gtk as Gtk
+import qualified GI.Gtk.Objects.Overlay as Gtk
 import Network.HostName
 import StatusNotifier.Tray
 import System.Directory
@@ -163,7 +163,8 @@ logDebug = do
 
 cssFilesByHostname =
   [ ("thinkpad-e595", ["taffybar.css"]),
-    ("probook-440g3", ["taffybar.css"])
+    ("probook-440g3", ["taffybar.css"]),
+    ("vm", ["taffybar.css"])
   ]
 
 myCPU =
