@@ -3,7 +3,7 @@ _: pkgs: {
     overrides = pkgs.lib.composeExtensions (old.overrides or (_: _: { }))
       (final: prev: {
         raybar = final.callCabal2nix "raybar"
-          (pkgs.lib.sourceByRegex ../config/taffybar [
+          (pkgs.lib.sourceByRegex ../taffybar [
             "taffybar.hs"
             "raybar.cabal"
           ]) { };
