@@ -120,6 +120,14 @@ def _draw_right_status(screen: Screen, is_last: bool) -> int:
 #     if tm is not None:
 #         tm.mark_tab_bar_dirty()
 
+characters = {
+    "python": "\uf81f",
+    "vim": "\ue62b",
+    "node": "\uf898",
+    "ghci": "\ue777",
+    "nixos": "\uf313",
+}
+
 
 def draw_tab(
     draw_data: DrawData,
@@ -131,7 +139,7 @@ def draw_tab(
     is_last: bool,
     extra_data: ExtraData,
 ) -> int:
-    _draw_icon(screen, index, symbol="  \uf81f   ")
+    _draw_icon(screen, index, symbol="  \uf313   ")
     _draw_left_status(
         draw_data,
         screen,
