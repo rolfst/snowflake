@@ -258,11 +258,11 @@
     },
     "nixpkgs_3": {
       "locked": {
-        "lastModified": 1682176583,
-        "narHash": "sha256-sIdTNtNX+QGDMGInlyzB4mNBTus5vxHMS2F+3ODNbm0=",
+        "lastModified": 1682369390,
+        "narHash": "sha256-xq2X1wJEWzegZS3mUYk4iHAC6grNQd2FvSkK23PJ86w=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "00cc237f08acfc4096ef5de8cf8782d3dcff7d19",
+        "rev": "9b6a3205fc06aaad642afcf95d7136fff66f6133",
         "type": "github"
       },
       "original": {
@@ -345,19 +345,19 @@
     "nvim-dir": {
       "flake": false,
       "locked": {
-        "lastModified": 1682083060,
-        "narHash": "sha256-K2t+HNYhuiSVXOitbo2k/tMwkpuaXETR5/hLPC68uzU=",
+        "lastModified": 1682369480,
+        "narHash": "sha256-NiM42ciY5G0XOuHwGIFCdrFKDDpBNMHShvLpu8MWKcM=",
         "ref": "refs/heads/master",
-        "rev": "5e6acf5b3f7b326fb50e94c3ce674a9d588cfc89",
-        "revCount": 36,
+        "rev": "3f3aa697759df41419454b020b8ff7497c00c8a6",
+        "revCount": 37,
         "submodules": true,
         "type": "git",
-        "url": "https://github.com/rolfst/nvim.git?rev=5e6acf5b3f7b326fb50e94c3ce674a9d588cfc89"
+        "url": "https://github.com/rolfst/nvim.git?rev=3f3aa697759df41419454b020b8ff7497c00c8a6"
       },
       "original": {
         "submodules": true,
         "type": "git",
-        "url": "https://github.com/rolfst/nvim.git?rev=5e6acf5b3f7b326fb50e94c3ce674a9d588cfc89"
+        "url": "https://github.com/rolfst/nvim.git?rev=3f3aa697759df41419454b020b8ff7497c00c8a6"
       }
     },
     "nvim-nightly": {

@@ -134,7 +134,7 @@ in {
             background                ${types.bg}
 
             cursor                    ${normal.yellow}
-            cursor_text_color         ${types.bg}
+            cursor_text_color         ${types.fg}
 
             tab_bar_background        ${types.bg}
             tab_title_template        "{fmt.fg._7976ab}{fmt.bg.default} ○ {index}:{f'{title[:6]}…{title[-6:]}' if title.rindex(title[-1]) + 1 > 25 else title}{' []' if layout_name == 'stack' else '''} "
@@ -143,7 +143,7 @@ in {
             selection_foreground      ${types.bg}
             selection_background      ${types.highlight}
 
-            color0                    ${normal.black}
+            color0                    ${bright.black}
             color8                    ${bright.black}
 
             color1                    ${normal.red}
