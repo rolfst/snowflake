@@ -10,7 +10,7 @@ in {
     (mkIf config.modules.develop.haskell.enable {
       user.packages = attrValues ({
         inherit (pkgs.haskellPackages)
-          cabal-install haskell-language-server hasktags hpack stylish-haskell;
+          cabal-install haskell-dap haskell-debug-adapter ghci-dap haskell-language-server hasktags hpack stylish-haskell;
         ghc-with-hoogle = pkgs.haskellPackages.ghcWithHoogle
           (p: with p; [ taffybar xmonad xmonad-contrib ]);
       });
