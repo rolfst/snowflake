@@ -11,6 +11,7 @@
       default = "zsh";
       git.enable = true;
       gnupg.enable = true;
+      tmux.enable = true;
     };
 
     networking = {
@@ -45,7 +46,7 @@
         firefox.enable = true;
       };
       extensions = {
-        keybase.enable = true;
+        keybase.enable = true; # the gui
       };
       # education = {
       #   memory.enable = true;
