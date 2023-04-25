@@ -16,6 +16,10 @@ in {
       GLFW_IM_MODULE = "ibus"; # Ibus & Fcitx5 solution..
     };
 
+    user.packages = [
+    pkgs.chafa
+    ];
+
     hm.programs.kitty = {
       enable = true;
       settings = {
