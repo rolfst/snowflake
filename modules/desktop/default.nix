@@ -111,6 +111,10 @@ in {
             user = config.user.name;
           };
         };
+        resolutions = [
+          {x= 1920;
+          y= 1080;}
+        ];
       };
 
       hm.xsession = {
