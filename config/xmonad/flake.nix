@@ -20,7 +20,7 @@
       let
         pkgs = import nixpkgs {
           inherit system overlays;
-          inherit (nixpkgs) lxde.lxsession;
+          inherit (nixpkgs.lxde) lxsession;
           config.allowBroken = true;
         };
       in {
