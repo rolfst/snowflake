@@ -18,6 +18,7 @@ in {
 
     user.packages = [
     pkgs.chafa
+    pkgs.viu
     ];
 
     hm.programs.kitty = {

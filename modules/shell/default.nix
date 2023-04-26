@@ -13,7 +13,7 @@
 in {
   options.modules.shell = {
     default = mkOption {
-      type = nullOr (enum ["fish" "zsh" "xonsh"]);
+      type = nullOr (enum ["fish" "zsh" "xonsh" "nush"]);
       default = null;
       description = "Default system shell";
     };
@@ -35,7 +35,7 @@ in {
       };
 
       user.packages = attrValues {
-        inherit (pkgs) any-nix-shell fzf pwgen yt-dlp csview ripdrag;
+        inherit (pkgs) any-nix-shell fzf pwgen yt-dlp csview ripdrag lazygit nushell;
 
         # GNU Alternatives
         inherit (pkgs) bat exa fd zoxide;
