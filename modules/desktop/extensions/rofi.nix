@@ -20,7 +20,7 @@ in {
   # TODO: re-create theming -> general + changable banner (drun, run, systemd and power-menu)
 
   config = mkIf cfg.enable {
-    user.packages = [ pkgs.rofi-systemd ];
+    user.packages = [ pkgs.rofi-systemd pkgs.betterlockscreen ];
 
     hm.programs.rofi = {
       enable = true;
