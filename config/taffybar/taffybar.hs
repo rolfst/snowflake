@@ -56,26 +56,27 @@ main = do
         fromMaybe ["taffybar.css"] $ lookup hostName cssFilesByHostname
   cssFiles <- mapM (getUserConfigFile "taffybar") relativeFiles
 
-  let baseEndWidgets = [myTray, myNet, myMem, myCPU, myMpris]
-      laptopEndWidgets = myBattery ++ baseEndWidgets
-      baseConfig =
-        defaultSimpleTaffyConfig
-          { startWidgets = [myWorkspaces, myLayout],
-            endWidgets = baseEndWidgets,
-            barPosition = Top,
-            widgetSpacing = 0,
-            barPadding = 0,
-            barHeight = ScreenRatio (1 / 24),
-            cssPaths = cssFiles
-          }
-      selectedConfig =
-        fromMaybe baseConfig $
-          lookup
-            hostName
-            [ ("vm", baseConfig {endWidgets = laptopEndWidgets}),
-              ("desktop-home", baseConfig {endWidgets = laptopEndWidgets})
-            ]
-      simpleTaffyConfig = selectedConfig {centerWidgets = [myClock]}
+  let
+    baseEndWidgets = [myTray, myNet, myMem, myCPU, myMpris]
+    laptopEndWidgets = myBattery ++ baseEndWidgets
+    baseConfig =
+      defaultSimpleTaffyConfig
+        { startWidgets = [myWorkspaces, myLayout]
+        , endWidgets = baseEndWidgets
+        , barPosition = Top
+        , widgetSpacing = 0
+        , barPadding = 0
+        , barHeight = ScreenRatio (1 / 24)
+        , cssPaths = cssFiles
+        }
+    selectedConfig =
+      fromMaybe baseConfig $
+        lookup
+          hostName
+          [ ("thinkpad-e595", baseConfig{endWidgets = laptopEndWidgets})
+          , ("probook-440g3", baseConfig{endWidgets = laptopEndWidgets})
+          ]
+    simpleTaffyConfig = selectedConfig{centerWidgets = [myClock]}
 
   startTaffybar $
     appendHook (void $ getTrayHost False) $
@@ -102,25 +103,23 @@ makeCombinedWidget constructors = do
 mkRGBA (r, g, b, a) = (r / 256, g / 256, b / 256, a / 256)
 
 ctBlue = mkRGBA (122, 162, 247, 256)
-
 ctRed = mkRGBA (247, 118, 142, 256)
-
 ctYellow = mkRGBA (224, 175, 104, 256)
 
 myGraphConfig =
   defaultGraphConfig
-    { graphPadding = 0,
-      graphBorderWidth = 0,
-      graphWidth = 75,
-      graphBackgroundColor = (0.0, 0.0, 0.0, 0.0)
+    { graphPadding = 0
+    , graphBorderWidth = 0
+    , graphWidth = 75
+    , graphBackgroundColor = (0.0, 0.0, 0.0, 0.0)
     }
 
-cpuCfg = myGraphConfig {graphDataColors = [ctRed], graphLabel = Just "Cpu"}
+cpuCfg = myGraphConfig{graphDataColors = [ctRed], graphLabel = Just "Cpu"}
 
-memCfg = myGraphConfig {graphDataColors = [ctBlue], graphLabel = Just "Mem"}
+memCfg = myGraphConfig{graphDataColors = [ctBlue], graphLabel = Just "Mem"}
 
 netCfg =
-  myGraphConfig {graphDataColors = [ctYellow], graphLabel = Just "Net"}
+  myGraphConfig{graphDataColors = [ctYellow], graphLabel = Just "Net"}
 
 memCallback :: IO [Double]
 memCallback = do
@@ -135,17 +134,17 @@ getFullWorkspaceNames :: X11Property [(WorkspaceId, String)]
 getFullWorkspaceNames =
   go
     <$> readAsListOfString Nothing "_NET_DESKTOP_FULL_NAMES"
-  where
-    go = zip [WorkspaceId i | i <- [0 ..]]
+ where
+  go = zip [WorkspaceId i | i <- [0 ..]]
 
 workspaceNamesLabelSetter workspace =
   remapNSP
     . fromMaybe ""
     . lookup (workspaceIdx workspace)
     <$> liftX11Def [] getFullWorkspaceNames
-  where
-    remapNSP "NSP" = "S"
-    remapNSP n = n
+ where
+  remapNSP "NSP" = "S"
+  remapNSP n = n
 
 enableLogger logger level = do
   logger <- getLogger logger
@@ -162,9 +161,8 @@ logDebug = do
   saveGlobalLogger $ setLevel DEBUG logger2
 
 cssFilesByHostname =
-  [ ("thinkpad-e595", ["taffybar.css"]),
-    ("probook-440g3", ["taffybar.css"]),
-    ("vm", ["taffybar.css"])
+  [ ("thinkpad-e595", ["taffybar.css"])
+  , ("probook-440g3", ["taffybar.css"])
   ]
 
 myCPU =
@@ -191,17 +189,17 @@ myWorkspaces =
   flip widgetSetClassGI "workspaces"
     =<< workspacesNew
       defaultWorkspacesConfig
-        { minIcons = 1,
-          getWindowIconPixbuf =
+        { minIcons = 1
+        , getWindowIconPixbuf =
             scaledWindowIconPixbufGetter $
               getWindowIconPixbufFromChrome
                 <|||> unscaledDefaultGetWindowIconPixbuf
-                <|||> (\size _ -> lift $ loadPixbufByName size "application-default-icon"),
-          widgetGap = 0,
-          showWorkspaceFn = hideEmpty,
-          updateRateLimitMicroseconds = 100000,
-          labelSetter = myLabelSetter, -- workspaceNamesLabelSetter
-          widgetBuilder = buildLabelOverlayController
+                <|||> (\size _ -> lift $ loadPixbufByName size "application-default-icon")
+        , widgetGap = 0
+        , showWorkspaceFn = hideEmpty
+        , updateRateLimitMicroseconds = 100000
+        , labelSetter = myLabelSetter -- workspaceNamesLabelSetter
+        , widgetBuilder = buildLabelOverlayController
         }
 
 myLabelSetter workspace = return $
@@ -221,23 +219,23 @@ myClock =
   deocrateWithSetClassAndBoxes "clock" $
     textClockNewWith
       defaultClockConfig
-        { clockUpdateStrategy = RoundedTargetInterval 60 0.0,
-          clockFormatString = "\61463  %H:%M   \61555  %d/%m/%y"
+        { clockUpdateStrategy = RoundedTargetInterval 60 0.0
+        , clockFormatString = "\61463  %H:%M   \61555  %d/%m/%y"
         }
 
 myTray =
   deocrateWithSetClassAndBoxes "tray" $
     sniTrayNewFromParams
       defaultTrayParams
-        { trayRightClickAction = PopupMenu,
-          trayLeftClickAction = Activate
+        { trayRightClickAction = PopupMenu
+        , trayLeftClickAction = Activate
         }
 
 myMpris =
   mpris2NewWithConfig
     MPRIS2Config
-      { mprisWidgetWrapper = deocrateWithSetClassAndBoxes "mpris" . return,
-        updatePlayerWidget =
+      { mprisWidgetWrapper = deocrateWithSetClassAndBoxes "mpris" . return
+      , updatePlayerWidget =
           simplePlayerWidget
             defaultPlayerConfig
               { setNowPlayingLabel = playingText 10 10

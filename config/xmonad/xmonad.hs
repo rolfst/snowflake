@@ -49,6 +49,7 @@ import XMonad.Actions.DynamicWorkspaces hiding (
  )
 import XMonad.Actions.Minimize
 import XMonad.Actions.Navigation2D
+import XMonad.Actions.SpawnOn
 import qualified XMonad.Actions.SwapWorkspaces as SW
 import XMonad.Actions.UpdatePointer
 import XMonad.Actions.WindowBringer
@@ -107,7 +108,7 @@ myConfig =
   def
     { modMask = mod4Mask
     , terminal = "kitty"
-    , manageHook = namedScratchpadManageHook scratchpads
+    , manageHook = manageSpawn <+> namedScratchpadManageHook scratchpads
     , layoutHook = myLayoutHook
     , borderWidth = 2
     , normalBorderColor = icyInactive
@@ -135,7 +136,7 @@ icyTheme =
     , inactiveColor = icyInactive
     , inactiveBorderColor = icyInactive
     , inactiveTextColor = icyActive
-    , fontName = "xft:VictorMono:style=SemiBold"
+    , fontName = "xft:FiraCode:style=SemiBold"
     }
 
 icyActive = "#1abc9c"
@@ -245,7 +246,6 @@ virtualClasses =
 hostNameToAction = M.fromList [("my-hostname", return ())]
 
 myStartup = do
-  spawnOnce "lxsession"
   setToggleActiveAll GAPS True
   setToggleActiveAll AVOIDSTRUTS True
   hostName <- io getHostName
@@ -750,7 +750,7 @@ nearFullFloat = customFloating $ W.RationalRect l t w h
 scratchpads =
   [ NS
       "Discord"
-      "discord"
+      "discordcanary"
       (className =? "discord")
       nearFullFloat
   , NS
@@ -879,8 +879,7 @@ addKeys conf@XConfig{modMask = modm} =
     -- Specific program spawning
     ++ bindBringAndRaiseMany
       [ (modalt, xK_g, spawn "chromium", chromiumSelector)
-      , (modalt, xK_f, spawn "firefox-devedition", firefoxSelector)
-      , (modalt, xK_w, spawn "firefox-devedition --profile ~/.mozilla/firefox/z5dgw9v6.dev-edition-private", firefoxSelector)
+      , (modalt, xK_f, spawn "firefox", firefoxSelector)
       ]
     -- Window manipulation
     ++ [ ((modm, xK_g), myGoToWindow)

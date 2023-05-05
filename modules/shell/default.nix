@@ -1,23 +1,20 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  ...
-}: let
-  inherit (lib) attrValues mkIf mkMerge mkOption;
-  inherit (lib.types) nullOr enum;
-  inherit (lib.my) mkBoolOpt;
+{ options, config, lib, pkgs, ... }:
 
+let
+  inherit (lib.attrsets) attrValues;
+  inherit (lib.modules) mkIf mkMerge;
   cfg = config.modules.shell;
 in {
-  options.modules.shell = {
+  options.modules.shell = let
+    inherit (lib.options) mkOption mkEnableOption;
+    inherit (lib.types) nullOr enum;
+  in {
     default = mkOption {
       type = nullOr (enum ["fish" "zsh" "xonsh" "nush"]);
       default = null;
       description = "Default system shell";
     };
-    usefulPkgs.enable = mkBoolOpt false;
+    usefulPkgs.enable = mkEnableOption "useful shell tools";
   };
 
   config = mkMerge [
@@ -31,16 +28,16 @@ in {
       hm.programs.direnv = {
         enable = true;
         nix-direnv.enable = true;
-        config.whitelist.prefix = ["/home"];
+        config.whitelist.prefix = [ "/home" ];
       };
 
-      user.packages = attrValues {
-        inherit (pkgs) any-nix-shell fzf pwgen yt-dlp csview ripdrag lazygit nushell;
+      user.packages = attrValues ({
+        inherit (pkgs) any-nix-shell fzf pwgen yt-dlp csview ripdrag;
 
         # GNU Alternatives
         inherit (pkgs) bat exa fd zoxide;
-        rgFull = pkgs.ripgrep.override {withPCRE2 = true;};
-      };
+        rgFull = pkgs.ripgrep.override { withPCRE2 = true; };
+      });
     })
   ];
 }

@@ -2,15 +2,19 @@
 
 let
   inherit (builtins) toJSON;
-  inherit (lib) mkIf mkMerge mapAttrsToList;
+  inherit (lib.attrsets) mapAttrsToList;
+  inherit (lib.meta) getExe;
+  inherit (lib.modules) mkIf mkMerge;
   inherit (lib.strings) concatStrings;
-  inherit (lib.types) attrsOf oneOf bool int lines str;
-  inherit (lib.my) mkBoolOpt mkOpt mkOpt';
 
   cfg = config.modules.desktop.browsers.firefox;
 in {
-  options.modules.desktop.browsers.firefox = {
-    enable = mkBoolOpt false;
+  options.modules.desktop.browsers.firefox = let
+    inherit (lib.options) mkEnableOption;
+    inherit (lib.types) attrsOf oneOf bool int lines str;
+    inherit (lib.my) mkOpt mkOpt';
+  in {
+    enable = mkEnableOption "Gecko-based libre browser";
     profileName = mkOpt str config.user.name;
 
     settings = mkOpt' (attrsOf (oneOf [ bool int str ])) { } ''
@@ -26,16 +30,15 @@ in {
 
   config = mkIf cfg.enable (mkMerge [
     {
-      user.packages = let inherit (pkgs) firefox-devedition-bin makeDesktopItem;
+      user.packages = let inherit (pkgs) firefox-bin makeDesktopItem;
       in [
-        firefox-devedition-bin
+        firefox-bin
         (makeDesktopItem {
-          name = "firefox-devedition-private";
-          desktopName = "Firefox-DevEdition (Private)";
-          genericName = "Launch a Private Firefox-DevEdition Instance";
+          name = "firefox-private";
+          desktopName = "Firefox (Private)";
+          genericName = "Launch a Private Firefox Instance";
           icon = "firefox";
-          exec =
-            "${firefox-devedition-bin}/bin/firefox-devedition --private-window";
+          exec = "${getExe firefox-bin} --private-window";
           categories = [ "Network" "WebBrowser" ];
         })
       ];
@@ -105,8 +108,8 @@ in {
         "browser.search.separatePrivateDefault.ui.enabled" = true;
 
         # font settings
-        "font.name.monospace.x-western" = "VictorMono Nerd Font Mono";
-        "font.name.serif.x-western" = "VictorMono Nerd Font";
+        "font.name.monospace.x-western" = "FiraCode Nerd Font Mono";
+        "font.name.serif.x-western" = "FiraCode Nerd Font";
 
         # Security-oriented defaults:
         "security.family_safety.mode" = 0;
@@ -182,9 +185,9 @@ in {
           target = "${cfgPath}/profiles.ini";
           text = ''
             [Profile0]
-            Name=dev-edition-default
+            Name=default
             IsRelative=1
-            Path=${cfg.profileName}.dev-edition-default
+            Path=${cfg.profileName}.default
             Default=1
 
             [General]
@@ -194,7 +197,7 @@ in {
         };
 
         user-js = mkIf (cfg.settings != { } || cfg.extraConfig != "") {
-          target = "${cfgPath}/${cfg.profileName}.dev-edition-default/user.js";
+          target = "${cfgPath}/${cfg.profileName}.default/user.js";
           text = ''
             ${concatStrings (mapAttrsToList (name: value: ''
               user_pref("${name}", ${toJSON value});
@@ -205,13 +208,13 @@ in {
 
         user-chome = mkIf (cfg.userChrome != "") {
           target =
-            "${cfgPath}/${cfg.profileName}.dev-edition-default/chrome/userChrome.css";
+            "${cfgPath}/${cfg.profileName}.default/chrome/userChrome.css";
           text = cfg.userChrome;
         };
 
         user-content = mkIf (cfg.userContent != "") {
           target =
-            "${cfgPath}/${cfg.profileName}.dev-edition-default/chrome/userContent.css";
+            "${cfgPath}/${cfg.profileName}.default/chrome/userContent.css";
           text = cfg.userContent;
         };
       };

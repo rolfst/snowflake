@@ -1,15 +1,16 @@
 { config, options, lib, pkgs, ... }:
 
 let
-  inherit (lib) getExe mkDefault mkIf mkMerge;
-  inherit (lib.my) mkBoolOpt;
+  inherit (lib) getExe mkDefault;
+  inherit (lib.modules) mkIf mkMerge;
 
   cfg = config.modules.networking;
 in {
-  options.modules.networking = {
-    iwd.enable = mkBoolOpt false;
-    networkd.enable = mkBoolOpt false;
-    networkManager.enable = mkBoolOpt false;
+  options.modules.networking = let inherit (lib.options) mkEnableOption;
+  in {
+    iwd.enable = mkEnableOption "wpa_supplicant alt.";
+    networkd.enable = mkEnableOption "systemd network manager";
+    networkManager.enable = mkEnableOption "powerful network manager";
   };
 
   config = mkMerge [
@@ -60,7 +61,7 @@ in {
       hm.services.network-manager-applet.enable = true;
     })
 
-    # TODO: add network connections + agenix.
+    # TODO: add network connections + ragenix.
     (mkIf cfg.networkd.enable {
       systemd.network.enable = true;
 

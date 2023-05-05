@@ -2,17 +2,36 @@
 
 let
   inherit (builtins) readFile;
-  inherit (lib) mkIf;
+  inherit (lib) mkIf mkEnableOption;
   inherit (lib.strings) optionalString;
-  inherit (lib.my) mkBoolOpt;
 
   cfg = config.modules.desktop.extensions.taffybar;
-  taffyDir = "${config.snowflake.configDir}/taffybar";
 in {
-  options.modules.desktop.extensions.taffybar = { enable = mkBoolOpt false; };
+  options.modules.desktop.extensions.taffybar = {
+    enable = mkEnableOption "haskell status-bar library";
+  };
 
   config = mkIf cfg.enable {
-    # WARN: 2-Step workaround (https://github.com/taffybar/taffybar/issues/403)
+    home.configFile = let
+      active = config.modules.themes.active;
+      taffyDir = "${config.snowflake.configDir}/taffybar";
+    in {
+      taffybar-palette = mkIf (active != null) {
+        target = "taffybar/palette/${active}.css";
+        source = "${taffyDir}/palette/${active}.css";
+      };
+      taffybar-css = {
+        target = "taffybar/taffybar.css";
+        text = ''
+          ${optionalString (active != null) ''
+            @import url("palette/${active}.css");
+          ''}
+          ${readFile "${taffyDir}/taffybar.css"}
+        '';
+      };
+    };
+
+    # 2-step workaround (https://github.com/taffybar/taffybar/issues/403)
     gtk.iconCache.enable = true;
 
     services.xserver = {
@@ -29,35 +48,9 @@ in {
     hm.services = {
       # Allow tray-icons to be displayed:
       status-notifier-watcher.enable = true;
-
       taffybar = {
         enable = true;
-        package = pkgs.taffybar.override {
-          packages = haskellPackages: with haskellPackages; [ hostname ];
-        };
-      };
-    };
-
-    # Symlink necessary files for config to load:
-    home.configFile = let active = config.modules.themes.active;
-    in {
-      taffybar-base = {
-        target = "taffybar/taffybar.hs";
-        source = "${taffyDir}/taffybar.hs";
-        onChange = "rm -rf $XDG_CACHE_HOME/taffybar";
-      };
-      taffybar-palette = mkIf (active != null) {
-        target = "taffybar/palette/${active}.css";
-        source = "${taffyDir}/palette/${active}.css";
-      };
-      taffybar-css = {
-        target = "taffybar/taffybar.css";
-        text = ''
-          ${optionalString (active != null) ''
-            @import url("./palette/${active}.css");
-          ''}
-          ${readFile "${taffyDir}/taffybar.css"}
-        '';
+        package = pkgs.haskellPackages.raybar;
       };
     };
   };

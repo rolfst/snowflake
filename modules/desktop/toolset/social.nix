@@ -1,32 +1,51 @@
 { config, options, lib, pkgs, ... }:
 
 let
-  inherit (lib) attrValues mkIf mkMerge optionals;
+  inherit (lib) attrValues optionals;
+  inherit (lib.modules) mkIf mkMerge;
   inherit (lib.strings) concatStringsSep;
-  inherit (lib.my) mkBoolOpt;
 
   cfg = config.modules.desktop.toolset.social;
   envProto = config.modules.desktop.envProto;
 in {
-  options.modules.desktop.toolset.social = {
-    base.enable = mkBoolOpt false;
-    discord.enable = mkBoolOpt false;
-    element.enable = mkBoolOpt false;
-  };
+  options.modules.desktop.toolset.social =
+    let inherit (lib.options) mkEnableOption;
+    in {
+      base.enable = mkEnableOption "cross-platform clients";
+      discord.enable = mkEnableOption "discord client" // {
+        default = cfg.base.enable;
+      };
+      element = {
+        withDaemon = mkEnableOption "matrix daemon for ement";
+        withClient = mkEnableOption "element client" // {
+          default = cfg.base.enable;
+        };
+      };
+    };
 
   config = mkMerge [
     (mkIf cfg.base.enable {
-      # Enable modules that users ought to have installed by default:
-      modules.desktop.toolset.social = {
-        discord.enable = true;
-        element.enable = true;
-      };
-
-      # Install packages that have not been configured:
       user.packages = attrValues ({ inherit (pkgs) signal-desktop tdesktop; });
     })
 
-    (mkIf cfg.element.enable {
+    (mkIf cfg.element.withDaemon {
+      hm.services.pantalaimon = {
+        enable = true;
+        settings = {
+          Default = {
+            LogLevel = "Debug";
+            SSL = true;
+          };
+          local-matrix = {
+            Homeserver = "https://matrix.org";
+            ListenAddress = "127.0.0.1";
+            ListenPort = 8008;
+          };
+        };
+      };
+    })
+
+    (mkIf cfg.element.withClient {
       user.packages = let
         inherit (pkgs) makeWrapper symlinkJoin element-desktop;
         element-desktop' = symlinkJoin {
@@ -43,7 +62,7 @@ in {
 
     (mkIf cfg.discord.enable {
       home.configFile.openSAR-settings = {
-        target = "discord/settings.json";
+        target = "discordcanary/settings.json";
         text = builtins.toJSON {
           openasar = {
             setup = true;
@@ -81,15 +100,14 @@ in {
           "--enable-webrtc-pipewire-capturer"
         ];
 
-        discord' =
-          # (pkgs.discord.override { withOpenASAR = true; }).overrideAttrs
-          (pkgs.discord).overrideAttrs
+        discord-canary' =
+          (pkgs.discord-canary.override { withOpenASAR = true; }).overrideAttrs
           (old: {
             preInstall = ''
               gappsWrapperArgs+=("--add-flags" "${concatStringsSep " " flags}")
             '';
           });
-      in [ discord' ];
+      in [ discord-canary' ];
     })
   ];
 }

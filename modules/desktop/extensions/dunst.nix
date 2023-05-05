@@ -1,12 +1,15 @@
 { options, config, lib, pkgs, ... }:
 
 let
-  inherit (lib) optionalAttrs mkIf;
-  inherit (lib.my) mkBoolOpt;
+  inherit (lib.attrsets) optionalAttrs;
+  inherit (lib.meta) getExe;
+  inherit (lib.modules) mkIf;
 
   cfg = config.modules.desktop.extensions.dunst;
 in {
-  options.modules.desktop.extensions.dunst = { enable = mkBoolOpt false; };
+  options.modules.desktop.extensions.dunst =
+    let inherit (lib.options) mkEnableOption;
+    in { enable = mkEnableOption "lightweight notification daemon"; };
 
   config = mkIf cfg.enable {
     hm.services.dunst = {
@@ -30,7 +33,7 @@ in {
           sticky_history = "no";
           history_length = 20;
 
-          browser = "${pkgs.firefox-devedition-bin}/bin/firefox-devedition";
+          browser = "${getExe pkgs.firefox-bin}";
           always_run_script = true;
           ignore_dbusclose = false;
           force_xinerama = false;
@@ -60,7 +63,7 @@ in {
           progress_bar_max_width = 300;
 
           # Aesthetics
-          font = let inherit (config.modules.themes.font.sans) family weight;
+          font = let inherit (config.modules.themes.font.mono) family weight;
           in "${family} ${weight} 11";
           frame_width = 2;
           separator_color = "frame";

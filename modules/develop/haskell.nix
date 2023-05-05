@@ -1,16 +1,17 @@
 { config, options, lib, pkgs, ... }:
 
 let
-  inherit (lib) attrValues mkIf mkMerge;
-  inherit (lib.my) mkBoolOpt;
+  inherit (lib.attrsets) attrValues;
+  inherit (lib.modules) mkIf mkMerge;
 in {
-  options.modules.develop.haskell = { enable = mkBoolOpt false; };
+  options.modules.develop.haskell = let inherit (lib.options) mkEnableOption;
+  in { enable = mkEnableOption "Haskell development"; };
 
   config = mkMerge [
     (mkIf config.modules.develop.haskell.enable {
       user.packages = attrValues ({
         inherit (pkgs.haskellPackages)
-          cabal-install haskell-dap haskell-debug-adapter ghci-dap haskell-language-server hasktags hpack stylish-haskell;
+          cabal-install haskell-language-server hasktags hpack stylish-haskell;
         ghc-with-hoogle = pkgs.haskellPackages.ghcWithHoogle
           (p: with p; [ taffybar xmonad xmonad-contrib ]);
       });
@@ -24,9 +25,7 @@ in {
           :def hoogle \x -> pure $ ":!hoogle search \"" ++ x ++ "\""
         '';
       };
-    })
 
-    (mkIf config.modules.desktop.editors.vscodium.enable {
       hm.programs.vscode.extensions = with pkgs.vscode-extensions; [
         haskell.haskell
         justusadam.language-haskell # syntax-highlighting

@@ -27,11 +27,19 @@ in {
           size = 24;
         };
 
+        fontConfig = {
+          packages = attrValues ({
+            inherit (pkgs) twitter-color-emoji;
+            nerdfonts = pkgs.nerdfonts.override { fonts = [ "VictorMono" ]; };
+          });
+          mono = [ "VictorMono Nerd Font Mono" ];
+          sans = [ "VictorMono Nerd Font" ];
+          emoji = [ "Twitter Color Emoji" ];
+        };
+
         font = {
-          package = pkgs.nerdfonts.override { fonts = [ "VictorMono" ]; };
           sans.family = "VictorMono Nerd Font";
           mono.family = "VictorMono Nerd Font Mono";
-          emoji = "Twitter Color Emoji";
         };
 
         colors = {
@@ -63,21 +71,6 @@ in {
               border = "#c9cbff";
               highlight = "#f2cdcd";
             };
-          };
-
-          fish = {
-            fg = "cdd6f4";
-            highlight = "313244";
-            base01 = "94e2d5";
-            base02 = "f2cdcd";
-            base03 = "cba6f7";
-            base04 = "f5c2e7";
-            base05 = "f38ba8";
-            base06 = "fab387";
-            base07 = "a6e3a1";
-            base08 = "f9e2af";
-            base09 = "89b4fa";
-            base10 = "6c7086";
           };
 
           rofi = {
@@ -127,11 +120,6 @@ in {
     # })
 
     (mkIf config.services.xserver.enable {
-      fonts.fonts = attrValues ({
-        inherit (pkgs) twitter-color-emoji;
-        font = cfg.font.package;
-      });
-
       hm.programs.rofi = {
         extraConfig = {
           icon-theme = let inherit (cfg.iconTheme) name; in "${name}";

@@ -1,21 +1,21 @@
 { config, options, lib, pkgs, ... }:
 
 let
-  inherit (lib) attrValues optionalAttrs;
-  inherit (lib.my) mkBoolOpt;
+  inherit (lib.attrsets) attrValues optionalAttrs;
+  inherit (lib.options) mkEnableOption;
 
   cfg = config.modules.desktop.toolset.graphics;
 in {
   options.modules.desktop.toolset.graphics = {
-    base.enable = mkBoolOpt true;
-    modeling.enable = mkBoolOpt false;
-    raster.enable = mkBoolOpt false;
-    vector.enable = mkBoolOpt false;
+    base.enable = mkEnableOption "base packages" // { default = true; };
+    modeling.enable = mkEnableOption "3D modeling";
+    raster.enable = mkEnableOption "rasterized editing";
+    vector.enable = mkEnableOption "vectorized editing";
   };
 
   config = {
     user.packages = attrValues ({ } // optionalAttrs cfg.base.enable {
-      inherit (pkgs) eyedropper font-manager imagemagick;
+      inherit (pkgs) hyprpicker font-manager imagemagick;
     } // optionalAttrs cfg.vector.enable { inherit (pkgs) inkscape rnote; }
       // optionalAttrs cfg.raster.enable {
         inherit (pkgs) gimp;

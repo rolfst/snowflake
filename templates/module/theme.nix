@@ -2,7 +2,8 @@
 
 let
   inherit (builtins) toString;
-  inherit (lib) attrValues mkDefault mkIf mkMerge;
+  inherit (lib) attrValues mkDefault mkIf;
+  inherit (lib.options) mkMerge;
 
   cfg = config.modules.themes;
 in {
@@ -30,7 +31,7 @@ in {
         };
 
         font = {
-          package = pkgs.nerdfonts.override { fonts = [ "VictorMono" ]; };
+          package = pkgs.nerdfonts.override { fonts = [ "VictorMono" "FiraCode" ]; };
           sans.family = "VictorMono Nerd Font";
           mono.family = "VictorMono Nerd Font Mono";
           emoji = "Noto Color Emoji";
@@ -65,21 +66,6 @@ in {
               border = "";
               highlight = "";
             };
-          };
-
-          fish = {
-            fg = "";
-            highlight = "";
-            base01 = "";
-            base02 = "";
-            base03 = "";
-            base04 = "";
-            base05 = "";
-            base06 = "";
-            base07 = "";
-            base08 = "";
-            base09 = "";
-            base10 = "";
           };
 
           rofi = {
@@ -163,7 +149,7 @@ in {
 
         theme = let
           inherit (config.hm.lib.formats.rasi) mkLiteral;
-          inherit (cfg.colors.rofi) colors bg fg ribbon selected urgent transparent;
+          inherit (cfg.colors.rofi) bg fg ribbon selected urgent transparent;
         in {
           "*" = {
             fg = mkLiteral "${fg}";
@@ -171,29 +157,11 @@ in {
             bg-alt = mkLiteral "${bg.alt}";
             bg-bar = mkLiteral "${bg.bar}";
 
-            cur = mkLiteral "hsla(247, 23%, 15%, 1)";
-            cmt = mkLiteral "hsla(249, 12%, 47%, 1)";
-            cya = mkLiteral "hsla(189, 43%, 73%, 1)";
-            grn = mkLiteral "hsla(197, 49%, 38%, 1)";
-            ora = mkLiteral "hsla(2, 55%, 83%, 1)";
-            pur = mkLiteral "hsla(267, 57%, 78%, 1)";
-            red = mkLiteral "hsla(343, 76%, 68%, 1)";
-            yel = mkLiteral "hsla(35, 88%, 72%, 1)";
-
             outer-ribbon = mkLiteral "${ribbon.outer}";
             inner-ribbon = mkLiteral "${ribbon.inner}";
             selected = mkLiteral "${selected}";
             urgent = mkLiteral "${urgent}";
             transparent = mkLiteral "${transparent}";
-
-            active-background = mkLiteral "@grn";
-            urgent-background = mkLiteral "@red";
-
-            selected-background = mkLiteral "@active-background";
-            selected-urgent-background = mkLiteral "@urgent-background";
-            selected-active-background = mkLiteral "@active-background";
-            separatorcolor = mkLiteral "@active-background";
-            bordercolor = mkLiteral "@ora";
           };
 
           "window" = {

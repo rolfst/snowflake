@@ -1,9 +1,4 @@
-{
-  pkgs,
-  config,
-  lib,
-  ...
-}: {
+{ pkgs, config, lib, ... }: {
   imports = [./hardware-configuration.nix];
 
   modules = {
@@ -11,9 +6,10 @@
       default = "zsh";
       git.enable = true;
       gnupg.enable = true;
+      android.enable = false;
       tmux.enable = true;
     };
-
+    hardware.xkbLayout = { hyperCtrl.enable = true; };
     networking = {
       networkManager.enable = true;
     };
@@ -48,14 +44,19 @@
       extensions = {
         keybase.enable = true; # the gui
       };
-      # education = {
+      education = {
       #   memory.enable = true;
-      #   vidcom.enable = true;
-      # };
+        vidcom.enable = true;
+      };
+
       toolset = {
         player = {
           music.enable = true;
           video.enable = true;
+        };
+        docView = {
+          zathura.enable = true;
+          sioyek.enable = true;
         };
         social.base.enable = true;
         keybase.enable = true;

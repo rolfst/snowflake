@@ -10,14 +10,14 @@
     };
 
     # System application(s)
-    # agenix = {
-    #   url = "github:ryantm/agenix";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
-    # kmonad = {
-    #   url = "github:kmonad/kmonad?dir=nix";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
+    ragenix = {
+      url = "github:yaxitech/ragenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    kmonad = {
+      url = "github:kmonad/kmonad?dir=nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Window Manager(s) + Extensions
     xmonad-contrib.url = "github:icy-thought/xmonad-contrib"; # TODO: replace with official after #582 == merged!
@@ -38,12 +38,8 @@
     };
   };
 
-  outputs = inputs @ {
-    self,
-    nixpkgs,
-    nixpkgs-unstable,
-    ...
-  }: let
+  outputs = inputs @ { self, nixpkgs, nixpkgs-unstable, ... }:
+  let
     inherit (lib.my) mapModules mapModulesRec mapHosts;
     system = "x86_64-linux";
 
@@ -65,9 +61,7 @@
   in {
     lib = lib.my;
 
-    overlays =
-      (mapModules ./overlays import)
-      // {
+    overlays = (mapModules ./overlays import) // {
         default = final: prev: {
           unstable = pkgs';
           my = self.packages.${system};
@@ -76,22 +70,18 @@
 
     packages."${system}" = mapModules ./packages (p: pkgs.callPackage p {});
 
-    nixosModules =
-      {
+    nixosModules = {
         snowflake = import ./.;
-      }
-      // mapModulesRec ./modules import;
+      } // mapModulesRec ./modules import;
 
     nixosConfigurations = mapHosts ./hosts {};
 
     devShells."${system}".default = import ./shell.nix {inherit pkgs;};
 
-    templates.full =
-      {
+    templates.full = {
         path = ./.;
         description = "λ well-tailored and configureable NixOS system!";
-      }
-      // import ./templates;
+      } // import ./templates;
 
     templates.default = self.templates.full;
 

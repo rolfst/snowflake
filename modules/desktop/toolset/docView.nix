@@ -2,15 +2,21 @@
 
 let
   inherit (builtins) toString;
-  inherit (lib) optionalAttrs mkIf mkMerge;
+  inherit (lib.attrsets) optionalAttrs;
+  inherit (lib.modules) mkIf mkMerge;
   inherit (lib.strings) concatStringsSep;
-  inherit (lib.my) mkBoolOpt;
 
   cfg = config.modules.desktop.toolset.docView;
 in {
-  options.modules.desktop.toolset.docView = {
-    zathura.enable = mkBoolOpt false;
-    sioyek.enable = mkBoolOpt false;
+  options.modules.desktop.toolset.docView =
+    let inherit (lib.options) mkEnableOption;
+    in {
+      zathura.enable = mkEnableOption "plugin-based doc-viewer";
+      sioyek.enable = mkEnableOption "doc-viewer for research";
+    calibre = {
+        enable = mkEnableOption "base of calibre";
+        web = mkEnableOption "web server of calibre";
+    };
   };
 
   config = mkMerge [

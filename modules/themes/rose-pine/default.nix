@@ -1,30 +1,24 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  ...
-}: let
-  inherit (builtins) toString;
-  inherit (lib) attrValues mkDefault mkIf mkMerge;
+{ options, config, lib, pkgs, ... }:
+
+let
+  inherit (builtins) toString readFile;
+  inherit (lib) attrValues concatMapStringsSep mkDefault mkIf mkMerge;
 
   cfg = config.modules.themes;
+  configDir = config.snowflake.configDir;
 in {
   config = mkIf (cfg.active == "rose-pine") (mkMerge [
     {
       modules.themes = {
-        wallpaper = mkDefault ./assets/avatar-H2O-upscayl.png;
-
+        wallpaper = mkDefault ./assets/loaki-solarpunk.jpg;
         gtk = {
-          name = "rose-pine-moon";
-          package =
-            pkgs.rose-pine-gtk-theme;
+          name = "rose-pine";
+          package = pkgs.my.rose-pine-gtk;
         };
 
         iconTheme = {
-          name = "Fluent-orange-dark";
-          package =
-            pkgs.fluent-icon-theme.override {colorVariants = ["orange"];};
+          name = "rose-pine";
+          package = pkgs.rose-pine-icon-theme;
         };
 
         pointer = {
@@ -33,13 +27,40 @@ in {
           size = 24;
         };
 
-        font = {
-          package = pkgs.nerdfonts.override {fonts = ["VictorMono"];};
-          sans.family = "VictorMono Nerd Font";
-          mono.family = "VictorMono Nerd Font Mono";
-          emoji = "Noto Color Emoji";
+        fontConfig = {
+          packages = attrValues ({
+            inherit (pkgs) cascadia-code noto-fonts-emoji sarasa-gothic;
+            nerdfonts =
+              pkgs.nerdfonts.override { fonts = [ "Arimo" "FiraCode" ]; };
+          });
+          sans = ["FiraCode Nerd Font" "Cascadia Code" "Sarasa Mono SC"];
+          mono = ["FiraCode Nerd Font Mono" "Sarasa Gothic SC"];
+          emoji = ["Noto Color Emoji"];
         };
 
+        font = {
+          mono.family = "FiraCode Nerd Font";
+          sans.family = "Arimo Nerd Font";
+        };
+
+        symbols = {
+          characters = {
+             vicmd = "";
+             github = " ";
+             folder = " ";
+             duration = " ";
+             battery = "🔋";
+             charging = "⚡️";
+             discharging = "💀";
+           };
+           decorators = {
+             left_separator = "";
+             right_separator = "";
+             error = "";
+             success = "";
+             warning = "";
+           };
+        };
         colors = {
           main = {
             normal = {
@@ -67,7 +88,7 @@ in {
               bg = "#191724";
               panelbg = "#26233a";
               border = "#31748f";
-              highlight = "#403d52";
+              highlight = "#c5b1e5";
               inactive = "#19172";
             };
           };
@@ -87,10 +108,10 @@ in {
                 };
             bg = {
               main = "hsla(249, 22%, 12%, 1)";
-              alt = "hsla(235, 18%, 12%, 0)";
-              bar = "hsla(229, 24%, 18%, 1)";
+              alt = "hsla(247, 23%, 15%, 0)";
+              bar = "hsla(248, 25%, 18%, 1)";
             }; 	
-            fg = "hsla(245, 50%, 91%, 1)";
+            fg = "hsla(245, 52%, 91%, 1)";
             ribbon = {
               outer = "hsla(188, 68%, 27%, 1)";
               inner = "hsla(202, 76%, 24%, 1)";
@@ -111,9 +132,9 @@ in {
             light = "rose-pine-dawn";
             extension = {
               name = "rose-pine";
-              publisher = "rose-pine";
-              version = "2.8.0";
-              hash = "sha256-00000000000000000000000000000000000000000000";
+              publisher = "mvllow";
+              version = "2.8.0 ";
+              hash = "";
             };
           };
         };
@@ -138,24 +159,18 @@ in {
       };
     }
 
-    # (mkIf config.modules.desktop.browsers.firefox.enable {
-    #   firefox.userChrome =
-    #     concatMapStringsSep "\n" readFile
-    #     ["${configDir}" /firefox/userChrome.css];
-    # })
+    (mkIf config.modules.desktop.browsers.firefox.enable {
+      modules.desktop.browsers.firefox.userChrome =
+        concatMapStringsSep "\n" readFile
+        [ "${configDir}/firefox/vertical-tabs.css" ];
+    })
 
     (mkIf config.services.xserver.enable {
-      fonts.fonts = attrValues {
-        inherit (pkgs) noto-fonts-emoji;
-        font = cfg.font.package;
-      };
-
       hm.programs.rofi = {
         extraConfig = {
           icon-theme = let inherit (cfg.iconTheme) name; in "${name}";
-          font = let
-            inherit (cfg.font.sans) family weight size;
-          in "${family} ${weight} ${toString size}";
+          font = let inherit (cfg.font.sans) family weight size;
+          in "${family} ${weight} ${toString (size)}";
         };
 
         theme = let
@@ -278,7 +293,7 @@ in {
 
           "element selected" = {
             background-color = mkLiteral "@selected";
-            text-color = mkLiteral "@bg";
+            text-color = mkLiteral "@fg";
             border = mkLiteral "0% 0% 0.3% 0.2%";
             border-radius = mkLiteral "1.5% 1.0% 1.5% 1.5%";
             border-color = mkLiteral "@inner-ribbon";
@@ -296,38 +311,25 @@ in {
         };
       };
 
-      hm.programs.sioyek.config = let
-        inherit (cfg.font.mono) family size weight;
-      in {
-        "custom_background_color " = "0.10 0.11 0.15";
-        "custom_text_color " = "0.75 0.79 0.96";
+      hm.programs.sioyek.config =
+        let inherit (cfg.font.mono) family size weight;
+        in {
+          "custom_background_color " = "0.10 0.11 0.15";
+          "custom_text_color " = "0.75 0.79 0.96";
 
-        "text_highlight_color" = "0.24 0.35 0.63";
-        "visual_mark_color" = "1.00 0.62 0.39 1.0";
-        "search_highlight_color" = "0.97 0.46 0.56";
-        "link_highlight_color" = "0.48 0.64 0.97";
-        "synctex_highlight_color" = "0.62 0.81 0.42";
+          "text_highlight_color" = "0.24 0.35 0.63";
+          "visual_mark_color" = "1.00 0.62 0.39 1.0";
+          "search_highlight_color" = "0.97 0.46 0.56";
+          "link_highlight_color" = "0.48 0.64 0.97";
+          "synctex_highlight_color" = "0.62 0.81 0.42";
 
-        "page_separator_width" = "2";
-        "page_separator_color" = "0.81 0.79 0.76";
-        "status_bar_color" = "0.34 0.37 0.54";
+          "page_separator_width" = "2";
+          "page_separator_color" = "0.81 0.79 0.76";
+          "status_bar_color" = "0.34 0.37 0.54";
 
-        "font_size" = "${toString size}";
-        "ui_font" = "${family} ${weight}";
-      };
-    })
-
-    (mkIf (config.modules.desktop.envProto == "x11") {
-      services.xserver.displayManager = {
-        lightdm.greeters.mini.extraConfig = let
-          inherit (cfg.colors.main) normal types;
-        in ''
-          text-color = "${types.bg}"
-          password-background-color = "${normal.black}"
-          window-color = "${types.border}"
-          border-color = "${types.border}"
-        '';
-      };
+          "font_size" = "${toString (size)}";
+          "ui_font" = "${family} ${weight}";
+        };
     })
   ]);
 }

@@ -2,15 +2,19 @@
 
 let
   inherit (builtins) getEnv map;
-  inherit (lib) getExe mapAttrsToList mkIf mkMerge mkOption;
-  inherit (lib.strings) concatStringsSep optionalString;
-  inherit (lib.types) attrsOf int lines nullOr package path str;
-  inherit (lib.my) mkOpt toFilteredImage;
+  inherit (lib.attrsets) mapAttrsToList;
+  inherit (lib.meta) getExe;
+  inherit (lib.modules) mkIf mkMerge;
+  inherit (lib.strings) concatStringsSep optionalString removePrefix;
 
   cfg = config.modules.themes;
   envProto = config.modules.desktop.envProto;
 in {
-  options.modules.themes = {
+  options.modules.themes = let
+    inherit (lib.options) mkOption mkPackageOption;
+    inherit (lib.types) attrsOf int lines listOf nullOr path package str;
+    inherit (lib.my) mkOpt toFilteredImage;
+  in {
     active = mkOption {
       type = nullOr str;
       default = null;
@@ -32,24 +36,30 @@ in {
 
     gtk = {
       name = mkOpt str "";
-      package = mkOpt (nullOr package) null;
+      package = mkPackageOption pkgs "gtk" { };
     };
 
     iconTheme = {
       name = mkOpt str "";
-      package = mkOpt (nullOr package) null;
+      package = mkPackageOption pkgs "icon" { };
     };
 
     pointer = {
       name = mkOpt str "";
-      package = mkOpt (nullOr package) null;
+      package = mkPackageOption pkgs "pointer" { };
       size = mkOpt int "";
     };
 
     onReload = mkOpt (attrsOf lines) { };
 
+    fontConfig = {
+      packages = mkOpt (listOf package) [ ];
+      mono = mkOpt (listOf str) [ "" ];
+      sans = mkOpt (listOf str) [ "" ];
+      emoji = mkOpt (listOf str) [ "" ];
+    };
+
     font = {
-      package = mkOpt (nullOr package) null;
       mono = {
         family = mkOpt str "";
         weight = mkOpt str "SemiBold";
@@ -64,8 +74,26 @@ in {
         weightNum = mkOpt str "600";
         size = mkOpt int 10;
       };
-      emoji = mkOpt str "";
     };
+
+    symbols = {
+        characters = {
+            vicmd = mkOpt str "";
+            github = mkOpt str " ";
+            folder = mkOpt str " ";
+            duration = mkOpt str " ";
+            battery = mkOpt str "🔋";
+            charging = mkOpt str "⚡️";
+            discharging = mkOpt str "💀";
+        };
+        decorators = {
+            left_separator = mkOpt str "";
+            right_separator = mkOpt str "";
+            error = mkOpt str "";
+            success = mkOpt str "";
+            warning = mkOpt str "";
+            };
+        };
 
     colors = {
       main = {
@@ -105,20 +133,7 @@ in {
         };
       };
 
-      fish = {
-        fg = mkOpt str "#ffffff";
-        highlight = mkOpt str "#ffffff";
-        base01 = mkOpt str "#ffffff";
-        base02 = mkOpt str "#ffffff";
-        base03 = mkOpt str "#ffffff";
-        base04 = mkOpt str "#ffffff";
-        base05 = mkOpt str "#ffffff";
-        base06 = mkOpt str "#ffffff";
-        base07 = mkOpt str "#ffffff";
-        base08 = mkOpt str "#ffffff";
-        base09 = mkOpt str "#ffffff";
-        base10 = mkOpt str "#ffffff";
-      };
+      fishColor = hexColor: removePrefix "#" hexColor;
 
       rofi = {
         colors = {
@@ -178,27 +193,21 @@ in {
 
       hm.gtk = {
         enable = true;
-        font = let
-          inherit (cfg.font) package;
-          inherit (cfg.font.sans) family size;
+        font = let inherit (cfg.font.sans) family size;
         in {
           name = family;
-          package = package;
           size = size;
         };
-
         theme = let inherit (cfg.gtk) name package;
         in {
           name = name;
           package = package;
         };
-
         iconTheme = let inherit (cfg.iconTheme) name package;
         in {
           name = name;
           package = package;
         };
-
         gtk3.bookmarks = map (dir: "file://${config.user.home}/" + dir) [
           "snowflake"
           "notes"
@@ -217,11 +226,14 @@ in {
         gtk.enable = true;
       };
 
-      fonts.fontconfig.defaultFonts = let inherit (cfg.font) emoji mono sans;
+      fonts = let inherit (cfg.fontConfig) packages emoji mono sans;
       in {
-        sansSerif = [ sans.family ];
-        monospace = [ mono.family ];
-        emoji = [ emoji ];
+        fonts = packages;
+        fontconfig.defaultFonts = {
+          monospace = mono;
+          sansSerif = sans;
+          emoji = emoji;
+        };
       };
 
       hm.programs.vscode.extensions =
@@ -234,7 +246,17 @@ in {
         }];
     }
 
-    # x11 related settings:
+    (mkIf (envProto == "wayland") {
+      programs.regreet.settings.GTK =
+        let inherit (cfg) pointer font iconTheme gtk;
+        in {
+          cursor_theme_name = "${pointer.name}";
+          font_name = "${font.mono.family}";
+          icon_theme_name = "${iconTheme.name}";
+          theme_name = "${gtk.name}";
+        };
+    })
+
     (mkIf (envProto == "x11") (mkMerge [
       {
         # Read xresources files in ~/.config/xtheme/* to allow modular configuration
@@ -325,8 +347,14 @@ in {
         };
       }
 
-      # Set the wallpaper ourselves so we don't need .background-image and/or
-      # .fehbg polluting $HOME
+      # Change the wallpaper of our lightdm:
+      (mkIf (cfg.loginWallpaper != null) {
+        services.xserver.displayManager = {
+          lightdm.background = cfg.loginWallpaper;
+        };
+      })
+
+      # Auto-set wallpaper to prevent $HOME pollution!
       (mkIf (cfg.wallpaper != null) (let
         wCfg = config.services.xserver.desktopManager.wallpaper;
         command = ''
@@ -346,8 +374,9 @@ in {
       }))
 
       (mkIf (cfg.loginWallpaper != null) {
-        services.xserver.displayManager = {
-          lightdm.background = cfg.loginWallpaper;
+        programs.regreet.settings.background = {
+          path = cfg.loginWallpaper;
+          fit = "Fill";
         };
       })
 

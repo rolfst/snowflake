@@ -1,16 +1,16 @@
 { options, config, lib, pkgs, ... }:
 
-let
-  inherit (lib) mkIf;
-  inherit (lib.my) mkBoolOpt;
+let inherit (lib.modules) mkIf;
 in {
-  options.modules.containers.archlinux = { enable = mkBoolOpt false; };
+  options.modules.containers.archlinux =
+    let inherit (lib.options) mkEnableOption;
+    in { enable = mkEnableOption "arch-linux container"; };
 
   config = mkIf config.modules.containers.archlinux.enable {
     virtualisation.libvirtd = {
       enable = true;
       qemuVerbatimConfig = ''
-        user = "icy-thought"
+        user = "rolfst"
       '';
     };
 
@@ -27,9 +27,9 @@ in {
 
       filesConfig = {
         Volatile = false;
-        BindReadOnly = [ "/home/icy-thought:/mnt/icy-thought" ];
+        BindReadOnly = [ "/home/rolfst:/mnt/rolfst" ];
         Bind = [
-          "/home/icy-thought/.container-arch:/home/icy-thought"
+          "/home/rolfst/.container-arch:/home/rolfst"
           "/run/user/1000/wayland-1"
           "/tmp/.X11-unix/X0"
           "/tank"

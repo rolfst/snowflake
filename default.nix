@@ -1,29 +1,16 @@
-{
-  inputs,
-  config,
-  lib,
-  pkgs,
-  ...
-}: let
+{ inputs, config, lib, pkgs, ... }:
+
+let
   inherit (builtins) toString;
-  inherit
-    (lib)
-    attrValues
-    filterAttrs
-    mkDefault
-    mkIf
-    mkAliasOptionModule
-    mapAttrs
-    mapAttrsToList
-    ;
+  inherit (lib)
+    attrValues filterAttrs mkDefault mkIf mkAliasOptionModule mapAttrs
+    mapAttrsToList;
   inherit (lib.my) mapModulesRec';
 in {
-  imports =
-    [
+  imports = [
       inputs.home-manager.nixosModules.home-manager
       (mkAliasOptionModule ["hm"] ["home-manager" "users" config.user.name])
-    ]
-    ++ (mapModulesRec' (toString ./modules) import);
+    ] ++ (mapModulesRec' (toString ./modules) import);
 
   # Common config for all nixos machines;
   environment.variables = {
@@ -40,19 +27,12 @@ in {
     package = pkgs.nixVersions.unstable;
     extraOptions = "experimental-features = nix-command flakes";
 
-    nixPath =
-      nixPathInputs
-      ++ [
+    nixPath = nixPathInputs ++ [
         "nixpkgs-overlays=${config.snowflake.dir}/overlays"
         "snowflake=${config.snowflake.dir}"
       ];
 
-    registry =
-      registryInputs
-      // {
-        snowflake.flake = inputs.self;
-        nixpkgs.flake = inputs.nixpkgs;
-      };
+    registry = registryInputs // { snowflake.flake = inputs.self; };
 
     gc = {
       automatic = true;
@@ -62,6 +42,8 @@ in {
 
     settings = {
       auto-optimise-store = true;
+      keep-derivations = false;
+      keep-outputs = false;
 
       substituters = ["https://nix-community.cachix.org" "https://hyprland.cachix.org"];
       trusted-public-keys = [

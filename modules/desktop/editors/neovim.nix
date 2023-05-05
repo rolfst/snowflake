@@ -1,20 +1,20 @@
-{
-  config,
-  options,
-  lib,
-  pkgs,
-  inputs,
-  ...
-}: let
-  inherit (lib) attrValues optionalAttrs mkIf mkMerge;
-  inherit (lib.my) mkBoolOpt;
+{ config, options, lib, pkgs, inputs, ... }:
+
+let
+  inherit (lib.attrsets) attrValues optionalAttrs;
+  inherit (lib.modules) mkIf mkMerge;
 
   cfg = config.modules.desktop.editors.neovim;
 in {
-  options.modules.desktop.editors.neovim = {
-    agasaya.enable = mkBoolOpt false; # lua
-    ereshkigal.enable = mkBoolOpt false; # fnl
-    rolfst.enable = mkBoolOpt false; # personal
+  options.modules.desktop.editors.neovim = let
+    inherit (lib.options) mkEnableOption;
+    inherit (lib.types) package;
+    inherit (lib.my) mkOpt;
+  in {
+    package = mkOpt package pkgs.neovim-nightly;
+    agasaya.enable = mkEnableOption "nvim (lua) config";
+    ereshkigal.enable = mkEnableOption "nvim (lisp) config";
+    rolfst.enable = mkEnableOption "nvim personal config";
   };
 
   config = mkMerge [
@@ -30,7 +30,7 @@ in {
 
       hm.programs.neovim = {
         enable = true;
-        package = pkgs.neovim-nightly;
+        package = cfg.package;
         viAlias = true;
         vimAlias = true;
         vimdiffAlias = true;

@@ -1,14 +1,15 @@
 { config, options, lib, pkgs, ... }:
 
 let
-  inherit (lib) attrValues mkIf mkMerge;
-  inherit (lib.my) mkBoolOpt;
-
+  inherit (lib.attrsets) attrValues;
+  inherit (lib.modules) mkIf mkMerge;
   cfg = config.modules.desktop.distraction.hardware;
 in {
-  options.modules.desktop.distraction = {
-    hardware = { amdvlk.enable = mkBoolOpt false; };
-  };
+  options.modules.desktop.distraction =
+    let inherit (lib.options) mkEnableOption;
+    in {
+      hardware = { amdvlk.enable = mkEnableOption "AMD open-source driver"; };
+    };
 
   config = mkMerge [
     (mkIf cfg.amdvlk.enable {

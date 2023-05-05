@@ -1,10 +1,11 @@
 { config, options, lib, pkgs, ... }:
 
 let
-  inherit (lib) attrValues mkIf mkMerge;
-  inherit (lib.my) mkBoolOpt;
+  inherit (lib.attrsets) attrValues;
+  inherit (lib.modules) mkIf mkMerge;
 in {
-  options.modules.develop.cc = { enable = mkBoolOpt false; };
+  options.modules.develop.cc = let inherit (lib.options) mkEnableOption;
+  in { enable = mkEnableOption "C/C++ development"; };
 
   config = mkMerge [
     (mkIf config.modules.develop.cc.enable {
@@ -12,9 +13,7 @@ in {
         inherit (pkgs) clang bear gdb cmake;
         inherit (pkgs.llvmPackages) libcxx;
       });
-    })
 
-    (mkIf config.modules.desktop.editors.vscodium.enable {
       hm.programs.vscode.extensions =
         attrValues ({ inherit (pkgs.vscode-extensions.ms-vscode) cpptools; });
     })

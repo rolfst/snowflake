@@ -1,15 +1,16 @@
 { options, config, lib, pkgs, ... }:
 
 let
-  inherit (lib) mkIf mkMerge getExe;
-  inherit (lib.my) mkBoolOpt;
-
+  inherit (lib.meta) getExe;
+  inherit (lib.modules) mkIf mkMerge;
   cfg = config.modules.desktop.education;
 in {
-  options.modules.desktop.education = {
-    memory.enable = mkBoolOpt false;
-    vidcom.enable = mkBoolOpt false;
+  options.modules.desktop.education = let inherit (lib.options) mkEnableOption;
+  in {
+    memory.enable = mkEnableOption "SUID tool (sandbox)";
+    vidcom.enable = mkEnableOption "jailed zoom-us";
   };
+
 
   config = mkMerge [
     (mkIf cfg.memory.enable {

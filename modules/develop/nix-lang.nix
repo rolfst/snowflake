@@ -1,23 +1,21 @@
 { config, options, lib, pkgs, ... }:
 
 let
-  inherit (lib) attrValues mkIf mkMerge;
-  inherit (lib.my) mkBoolOpt;
+  inherit (lib.attrsets) attrValues;
+  inherit (lib.modules) mkIf mkMerge;
 in {
-  options.modules.develop.nix = { enable = mkBoolOpt true; };
+  options.modules.develop.nix = let inherit (lib.options) mkEnableOption;
+  in { enable = mkEnableOption "Nix development" // { default = true; }; };
 
   config = mkMerge [
     (mkIf config.modules.develop.nix.enable {
       user.packages = attrValues ({
         inherit (pkgs)
           nil # Nix Expression Language
-          manix nix-index nix-init nix-output-monitor nix-tree nixfmt
-          deadnix
+          manix nix-index nix-init nix-output-monitor nix-tree nixfmt deadnix
           nixpkgs-review;
       });
-    })
 
-    (mkIf config.modules.desktop.editors.vscodium.enable {
       hm.programs.vscode.extensions =
         attrValues ({ inherit (pkgs.vscode-extensions.jnoortheen) nix-ide; });
     })

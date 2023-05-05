@@ -1,18 +1,10 @@
-{
-  options,
-  config,
-  lib,
-  pkgs,
-  ...
-}: let
-  inherit (lib) mkIf attrValues mkOption mkMerge;
-  inherit (lib.types) package;
-  inherit (lib.my) mkBoolOpt;
+{ options, config, lib, pkgs, ... }: let
+  inherit (lib) mkIf mkEnableOption attrValues mkMerge;
 
   cfg = config.modules.desktop.toolset.keybase;
 in {
   options.modules.desktop.toolset.keybase = {
-    enable = mkBoolOpt false;
+    enable = mkEnableOption "status-bar for wayland";
   };
   config = mkMerge [
     (mkIf cfg.enable {

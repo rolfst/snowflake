@@ -1,15 +1,14 @@
 { config, options, lib, pkgs, ... }:
 
 let
-  inherit (lib) mkIf;
+  inherit (lib.modules) mkIf;
   inherit (lib.strings) optionalString;
-  inherit (lib.my) mkBoolOpt;
-
   cfg = config.modules.shell.xplr;
 in {
-  options.modules.shell.xplr = {
-    enable = mkBoolOpt false;
-    fennel.enable = mkBoolOpt false;
+  options.modules.shell.xplr = let inherit (lib.options) mkEnableOption;
+  in {
+    enable = mkEnableOption "TUI file-explorer";
+    fennel.enable = mkEnableOption "lisp-configured xplr";
   };
 
   config = mkIf cfg.enable {

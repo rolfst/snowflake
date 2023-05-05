@@ -1,12 +1,20 @@
-# Rose-pine
+# Tokyo-Night
 
-A very pleasant theme that I've been sleeping on!
+_Amidst the towering pine,_
 
-## Minimal Capture
+_A rose blooms in grace divine,_
 
-![Rose-pine](../../../.github/assets/themes/tokyonight/xmonad.png)
+_Red and pink, a gentle sight,_
 
-## Useful Links
+_A union of beauty, dark and light._
 
-1. Repository (GitHub): [Tokyo-Night](https://github.com/folke/tokyonight.nvim)
-2. `Rella` (Pixiv): [光の群れが　蛍のよう](https://www.pixiv.net/en/artworks/64495434)
+# Minimal Capture
+
+![Rose-Pine](../../../.github/assets/themes/rose-pine/xmonad.png)
+
+# Useful Links
+
+1. Repository (GitHub):
+   [Rose-Pine](https://github.com/rose-pine/rose-pine-theme)
+2. Generated Wallpaper:
+   [Loaki71](https://www.reddit.com/r/SDLandscapes/comments/12tcuqc/solarpunk_cities)

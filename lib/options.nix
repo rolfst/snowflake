@@ -1,18 +1,9 @@
 { lib, ... }:
 
-let
-  inherit (lib) mkOption;
-  inherit (lib.types) bool;
+let inherit (lib) mkOption;
 in {
   mkOpt = type: default: mkOption { inherit type default; };
 
   mkOpt' = type: default: description:
     mkOption { inherit type default description; };
-
-  mkBoolOpt = default:
-    mkOption {
-      inherit default;
-      type = bool;
-      example = true;
-    };
 }

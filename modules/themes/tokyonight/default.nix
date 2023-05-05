@@ -1,10 +1,11 @@
 { options, config, lib, pkgs, ... }:
 
 let
-  inherit (builtins) toString;
-  inherit (lib) attrValues mkDefault mkIf mkMerge;
+  inherit (builtins) toString readFile;
+  inherit (lib) attrValues concatMapStringsSep mkDefault mkIf mkMerge;
 
   cfg = config.modules.themes;
+  configDir = config.snowflake.configDir;
 in {
   config = mkIf (cfg.active == "tokyonight") (mkMerge [
     {
@@ -29,11 +30,19 @@ in {
           size = 24;
         };
 
+        fontConfig = {
+          packages = attrValues ({
+            inherit (pkgs) noto-fonts-emoji;
+            nerdfonts = pkgs.nerdfonts.override { fonts = [ "VictorMono" ]; };
+          });
+          mono = [ "VictorMono Nerd Font Mono" ];
+          sans = [ "VictorMono Nerd Font" ];
+          emoji = [ "Noto Color Emoji" ];
+        };
+
         font = {
-          package = pkgs.nerdfonts.override { fonts = [ "VictorMono" ]; };
           sans.family = "VictorMono Nerd Font";
           mono.family = "VictorMono Nerd Font Mono";
-          emoji = "Noto Color Emoji";
         };
 
         colors = {
@@ -65,21 +74,6 @@ in {
               border = "#1abc9c";
               highlight = "#3d59a1";
             };
-          };
-
-          fish = {
-            fg = "c0caf5";
-            highlight = "33467c";
-            base01 = "cfc9c2";
-            base02 = "9d7cd8";
-            base03 = "b4f9f8";
-            base04 = "9ece6a";
-            base05 = "f7768e";
-            base06 = "ff9e64";
-            base07 = "e0af68";
-            base08 = "bb9af7";
-            base09 = "7dcfff";
-            base10 = "565f89";
           };
 
           rofi = {
@@ -141,18 +135,13 @@ in {
       };
     }
 
-    # (mkIf config.modules.desktop.browsers.firefox.enable {
-    #   firefox.userChrome =
-    #     concatMapStringsSep "\n" readFile
-    #     ["${configDir}" /firefox/userChrome.css];
-    # })
+    (mkIf config.modules.desktop.browsers.firefox.enable {
+      modules.desktop.browsers.firefox.userChrome =
+        concatMapStringsSep "\n" readFile
+        [ "${configDir}/firefox/firefox-onebar.css" ];
+    })
 
     (mkIf config.services.xserver.enable {
-      fonts.fonts = attrValues ({
-        inherit (pkgs) noto-fonts-emoji;
-        font = cfg.font.package;
-      });
-
       hm.programs.rofi = {
         extraConfig = {
           icon-theme = let inherit (cfg.iconTheme) name; in "${name}";
