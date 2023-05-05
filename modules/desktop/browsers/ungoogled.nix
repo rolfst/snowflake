@@ -28,7 +28,7 @@ in {
       package = let
         ungoogledFlags = toString [
           "--force-dark-mode"
-          "--disable-search-engine-collection"
+          # "--disable-search-engine-collection"
           "--extension-mime-request-handling=always-prompt-for-install"
           "--fingerprinting-canvas-image-data-noise"
           "--fingerprinting-canvas-measuretext-noise"

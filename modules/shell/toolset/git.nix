@@ -9,8 +9,8 @@ in {
 
   config = mkIf config.modules.shell.git.enable {
     user.packages = attrValues ({
-      inherit (pkgs) act dura gitui;
-      inherit (pkgs.gitAndTools) gh git-open;
+        inherit (pkgs) act dura gitui sad;
+        inherit (pkgs.gitAndTools) gh git-open;
     } // optionalAttrs config.modules.shell.gnupg.enable {
       inherit (pkgs.gitAndTools) git-crypt;
 
@@ -149,6 +149,15 @@ in {
           "https://gitlab.com/".insteadOf = "gl:";
           "https://gist.github.com/".insteadOf = "gist:";
           "https://bitbucket.org/".insteadOf = "bb:";
+        };
+        merge = {
+            tool = "nvim";
+        };
+        mergetool = {
+            nvim = {
+                cmd = "nvim -d -c \"wincmd l\" -c \"norm ]c\" \"$LOCAL\" \"$MERGED\" \"$REMOTE\"";
+            };
+            keepBackup = false;
         };
 
         diff = {

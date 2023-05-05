@@ -169,7 +169,7 @@ in {
       }] ++ (map (p: mkPlugin p) [
         "autopair"
         "nix-shell"
-        "vi-mode"
+        # "vi-mode"
         "you-should-use"
       ]);
     };
