@@ -29,4 +29,5 @@ in {
         convert ${options} ${imageFile} $out/${result}
       '';
     in "${filteredImage}/${result}";
+
 }
