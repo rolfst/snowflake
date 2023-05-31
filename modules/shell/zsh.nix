@@ -22,7 +22,14 @@ in {
     environment.pathsToLink = [ "/share/zsh" ];
 
     # Enable nixpkgs suggestions:
-    programs.zsh.enable = true;
+    programs = {
+      zsh  = {
+        enable = true;
+        interactiveShellInit = ''
+        source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+        '';
+      };
+    };
 
     hm.programs.zsh = {
       enable = true;
@@ -169,7 +176,7 @@ in {
       }] ++ (map (p: mkPlugin p) [
         "autopair"
         "nix-shell"
-        # "vi-mode"
+        "vi-mode"
         "you-should-use"
       ]);
     };
