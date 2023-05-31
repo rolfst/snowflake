@@ -12,7 +12,7 @@ in {
       user.packages = attrValues ({
         inherit (pkgs)
           nil # Nix Expression Language
-          manix nix-index nix-init nix-output-monitor nix-tree nixfmt deadnix
+          manix nix-index nix-init nix-output-monitor nix-tree alejandra deadnix
           nixpkgs-review;
       });
 
