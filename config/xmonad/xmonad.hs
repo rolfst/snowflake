@@ -754,9 +754,9 @@ scratchpads =
       (className =? "discord")
       nearFullFloat
   , NS
-      "Element"
-      "element-desktop"
-      (className =? "Element")
+      "MatrixClient"
+      "fractal"
+      (className =? "fractal")
       nearFullFloat
   , NS
       "Picture-in-Picture"
@@ -916,7 +916,7 @@ addKeys conf@XConfig{modMask = modm} =
          ((modalt, xK_b), doScratchpad "System Monitor")
        , ((modalt, xK_h), doScratchpad "Telegram")
        , ((modalt, xK_j), doScratchpad "Discord")
-       , ((modalt, xK_k), doScratchpad "Element")
+       , ((modalt, xK_k), doScratchpad "MatrixClient")
        , -- Rofi(s)
          ((modm, xK_p), spawn "rofi -show power-menu")
        , ((modalt, xK_p), spawn "rofi -show drun")

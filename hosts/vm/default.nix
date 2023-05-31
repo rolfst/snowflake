@@ -58,7 +58,10 @@
           zathura.enable = true;
           sioyek.enable = true;
         };
-        social.base.enable = true;
+        social = {
+            base.enable = true;
+            element.withClient.enable = true;
+        };
         keybase.enable = true;
       };
     };
