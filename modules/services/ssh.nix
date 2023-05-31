@@ -13,23 +13,23 @@ in {
     services.openssh = {
       enable = true;
       settings = {
-        kbdInteractiveAuthentication = false;
+        KbdInteractiveAuthentication = false;
         PasswordAuthentication = false;
         # startWhenNeeded = true;
       };
 
-      hostKeys = [{
-        comment = "icy-thought@host";
-        path = "/etc/ssh/ed25519_key";
-        rounds = 100;
-        type = "ed25519";
-      }];
+      # hostKeys = [{
+      #   comment = "icy-thought@host";
+      #   path = "/etc/ssh/ed25519_key";
+      #   rounds = 100;
+      #   type = "ed25519";
+      # }];
     };
 
     user.openssh.authorizedKeys.keyFiles =
-      if config.user.name == "icy-thought" then
+      if config.user.name == "rolfst" then
         filter pathExists [
-          "${config.user.home}/.ssh/id_ed25519.pub"
+          "${config.user.home}/.ssh/id_ed25519_rolfstgm.pub"
           "${config.user.home}/.ssh/id_rsa.pub"
         ]
       else
