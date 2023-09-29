@@ -11,12 +11,12 @@ in {
   options.modules.desktop.toolset.docView =
     let inherit (lib.options) mkEnableOption;
     in {
-      zathura.enable = mkEnableOption "plugin-based doc-viewer";
-      sioyek.enable = mkEnableOption "doc-viewer for research";
-    calibre = {
-        enable = mkEnableOption "base of calibre";
-        web = mkEnableOption "web server of calibre";
-    };
+        zathura.enable = mkEnableOption "plugin-based doc-viewer";
+        sioyek.enable = mkEnableOption "doc-viewer for research";
+        calibre = {
+            enable = mkEnableOption "base of calibre";
+            web = mkEnableOption "web server of calibre";
+        };
   };
 
   config = mkMerge [
@@ -33,8 +33,8 @@ in {
           statusbar-home-tilde = true;
           window-title-basename = true;
         } // optionalAttrs (active != null) {
-          font = let inherit (config.modules.themes.font.sans) family size;
-          in "${family} Bold ${toString (size)}";
+          font = let inherit (config.modules.themes.font) mono sans;
+          in "${mono.family} Bold ${toString (sans.size)}";
           recolor = true;
           recolor-keephue = true;
           recolor-reverse-video = true;

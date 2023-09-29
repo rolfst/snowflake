@@ -14,7 +14,8 @@ in {
   config = mkMerge [
     (mkIf cfg.enable {
       user.packages = attrValues ({
-        inherit (pkgs) lua lua-language-server stylua;
+        inherit (pkgs.lua51Packages) lua;
+        inherit (pkgs) lua-language-server stylua;
       } // optionalAttrs (cfg.fennel.enable) { inherit (pkgs) fennel fnlfmt; });
 
       home.configFile.stylua-conf = {

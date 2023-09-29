@@ -14,7 +14,7 @@ in {
       maim
       slop
 
-      (writeScriptBin "scrcapy" ''
+      (writeScriptBin "captScr" ''
         #!${getExe python3}
 
         import argparse

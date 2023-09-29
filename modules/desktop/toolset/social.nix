@@ -22,23 +22,23 @@ in {
       // {
         default = cfg.base.enable;
       };
-    element = {
+    matrix = {
       withDaemon = {
         enable =
-          mkEnableOption "matrix daemon for ement"
+          mkEnableOption "matrix daemon for ement.el"
           // {
-            default = !cfg.element.withClient.enable;
+            default = config.modules.desktop.editors.emacs.enable && !cfg.matrix.withClient.enable;
           };
       };
       withClient = {
         enable =
-          mkEnableOption "element client"
+          mkEnableOption "rust-based matrix client"
           // {
-            default = cfg.base.enable && !cfg.element.withDaemon.enable;
+            default = cfg.base.enable && !cfg.matrix.withDaemon.enable;
           };
         package = mkOption {
           type = nullOr (enum ["element" "fractal"]);
-          default = "fractal";
+          default = "element";
           description = "What display protocol to use.";
         };
       };
@@ -50,7 +50,21 @@ in {
       user.packages = attrValues {inherit (pkgs) signal-desktop tdesktop;};
     })
 
-    (mkIf cfg.element.withDaemon.enable {
+    (mkIf cfg.matrix.withDaemon.enable {
+      hm.nixpkgs.overlays = [
+        (final: prev: {
+          pantalaimon = prev.pantalaimon.overrideAttrs (old: {
+            version = "0.10.5-dev";
+            src = final.fetchFromGitHub {
+              owner = "matrix-org";
+              repo = old.pname;
+              rev = "3968c69aa846889970df1372ba9aa54c1c5e4290";
+              sha256 = "sha256-JdoJB68QtxPhFeZCHd+0ZOlUDbQV3HeBsxW0KbhnDSs=";
+            };
+          });
+        })
+      ];
+
       hm.services.pantalaimon = {
         enable = true;
         settings = {
@@ -60,14 +74,16 @@ in {
           };
           local-matrix = {
             Homeserver = "https://matrix.org";
-            ListenAddress = "127.0.0.1";
+            ListenAddress = "localhost";
             ListenPort = 8009;
+            IgnoreVerification = true;
+            UseKeyring = false;
           };
         };
       };
     })
 
-    (mkIf cfg.element.withClient.enable {
+    (mkIf cfg.matrix.withClient.enable {
       user.packages = let
         inherit (pkgs) makeWrapper symlinkJoin element-desktop;
         element-desktop' = symlinkJoin {
@@ -80,7 +96,7 @@ in {
           '';
         };
       in
-        if (cfg.element.withClient.package == "element")
+        if (cfg.matrix.withClient.package == "element")
         then [element-desktop']
         else [pkgs.fractal-next];
     })

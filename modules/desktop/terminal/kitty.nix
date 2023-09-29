@@ -9,9 +9,6 @@ in {
     in { enable = mkEnableOption "GPU-accelerated terminal emulator"; };
 
   config = mkIf config.modules.desktop.terminal.kitty.enable {
-    environment.variables = {
-      GLFW_IM_MODULE = "ibus"; # Ibus & Fcitx5 solution..
-    };
 
     user.packages = [
     pkgs.chafa
@@ -31,6 +28,7 @@ in {
         confirm_os_window_close = -1;
 
         background_opacity = "0.8";
+        dynamic_background_opacity = "yes";
         repaint_delay = 10;
         disable_ligatures = "cursor";
         adjust_line_height = "113%";
@@ -122,10 +120,10 @@ in {
             inherit (config.modules.themes.colors.main) bright normal types;
             inherit (config.modules.themes.font.mono) size;
           in ''
-            font_family               FiraCode SemiBold Nerd Font Complete
-            italic_font               FiraCode SemiBold Italic Nerd Font Complete
-            bold_font                 FiraCode Bold Nerd Font Complete
-            bold_italic_font          FiraCode Bold Italic Nerd Font Complete
+            font_family               FiraCode Bold Nerd Font Complete
+            italic_font               FiraCode Bold Italic Nerd Font Complete
+            bold_font                 FiraCode SemiBold Nerd Font Complete
+            bold_italic_font          FiraCode SemiBold Italic Nerd Font Complete
             font_size                 ${toString size}
 
             foreground                ${types.fg}

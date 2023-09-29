@@ -8,7 +8,7 @@ in {
   config = mkIf config.modules.hardware.printer.enable {
     services.printing = {
       enable = true;
-      drivers = [ pkgs.epson-escpr pkgs.samsung-unified-linux-driver ];
+      drivers = [ pkgs.hplip pkgs.xsane ];
     };
 
     # Enable wireless access to printers

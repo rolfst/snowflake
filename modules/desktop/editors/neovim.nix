@@ -11,7 +11,7 @@ in {
     inherit (lib.types) package;
     inherit (lib.my) mkOpt;
   in {
-    package = mkOpt package pkgs.neovim-nightly;
+    package = mkOpt package pkgs.neovim-unwrapped;
     agasaya.enable = mkEnableOption "nvim (lua) config";
     ereshkigal.enable = mkEnableOption "nvim (lisp) config";
     rolfst.enable = mkEnableOption "nvim personal config";
@@ -19,13 +19,12 @@ in {
 
   config = mkMerge [
     {
-      nixpkgs.overlays = [inputs.nvim-nightly.overlay];
-
       user.packages = attrValues ({
           inherit (pkgs) neovide;
         }
         // optionalAttrs (config.modules.develop.cc.enable == false) {
           inherit (pkgs) gcc; # Treesitter
+          inherit (pkgs.lua51Packages) luarocks-nix;
         });
 
       hm.programs.neovim = {

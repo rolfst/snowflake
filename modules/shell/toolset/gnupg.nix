@@ -1,6 +1,14 @@
-{ config, options, lib, pkgs, ... }:
+{
+  config,
+  options,
+  lib,
+  pkgs,
+  ...
+}: let
+  inherit (builtins) getEnv;
+  inherit (lib.modules) mkIf;
 
-let inherit (lib.modules) mkIf;
+  cfg = config.modules.shell.gnupg;
 in {
   options.modules.shell.gnupg = let
     inherit (lib.options) mkEnableOption;
@@ -8,28 +16,42 @@ in {
     inherit (lib.my) mkOpt;
   in {
     enable = mkEnableOption "cryptographic suite";
-    cacheTTL = mkOpt int 3600; # 1hr
+    cacheTTL = mkOpt int 86400; # 24 hours
   };
 
   config = mkIf config.modules.shell.gnupg.enable {
-    environment.variables = { GNUPGHOME = "$XDG_CONFIG_HOME/gnupg"; };
-
-    programs.gnupg.agent = {
+    # Unlock GnuPG automatically
+    security.pam.services.${config.user.name}.gnupg = {
       enable = true;
-      # enableSSHSupport = true;
-      # pinentryFlavor = "gtk2";
+      noAutostart = true;
+      storeOnly = true;
     };
 
-    user.packages = [ pkgs.tomb ];
+    hm.programs.gpg = {
+      enable = true;
+      homedir = "${config.hm.xdg.configHome}/gnupg";
+      settings = {
+        keyserver = "keys.openpgp.org";
+      };
+    };
 
-    # HACK Without this config file you get "No pinentry program" on 20.03.
-    #      programs.gnupg.agent.pinentryFlavor doesn't appear to work, and this
-    #      is cleaner than overriding the systemd unit.
-    home.configFile.gpg-agent = {
-      target = "gnupg/gpg-agent.conf";
-      text = ''
-        default-cache-ttl ${toString config.modules.shell.gnupg.cacheTTL}
-        pinentry-program ${pkgs.pinentry.gtk2}/bin/pinentry
+    # Enables Gnome3 pinentry usage
+    services.dbus.packages = [pkgs.gcr];
+
+    hm.services.gpg-agent = {
+      enable = true;
+      enableSshSupport = true;
+      pinentryFlavor = "gnome3";
+
+      defaultCacheTtl = cfg.cacheTTL;
+      defaultCacheTtlSsh = cfg.cacheTTL;
+      maxCacheTtl = cfg.cacheTTL;
+      maxCacheTtlSsh = cfg.cacheTTL;
+
+      extraConfig = ''
+        allow-emacs-pinentry
+        allow-loopback-pinentry
+        allow-preset-passphrase
       '';
     };
   };

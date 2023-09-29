@@ -4,32 +4,39 @@ let
   inherit (lib.attrsets) attrValues optionalAttrs;
   inherit (lib.modules) mkIf mkMerge;
 
-  cfg = config.modules.desktop.toolset.fileBrowse;
+  cfg = config.modules.desktop.toolset.fileManager;
 in {
-  options.modules.desktop.toolset.fileBrowse =
-    let inherit (lib.options) mkEnableOption;
+  options.modules.desktop.toolset.fileManager =
+    let
+        inherit (lib.options) mkEnableOption mkOption;
+        inherit (lib.types) nullOr enum;
     in {
-      dolphin.enable = mkEnableOption "KDE Plasma file-manager";
-      nautilus.enable = mkEnableOption "Gnome file-manager";
-      thunar.enable = mkEnableOption "GTK+ file-manager";
+        enable = mkEnableOption "A file-browser for our desktop";
+        program = mkOption {
+            type = nullOr (enum ["dolphin" "nautilus" "thunar"]);
+            default = "thunar";
+            description = "which file-browser to install";
+        };
     };
 
   config = mkMerge [
     {
+      # :NOTE| Notify system about our file-browser
+      modules.desktop.extensions.mimeApps.defApps.fileBrowser = cfg.program;
       services.gvfs.enable = true;
 
       environment.systemPackages = attrValues ({ }
-        // optionalAttrs (cfg.dolphin.enable) {
-          inherit (pkgs) dolphin dolphin-plugins;
-        } // optionalAttrs (cfg.nautilus.enable) {
+        // optionalAttrs (cfg.program == "dolphin") {
+           inherit (pkgs) dolphin dolphin-plugins;
+        } // optionalAttrs (cfg.program == "nautilus") {
           inherit (pkgs.gnome) nautilus;
-        } // optionalAttrs (cfg.thunar.enable) {
+        } // optionalAttrs (cfg.program == "thunar") {
           inherit (pkgs.xfce)
             thunar thunar-volman thunar-archive-plugin thunar-media-tags-plugin;
         });
     }
 
-    (mkIf cfg.thunar.enable {
+    (mkIf (cfg.program == "thunar") {
       services.tumbler.enable = true;
 
       home.configFile = {

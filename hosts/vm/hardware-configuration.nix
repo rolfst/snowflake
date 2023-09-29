@@ -27,8 +27,6 @@ in {
         "ahci"
         "xhci_pci"
         "sr_mod"
-        "virtio_blk"
-        "virtio_pci"
       ];
       kernelModules = [];
     };

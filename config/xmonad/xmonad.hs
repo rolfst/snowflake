@@ -36,7 +36,6 @@ import System.Directory
 import System.Environment.XDG.DesktopEntry
 import System.FilePath.Posix
 import System.IO.Unsafe
-import System.Process
 import Text.Printf
 import Unsafe.Coerce
 import XMonad hiding ((|||))
@@ -49,7 +48,6 @@ import XMonad.Actions.DynamicWorkspaces hiding (
  )
 import XMonad.Actions.Minimize
 import XMonad.Actions.Navigation2D
-import XMonad.Actions.SpawnOn
 import qualified XMonad.Actions.SwapWorkspaces as SW
 import XMonad.Actions.UpdatePointer
 import XMonad.Actions.WindowBringer
@@ -75,7 +73,6 @@ import XMonad.Layout.LimitWindows
 import XMonad.Layout.MagicFocus
 import XMonad.Layout.Magnifier hiding (Toggle)
 import XMonad.Layout.Minimize
-import XMonad.Layout.MultiColumns
 import XMonad.Layout.MultiToggle
 import XMonad.Layout.MultiToggle.Instances
 import XMonad.Layout.NoBorders
@@ -103,17 +100,18 @@ main =
     . ewmh
     . ewmhFullscreen
     . withNavigation2DConfig myNavigation2DConfig
+    . spawnExternalProcess def
     $ myConfig
 
 myConfig =
   def
     { modMask = mod4Mask
     , terminal = "kitty"
-    , manageHook = manageSpawn <+> namedScratchpadManageHook scratchpads
+    , manageHook = namedScratchpadManageHook =<< liftX myScratchpads
     , layoutHook = myLayoutHook
     , borderWidth = 2
-    , normalBorderColor = icyInactive
-    , focusedBorderColor = icyActive
+    , normalBorderColor = icyInactiveWin
+    , focusedBorderColor = icyActiveWin
     , logHook =
         updatePointer (0.5, 0.5) (0, 0)
           <> workspaceHistoryHook
@@ -128,21 +126,21 @@ myConfig =
     , keys = customKeys (const []) addKeys
     }
 
+icyActiveWin = "#bb7b79"
+
+icyInactiveWin = "#26233a"
+
 icyTheme =
   def
-    { activeColor = icyActive
-    , activeBorderColor = icyActive
-    , activeTextColor = icyInactive
+    { activeColor = icyActiveWin
+    , activeBorderColor = icyActiveWin
+    , activeTextColor = icyInactiveWin
     , decoHeight = 20
-    , inactiveColor = icyInactive
-    , inactiveBorderColor = icyInactive
-    , inactiveTextColor = icyActive
-    , fontName = "xft:FiraCode:style=SemiBold"
+    , inactiveColor = icyInactiveWin
+    , inactiveBorderColor = icyInactiveWin
+    , inactiveTextColor = icyActiveWin
+    , fontName = "xft:JetBrainsMono Nerd Font:style=SemiBold"
     }
-
-icyActive = "#1abc9c"
-
-icyInactive = "#1a1b26"
 
 restartEventHook e@ClientMessageEvent{ev_message_type = mt} = do
   a <- getAtom "XMONAD_RESTART"
@@ -161,8 +159,6 @@ writeToHomeDirLog stuff = io $ getLogFile >>= flip appendFile (stuff ++ "\n")
 
 logWindowSet message =
   withWindowSet $ \ws -> writeToHomeDirLog $ printf "%s -- " message $ show ws
-
-xRunCommand cmd = void $ io $ readCreateProcess (shell cmd) ""
 
 (<..>) :: Functor f => (a -> b) -> f (f a) -> f (f b)
 (<..>) = fmap . fmap
@@ -239,6 +235,8 @@ chromiumSelectorBase = isChromiumClass <$> className
 chromiumSelector = className =? "chromium-browser" <&&> appName =? "Chromium"
 
 firefoxSelector = className =? "firefox-aurora" <&&> appName =? "Navigator"
+
+protonMailSelector = chromiumSelectorBase
 
 virtualClasses =
   [(chromiumSelector, "Chromium")]
@@ -327,10 +325,9 @@ instance Eq (Toggle Window) where
   (Toggle v) == v2 = Just v == fromToggle v2
 
 fromToggle :: forall t. Typeable t => Toggle Window -> Maybe t
-fromToggle (Toggle v) =
-  if typeOf v == typeRep (Proxy :: Proxy t)
-    then Just $ unsafeCoerce v
-    else Nothing
+fromToggle (Toggle v)
+  | typeOf v == typeRep (Proxy :: Proxy t) = Just $ unsafeCoerce v
+  | otherwise = Nothing
 
 currentWorkspace = W.workspace . W.current <$> gets windowset
 
@@ -532,8 +529,7 @@ myBringWindow = myWindowAction True doBringWindow
 myReplaceWindow =
   swapMinimizeStateAfter $
     myWindowAct myWindowBringerConfig True $
-      windows
-        . swapFocusedWith
+      windows . swapFocusedWith
 
 -- Workspace Names for EWMH
 setWorkspaceNames :: X ()
@@ -646,8 +642,7 @@ restoreAllMinimized = minimizedWindows >>= restoreAll
 
 restoreOrMinimizeOtherClasses =
   maximizedOtherClass
-    >>= ifL restoreAllMinimized minimizeOtherClassesInWorkspace
-      . null
+    >>= ifL restoreAllMinimized minimizeOtherClassesInWorkspace . null
 
 restoreThisClassOrMinimizeOtherClasses =
   minimizedSameClass
@@ -740,64 +735,69 @@ swapMinimizeStateAfter action = withFocused $ \originalWindow -> do
     withFocused $ \newWindow ->
       when (newWindow /= originalWindow) $ minimizeWindow originalWindow
 
--- Named Scratchpads
-nearFullFloat = customFloating $ W.RationalRect l t w h
+-- :NOTE| Introduction of our namedScratchpads
+myScratchpads :: X [NamedScratchpad]
+myScratchpads = do
+  btopLaunch <-
+    getInput $
+      inTerm
+        >-> (toInput $ " start --class " <> sysMonID)
+        >-> execute "btop"
+  -- \| E-Mail session managed by Emacs, because why not? :P
+  mailSession <-
+    getInput $
+      inEditor
+        >-> setFrameName mailInst
+        >-> eval (elispFun "notmuch")
+  telegramClient <-
+    getInput $
+      inEditor
+        >-> setFrameName telegramSessionID
+        >-> eval (elispFun "telega")
+  pure
+    [ NS "Discord" "discordcanary" (className =? "discord") nearFullFloat
+    , NS "Mail" mailSession (title =? mailSessionID) floatCenter
+    , NS "System Monitor" btopLaunch (className =? sysMonID) nearFullFloat
+    , NS "Telegram" "telegramClient" (title =? "telegramSessionID") nearFullFloat
+    ]
  where
-  h = 0.95
-  w = 0.95
-  t = 0.02
-  l = 0.02
+  mailSessionID = "notmuch-scratch"
+  sysMonID = "system-monitor"
+  telegramSessionID = "telega-scratch"
+  nearFullFloat = customFloating $ W.RationalRect 0.02 0.02 0.95 0.95
 
-scratchpads =
-  [ NS
-      "Discord"
-      "discordcanary"
-      (className =? "discord")
-      nearFullFloat
-  , NS
-      "MatrixClient"
-      "fractal"
-      (className =? "fractal")
-      nearFullFloat
-  , NS
-      "Picture-in-Picture"
-      "Picture-in-Picture"
-      (title =? "Picture-in-Picture")
-      defaultFloating
-  , NS
-      "System Monitor"
-      "kitty --title 'System Monitor' btop"
-      (title =? "System Monitor")
-      nearFullFloat
-  ]
+  -- \| Defining our custom floats
+  floatCenter = customFloating $ W.RationalRect (1 / 50) (1 / 50) (19 / 20) (19 / 20)
+  floatTopLeft = customFloating $ W.RationalRect (1 / 6) (1 / 6) (2 / 3) (2 / 3)
 
-myScratchPadManageHook = namedScratchpadManageHook scratchpads
+myScratchPadManageHook = namedScratchpadManageHook =<< liftX myScratchpads
 
--- We need this event hook because some scratchpad applications (Spotify) don't
--- actually properly set their class at startup.
+-- :NOTE| required because some applications don't set their wm_class properly on startup.
 myScratchPadEventHook =
   onXPropertyChange "WM_CLASS" myScratchPadManageHook
     <> onXPropertyChange "WM_NAME" myScratchPadManageHook
 
 runScratchPadManageHookOnCurrent =
   join (withFocusedD (Endo id) $ runQuery myScratchPadManageHook)
-    >>= windows
-      . appEndo
+    >>= windows . appEndo
 
-scratchPadIsDisplayed name = join $ withFocusedD False query
+scratchPadIsDisplayed :: String -> X Bool
+scratchPadIsDisplayed name = join $ withFocusedD False =<< query
  where
-  query = maybe (const $ return False) (runQuery . NS.query) scratchpadInfo
-  scratchpadInfo = find ((name ==) . NS.name) scratchpads
+  -- :NOTE| ~[]~ because of ~X [NamedScratchpad]~
+  scratchpadInfo = find ((name ==) . NS.name) <$> myScratchpads
+  query = maybe (const $ return False) (runQuery . NS.query) <$> scratchpadInfo
 
 manageIfScratchPadIsDisplayed name =
   scratchPadIsDisplayed name >>= (`when` runScratchPadManageHookOnCurrent)
 
--- TODO: This doesnt work well with minimized windows
+-- :TODO| doScratchpad does not work well when minimized..
 doScratchpad name = do
-  maybeUnminimizeAfter $ deactivateFullAnd $ namedScratchpadAction scratchpads name
+  maybeUnminimizeAfter $
+    deactivateFullAnd $
+      namedScratchpadAction [] name
   manageIfScratchPadIsDisplayed name
 
--- Raise or spawn
 myRaiseNextMaybe =
   ((deactivateFullAnd . maybeUnminimizeAfter) .)
     . raiseNextMaybeCustomFocus greedyFocusWindow
@@ -818,7 +818,6 @@ bindBringAndRaise mask sym start query =
 bindBringAndRaiseMany :: [(KeyMask, KeySym, X (), Query Bool)] -> [((KeyMask, KeySym), X ())]
 bindBringAndRaiseMany = concatMap (\(a, b, c, d) -> bindBringAndRaise a b c d)
 
--- Screen shift
 shiftToNextScreen ws = case W.visible ws of
   W.Screen i _ _ : _ -> W.view (W.tag i) $ W.shift (W.tag i) ws
   _ -> ws
@@ -835,10 +834,9 @@ getNextScreen ws = minimumBy compareScreen candidates
     [] -> W.current ws : otherScreens -- Ensure a value will be selected
     _ -> largerId
 
-goToNextScreen ws =
-  if screenEq nScreen currScreen
-    then ws
-    else ws{W.current = nScreen, W.visible = currScreen : trimmedVisible}
+goToNextScreen ws
+  | screenEq nScreen currScreen = ws
+  | otherwise = ws{W.current = nScreen, W.visible = currScreen : trimmedVisible}
  where
   currScreen = W.current ws
   nScreen = getNextScreen ws
@@ -915,17 +913,18 @@ addKeys conf@XConfig{modMask = modm} =
        , ((hyper, xK_l), selectLayout)
        , -- ScratchPad(s)
          ((modalt, xK_b), doScratchpad "System Monitor")
+       , ((modalt, xK_d), doScratchpad "Discord")
+       , ((modalt, xK_k), doScratchpad "Matrix")
        , ((modalt, xK_h), doScratchpad "Telegram")
-       , ((modalt, xK_j), doScratchpad "Discord")
-       , ((modalt, xK_k), doScratchpad "MatrixClient")
-       , -- Rofi(s)
+       , -- :NOTE| Program-specific launches
+         -- Rofi(s)
          ((modm, xK_p), spawn "rofi -show power-menu")
        , ((modalt, xK_p), spawn "rofi -show drun")
        , ((modm .|. shiftMask, xK_p), spawn "rofi -show run")
        , ((hyper, xK_p), spawn "rofi-systemd")
-       , -- Specific program spawning
-         -- , ((modm .|. shiftMask, xK_x)   , spawn "whatever-lock") <- lockscreen when found!
-         -- , ((hyper, xK_q)                , spawn "rofi -show power") <- rofi power controls
+       , -- :NOTE| System-specific
+         -- , ((modm .|. shiftMask, xK_x),            spawn "whatever-lock") <- lockscreen when found!
+         -- , ((hyper, xK_q),                         spawn "rofi -show power") <- rofi power controls
 
          -- Playerctl
          ((modm, xK_Left), spawn "playerctl previous")
@@ -935,20 +934,20 @@ addKeys conf@XConfig{modMask = modm} =
          ((0, xF86XK_AudioRaiseVolume), spawn "volctl increase")
        , ((0, xF86XK_AudioLowerVolume), spawn "volctl decrease")
        , ((0, xF86XK_AudioMute), spawn "volctl toggle-mute")
-       , -- , ((hyper .|. shiftMask, xK_q)  , spawn "volctl --mute-winOther")
+       , -- , ((hyper .|. shiftMask, xK_q),     spawn "volctl --mute-winOther")
          ((0, xF86XK_AudioMicMute), spawn "micvol toggle-mute")
        , -- Brightness control
          ((0, xF86XK_MonBrightnessUp), spawn "brightctl increase -l 5")
        , ((0, xF86XK_MonBrightnessDown), spawn "brightctl decrease -l 5")
        , -- (Sc) current workspace
-         ((0, xK_Print), spawn "scrcapy system --workspace")
-       , ((controlMask, xK_Print), spawn "scrcapy clipboard -w")
+         ((0, xK_Print), spawn "captScr system --workspace")
+       , ((controlMask, xK_Print), spawn "captScr clipboard --workspace")
        , -- (Sc) active window
-         ((mod1Mask, xK_Print), spawn "scrcapy system --active-window")
-       , ((controlMask .|. mod1Mask, xK_Print), spawn "scrcapy clipboard --active-window")
+         ((mod1Mask, xK_Print), spawn "captScr system --active-window")
+       , ((controlMask .|. mod1Mask, xK_Print), spawn "captScr clipboard --active-window")
        , -- (Sc) selected area
-         ((shiftMask, xK_Print), spawn "scrcapy system --selection")
-       , ((controlMask .|. shiftMask, xK_Print), spawn "scrcapy clipboard --selection")
+         ((shiftMask, xK_Print), spawn "captScr system --selection")
+       , ((controlMask .|. shiftMask, xK_Print), spawn "captScr clipboard --selection")
        ]
     ++
     -- Replace moving bindings

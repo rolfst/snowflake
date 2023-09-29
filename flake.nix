@@ -24,14 +24,10 @@
     hyprland.url = "github:hyprwm/Hyprland";
 
     # Toolset ++ Application(s)
-    nvim-nightly = {
-      url = "github:nix-community/neovim-nightly-overlay";
-      inputs.nixpkgs.url = "github:nixos/nixpkgs";
-    };
     rust.url = "github:oxalica/rust-overlay";
 
     nvim-dir = {
-      url = "https://github.com/rolfst/nvim.git?rev=6f0c231f7a8fd271e3b2e3499e643feecfca9f51";
+      url = "https://github.com/rolfst/nvim.git?rev=b30a018b7effa2af07851db21dded489f86c0b0c";
       type = "git";
       submodules = true;
       flake = false;

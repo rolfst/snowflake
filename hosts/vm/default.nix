@@ -1,5 +1,5 @@
 { pkgs, config, lib, ... }: {
-  imports = [./hardware-configuration.nix];
+  # imports = [./hardware-configuration.nix];
 
   modules = {
     shell = {
@@ -46,21 +46,21 @@
       };
       education = {
       #   memory.enable = true;
-        vidcom.enable = true;
+        vidcom.enable = false;
       };
 
       toolset = {
         player = {
-          music.enable = true;
-          video.enable = true;
+          music.enable = false;
+          video.enable = false;
         };
         docView = {
-          zathura.enable = true;
-          sioyek.enable = true;
+          zathura.enable = false;
+          sioyek.enable = false;
         };
         social = {
-            base.enable = true;
-            element.withClient.enable = true;
+            base.enable = false;
+            element.withClient.enable = false;
         };
         keybase.enable = true;
       };

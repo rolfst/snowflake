@@ -11,7 +11,19 @@ let
 in {
   options.modules.desktop.extensions.mimeApps =
     let inherit (lib.options) mkEnableOption;
-    in { enable = mkEnableOption "default applications"; };
+    inherit (lib.types) str;
+    inherit (lib.my) mkOpt;
+    in {
+        enable = mkEnableOption "default applications";
+        defApps = {
+            docViewer = mkOpt str "org.pwmt.zathura.desktop";
+            editor = mkOpt str "emacsclient.desktop";
+            fileBrowser = mkOpt str "org.gnome.Nautilus.desktop";
+            imageViewer = mkOpt str "feh.desktop";
+            mediaPlayer = mkOpt str "mpv.desktop";
+            webBrowser = mkOpt str "firefox.desktop";
+        };
+    };
 
   config = mkIf cfg.enable {
     home.configFile."mimeapps.list".force = true;
@@ -19,19 +31,18 @@ in {
     hm.xdg.mimeApps = {
       enable = true;
       defaultApplications = let
-        defaultApps = {
-          audio = [ "mpv.desktop" ];
-          browser = [ "firefox.desktop" ];
-          # calendar = [ "org.gnome.Calendar.desktop" ];
-          compression = [ "org.gnome.Nautilus.desktop" ];
-          directory = [ "org.gnome.Nautilus.desktop" ];
-          image = [ "feh.desktop" ];
-          magnet = [ "transmission-gtk.desktop" ];
-          mail = [ "firefox.desktop" ]; # [ "org.gnome.Geary.desktop" ];
-          pdf = [ "org.pwmt.zathura.desktop" ];
-          text = [ "neovide.desktop" ];
-          telegram = [ "telegramdesktop.desktop" ];
-          video = [ "mpv.desktop" ];
+        defaultApps = let
+          inherit (cfg.defApps) docViewer editor fileBrowser imageViewer mediaPlayer webBrowser;
+        in {
+          audio = [mediaPlayer];
+          browser = [webBrowser];
+          compression = [fileBrowser];
+          directory = [fileBrowser];
+          image = [imageViewer];
+          mail = [editor];
+          pdf = [docViewer];
+          text = [editor];
+          video = [mediaPlayer];
         };
         mimeMap = {
           audio = [
@@ -87,10 +98,8 @@ in {
             "image/vnd.microsoft.icon"
             "image/webp"
           ];
-          magnet = [ "x-scheme-handler/magnet" ];
-          mail = [ "x-scheme-handler/mailto" ];
+          # mail = [ "x-scheme-handler/mailto" ];
           pdf = [ "application/pdf" ];
-          telegram = [ "x-scheme-handler/tg" ];
           text = [ "text/plain" ];
           video = [
             "video/mp2t"

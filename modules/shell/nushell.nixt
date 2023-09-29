@@ -5,11 +5,10 @@ let
   inherit (lib) mkIf getExe;
 in {
   config = mkIf (config.modules.shell.default == "nushell") {
-    modules.shell.usefulPkgs.enable = true;
+    modules.shell.corePkgs.enable = true;
 
     # Custom shell modules:
     modules.shell.macchina.enable = true;
-    modules.shell.xplr.enable = true;
 
     # Enable starship-rs:
     modules.shell.starship.enable = true;
@@ -450,7 +449,7 @@ in {
       # useBabelnushell = true;
 
       shellAliases = {
-        exa = "exa --group-directories-first";
+        eza = "eza --group-directories-first";
         less = "less -R";
       };
       # shellAbbrs = import "${config.snowflake.configDir}/shell-abbr";

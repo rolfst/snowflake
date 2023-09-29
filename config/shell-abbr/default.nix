@@ -1,10 +1,8 @@
 let
   main = {
-    ls = "exa -Slhg --icons";
-    lsa = "exa -Slhga --icons";
-    tree = "exa -SlhgT --icons";
-    emc = "emacsclient -c";
-    tmc = "emacsclient -t";
+    ls = "eza -Slhg --icons";
+    lsa = "eza -Slhga --icons";
+    tree = "eza -SlhgT --icons";
     usbStat = "watch rg -e Dirty: -e Writeback: /proc/meminfo";
     wget = "curl -O";
     # imgcat = "wezterm imgcat";

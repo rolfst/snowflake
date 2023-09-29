@@ -8,11 +8,10 @@ let
   cfg = config.modules.shell;
 in {
   config = mkIf (cfg.default == "zsh") {
-    modules.shell.usefulPkgs.enable = true;
+    modules.shell.corePkgs.enable = true;
 
     # Custom shell modules:
     modules.shell.macchina.enable = true;
-    modules.shell.xplr.enable = true;
 
     # Enable starship-rs:
     modules.shell.starship.enable = true;
@@ -35,7 +34,7 @@ in {
       enable = true;
       dotDir = ".config/zsh";
       autocd = true;
-      enableSyntaxHighlighting = true;
+      syntaxHighlighting.enable = true;
 
       history = {
         size = 10000;
@@ -44,8 +43,8 @@ in {
 
       historySubstringSearch = {
         enable = true;
-        searchUpKey = "^[OA";
-        searchDownKey = "^[OB";
+        # searchUpKey = "^[OA";
+        # searchDownKey = "^[OB";
       };
 
       enableCompletion = true;
@@ -156,7 +155,7 @@ in {
       '';
 
       shellAliases = {
-        exa = "exa --group-directories-first";
+        eza = "eza --group-directories-first";
         less = "less -R";
       };
 

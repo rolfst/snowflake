@@ -48,7 +48,8 @@ in {
       user.packages = attrValues {
         inherit (pkgs)
           hyperfine gucharmap qgnomeplatform # Qt -> GTK Theme
-          kalker ;
+          kalker 
+          ueberzugpp;
 
         kalker-launcher = pkgs.makeDesktopItem {
           name = "Kalker";

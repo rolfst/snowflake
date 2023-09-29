@@ -14,7 +14,7 @@ in {
       default = null;
       description = "Default system shell";
     };
-    usefulPkgs.enable = mkEnableOption "useful shell tools";
+    corePkgs.enable = mkEnableOption "core shell packages";
   };
 
   config = mkMerge [
@@ -22,7 +22,7 @@ in {
       users.defaultUserShell = pkgs."${cfg.default}";
     })
 
-    (mkIf cfg.usefulPkgs.enable {
+    (mkIf cfg.corePkgs.enable {
       modules.shell.btop.enable = true;
 
       hm.programs.direnv = {
@@ -32,10 +32,10 @@ in {
       };
 
       user.packages = attrValues ({
-        inherit (pkgs) any-nix-shell fzf pwgen yt-dlp csview ripdrag;
+        inherit (pkgs) any-nix-shell fzf pwgen yt-dlp csview ripdrag yazi;
 
         # GNU Alternatives
-        inherit (pkgs) bat exa fd zoxide;
+        inherit (pkgs) bat eza fd zoxide;
         rgFull = pkgs.ripgrep.override { withPCRE2 = true; };
       });
     })

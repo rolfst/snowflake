@@ -59,11 +59,10 @@ let
   ];
 in {
   config = mkIf (config.modules.shell.default == "xonsh") {
-    modules.shell.usefulPkgs.enable = true;
+    modules.shell.corePkgs.enable = true;
 
     # Custom shell modules:
     modules.shell.macchina.enable = true;
-    modules.shell.xplr.enable = true;
     modules.shell.starship.enable = true;
 
     programs.xonsh = {
@@ -96,7 +95,7 @@ in {
         xontrib load cmd_done direnv fzf-widgets hist_navigator output_search readable-traceback schedule
 
         # -------===[ Aliases & Abbreviations ]===------- #
-        aliases[exa] = "exa --group-directories-first"
+        aliases[eza] = "eza --group-directories-first"
         aliases[less] = "less -R"
 
         ${concatStrings (mapAttrsToList (k: v: ''
