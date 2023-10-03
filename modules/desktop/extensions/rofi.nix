@@ -1,7 +1,8 @@
 { options, config, lib, pkgs, ... }:
 
 let
-  inherit (lib) attrValues getExe;
+  inherit (lib) attrValues;
+  inherit (lib.meta) getExe;
   inherit (lib.modules) mkIf;
 
   cfg = config.modules.desktop.extensions.rofi;
@@ -27,7 +28,7 @@ in {
       plugins = attrValues ({ inherit (pkgs) rofi-emoji rofi-power-menu; });
 
       extraConfig = {
-        terminal = "${getExe config.modules.desktop.terminal.default}";
+        terminal = "${config.modules.desktop.terminal.default}";
         disable-history = false;
         show-icons = true;
         sidebar-mode = false;
