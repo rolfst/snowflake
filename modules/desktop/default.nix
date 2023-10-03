@@ -1,6 +1,10 @@
-{ config, options, lib, pkgs, ... }:
-
-let
+{
+  config,
+  options,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (builtins) isAttrs;
   inherit (lib) attrValues mkIf mkMerge mkOption;
   inherit (lib.types) nullOr enum;
@@ -24,11 +28,15 @@ in {
           message = "Prevent DE/WM > 1 from being enabled.";
         }
         {
-          assertion = let srv = config.services;
-          in srv.xserver.enable || srv.sway.enable || !(anyAttrs
-              (n: v: isAttrs v && anyAttrs (n: v: isAttrs v && v.enable)) cfg);
-          message =
-            "Prevent desktop applications from enabling without a DE/WM.";
+          assertion = let
+            srv = config.services;
+          in
+            srv.xserver.enable
+            || srv.sway.enable
+            || !(anyAttrs
+              (n: v: isAttrs v && anyAttrs (n: v: isAttrs v && v.enable))
+              cfg);
+          message = "Prevent desktop applications from enabling without a DE/WM.";
         }
       ];
 
@@ -46,10 +54,14 @@ in {
       '';
 
       user.packages = attrValues {
-        inherit (pkgs)
-          hyperfine gucharmap qgnomeplatform # Qt -> GTK Theme
-          kalker 
-          ueberzugpp;
+        inherit
+          (pkgs)
+          hyperfine
+          gucharmap
+          qgnomeplatform # Qt -> GTK Theme
+          kalker
+          ueberzugpp
+          ;
 
         kalker-launcher = pkgs.makeDesktopItem {
           name = "Kalker";
