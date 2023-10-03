@@ -97,12 +97,16 @@ in {
     (mkIf (cfg.envProto == "x11") {
       services.xserver = {
         enable = true;
+        displayManager = {
+          autoLogin.enable = true;
+          autoLogin.user = config.user.name;
+        };
         displayManager.lightdm = {
           enable = true;
-          greeters.mini = {
-            enable = true;
-            user = config.user.name;
-          };
+          # greeters.mini = {
+          #   enable = true;
+          #   user = config.user.name;
+          # };
         };
         resolutions = [
           {
