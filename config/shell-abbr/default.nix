@@ -10,8 +10,7 @@ let
     # Nix
     nb = "nix-build -E 'with import <nixpkgs> {}; callPackage ./. {}'";
     np = "nix-shell -p";
-    nls =
-      "nix-store --query --requisites /run/current-system | cut -d- -f2- | sort | uniq";
+    nls = "nix-store --query --requisites /run/current-system | cut -d- -f2- | sort | uniq";
     nfl = "nix flake lock --update-input";
 
     # Sys-Management
@@ -48,18 +47,19 @@ let
 
     # (Git) commit
     gc = "git commit -v";
-    "gc!" = "git commit -v --agmend";
-    gca = "git commit -v -ag";
-    "gca!" = "git commit -v -ag --agmend";
-    gcam = "git commit -ag -m";
-    "gcan!" = "git commit -v -ag --no-edit --agmend";
-    gcav = "git commit -ag -v --no-verify";
-    "gcav!" = "git commit -ag -v --no-verify --agmend";
+    "gc!" = "git commit -v --amend";
+    gca = "git commit -v -a";
+    "gca!" = "git commit -v -a --amend";
+    gcam = "git commit -a -m";
+    gcan = "git commit --amend --no-edit";
+    "gcan!" = "git commit -v -a --no-edit --amend";
+    gcav = "git commit -a -v --no-verify";
+    "gcav!" = "git commit -a -v --no-verify --amend";
     gcfx = "git commit --fixup";
     gcm = "git commit -m";
     "gcn!" = "git commit -v --no-edit --agmend";
     gcv = "git commit -v --no-verify";
-    gscam = "it commit -S -ag -m";
+    gscam = "git commit -S -a -m";
 
     # (Git) config
     gcf = "git config --list";
@@ -101,8 +101,7 @@ let
     glgga = "git log --graph --decorate --agll";
     glo = "git log --oneline --decorate --color";
     glog = "git log --oneline --decorate --color --graph";
-    gloo =
-      "git log --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s' --date=short";
+    gloo = "git log --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s' --date=short";
 
     # (Git) push / merge
     gm = "git merge";
@@ -172,5 +171,5 @@ let
     gco = "git checkout";
     gcb = "git checkout -b";
   };
-
-in main // git
+in
+  main // git
