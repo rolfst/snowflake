@@ -65,7 +65,7 @@ in {
   # Some reasonable, global defaults
   ## This is here to appease 'nix flake check' for generic hosts with no
   ## hardware-configuration.nix or fileSystem config.
-  fileSystems."/".device = mkDefault "/dev/disk/by-label/nixos";
+  fileSystems."/".device = mkDefault "/dev/disk/by-uuid/238f6eb4-b155-499e-b75a-2f1d233797ed";
 
   boot = {
     kernelPackages = mkDefault pkgs.linuxPackages_latest;
