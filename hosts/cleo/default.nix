@@ -60,6 +60,7 @@
 
       distraction = {
         steam.enable = true;
+        steam.hardware.enable = true;
         youtube.enable = true;
       };
 
