@@ -54,7 +54,6 @@ in {
           inherit
             (pkgs.ibus-engines)
             libpinyin
-            typing-booster
             ;
         };
       };
