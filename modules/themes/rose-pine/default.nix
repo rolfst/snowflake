@@ -1,6 +1,10 @@
-{ options, config, lib, pkgs, ... }:
-
-let
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (builtins) toString readFile;
   inherit (lib) attrValues concatMapStringsSep mkDefault mkIf mkMerge;
 
@@ -28,11 +32,11 @@ in {
         };
 
         fontConfig = {
-          packages = attrValues ({
+          packages = attrValues {
             inherit (pkgs) cascadia-code noto-fonts-emoji sarasa-gothic;
             nerdfonts =
-              pkgs.nerdfonts.override { fonts = [ "Arimo" "FiraCode" ]; };
-          });
+              pkgs.nerdfonts.override {fonts = ["Arimo" "FiraCode"];};
+          };
           sans = ["FiraCode Nerd Font" "Cascadia Code" "Sarasa Mono SC"];
           mono = ["FiraCode Nerd Font Mono" "Sarasa Gothic SC"];
           emoji = ["Noto Color Emoji"];
@@ -45,21 +49,21 @@ in {
 
         symbols = {
           characters = {
-             vicmd = "";
-             github = " ";
-             folder = " ";
-             duration = " ";
-             battery = "🔋";
-             charging = "⚡️";
-             discharging = "💀";
-           };
-           decorators = {
-             left_separator = "";
-             right_separator = "";
-             error = "";
-             success = "";
-             warning = "";
-           };
+            vicmd = "";
+            github = " ";
+            folder = " ";
+            duration = " ";
+            battery = "🔋";
+            charging = "⚡️";
+            discharging = "💀";
+          };
+          decorators = {
+            left_separator = "";
+            right_separator = "";
+            error = "";
+            success = "";
+            warning = "";
+          };
         };
         colors = {
           main = {
@@ -95,22 +99,22 @@ in {
 
           rofi = {
             colors = {
-                bg = "hsla(249, 22%, 12%, 1)";
-                cur = "hsla(247, 23%, 15%, 1)";
-                fgd = "hsla(245, 50%, 91%, 1)";
-                cmt = "hsla(249, 12%, 47%, 1)";
-                cya = "hsla(189, 43%, 73%, 1)";
-                grn = "hsla(197, 49%, 38%, 1)";
-                ora = "hsla(2, 55%, 83%, 1)";
-                pur = "hsla(267, 57%, 78%, 1)";
-                red = "hsla(343, 76%, 68%, 1)";
-                yel = "hsla(35, 88%, 72%, 1)";
-                };
+              bg = "hsla(249, 22%, 12%, 1)";
+              cur = "hsla(247, 23%, 15%, 1)";
+              fgd = "hsla(245, 50%, 91%, 1)";
+              cmt = "hsla(249, 12%, 47%, 1)";
+              cya = "hsla(189, 43%, 73%, 1)";
+              grn = "hsla(197, 49%, 38%, 1)";
+              ora = "hsla(2, 55%, 83%, 1)";
+              pur = "hsla(267, 57%, 78%, 1)";
+              red = "hsla(343, 76%, 68%, 1)";
+              yel = "hsla(35, 88%, 72%, 1)";
+            };
             bg = {
               main = "hsla(249, 22%, 12%, 1)";
               alt = "hsla(247, 23%, 15%, 0)";
               bar = "hsla(248, 25%, 18%, 1)";
-            }; 	
+            };
             fg = "hsla(245, 52%, 91%, 1)";
             ribbon = {
               outer = "hsla(188, 68%, 27%, 1)";
@@ -169,8 +173,9 @@ in {
       hm.programs.rofi = {
         extraConfig = {
           icon-theme = let inherit (cfg.iconTheme) name; in "${name}";
-          font = let inherit (cfg.font.sans) family weight size;
-          in "${family} ${weight} ${toString (size)}";
+          font = let
+            inherit (cfg.font.sans) family weight size;
+          in "${family} ${weight} ${toString size}";
         };
 
         theme = let
@@ -311,25 +316,37 @@ in {
         };
       };
 
-      hm.programs.sioyek.config =
-        let inherit (cfg.font) mono sans;
-        in {
-          "custom_background_color " = "0.10 0.11 0.15";
-          "custom_text_color " = "0.75 0.79 0.96";
+      hm.programs.sioyek.config = let
+        inherit (cfg.font) mono sans;
+      in {
+        "custom_background_color " = "0.10 0.11 0.15";
+        "custom_text_color " = "0.75 0.79 0.96";
 
-          "text_highlight_color" = "0.24 0.35 0.63";
-          "visual_mark_color" = "1.00 0.62 0.39 1.0";
-          "search_highlight_color" = "0.97 0.46 0.56";
-          "link_highlight_color" = "0.48 0.64 0.97";
-          "synctex_highlight_color" = "0.62 0.81 0.42";
+        "text_highlight_color" = "0.24 0.35 0.63";
+        "visual_mark_color" = "1.00 0.62 0.39 1.0";
+        "search_highlight_color" = "0.97 0.46 0.56";
+        "link_highlight_color" = "0.48 0.64 0.97";
+        "synctex_highlight_color" = "0.62 0.81 0.42";
 
-          "page_separator_width" = "2";
-          "page_separator_color" = "0.81 0.79 0.76";
-          "status_bar_color" = "0.34 0.37 0.54";
+        "page_separator_width" = "2";
+        "page_separator_color" = "0.81 0.79 0.76";
+        "status_bar_color" = "0.34 0.37 0.54";
 
-          "font_size" = "${toString (sans.size)}";
-          "ui_font" = "${mono.family} ${mono.weight}";
-        };
+        "font_size" = "${toString (sans.size)}";
+        "ui_font" = "${mono.family} ${mono.weight}";
+      };
+    })
+    (mkIf (config.modules.desktop.envProto == "x11") {
+      services.xserver.displayManager = {
+        lightdm.greeters.mini.extraConfig = let
+          inherit (cfg.colors.main) normal types;
+        in ''
+          text-color = "${types.bg}"
+          password-background-color = "${normal.black}"
+          window-color = "${types.border}"
+          border-color = "${types.border}"
+        '';
+      };
     })
   ]);
 }
