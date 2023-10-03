@@ -160,24 +160,23 @@ in {
       };
 
       plugins = let
-        mkPlugin = name: {
-          inherit name;
-          inherit (pkgs."zsh-${name}") src;
-        };
-      in [{
-        name = "zsh-abbr";
-        src = pkgs.fetchFromGitHub {
-          owner = "olets";
-          repo = "zsh-abbr";
-          rev = "v4.9.1";
-          hash = "sha256-pVhhViYa5bsFDp66m2sTrnnzfXvcZw6qqQKWRLDXK/Y=";
-        };
-      }] ++ (map (p: mkPlugin p) [
-        "autopair"
-        "nix-shell"
-        "vi-mode"
-        "you-should-use"
-      ]);
+        mkZshPlugin = {
+	  pkg,
+          file ? "${pkg.pname}.plugin.zsh",
+        }: {
+	  name = pkg.pname;
+	  src = pkg.src;
+	  inherit file;
+	};
+      in with pkgs; [
+        (mkZshPlugin {pkg = zsh-abbr;})
+        (mkZshPlugin {pkg = zsh-autopair;})
+        (mkZshPlugin {pkg = zsh-vi-mode;})
+        (mkZshPlugin {pkg = zsh-you-should-use;})
+        (mkZshPlugin {pkg = zsh-nix-shell;
+	  file = "nix-shell.plugin.zsh";
+	})
+      ];
     };
 
     home.configFile = {
