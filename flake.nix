@@ -34,8 +34,12 @@
     };
   };
 
-  outputs = inputs @ { self, nixpkgs, nixpkgs-unstable, ... }:
-  let
+  outputs = inputs @ {
+    self,
+    nixpkgs,
+    nixpkgs-unstable,
+    ...
+  }: let
     inherit (lib.my) mapModules mapModulesRec mapHosts;
     system = "x86_64-linux";
 
@@ -57,7 +61,9 @@
   in {
     lib = lib.my;
 
-    overlays = (mapModules ./overlays import) // {
+    overlays =
+      (mapModules ./overlays import)
+      // {
         default = final: prev: {
           unstable = pkgs';
           my = self.packages.${system};
@@ -66,18 +72,25 @@
 
     packages."${system}" = mapModules ./packages (p: pkgs.callPackage p {});
 
-    nixosModules = {
+    nixosModules =
+      {
         snowflake = import ./.;
-      } // mapModulesRec ./modules import;
+      }
+      // mapModulesRec ./modules import;
 
     nixosConfigurations = mapHosts ./hosts {};
 
-    devShells."${system}".default = import ./shell.nix {inherit pkgs;};
+    devShells."${system}".default = import ./shell.nix {
+      inherit pkgs;
+      inherit lib;
+    };
 
-    templates.full = {
+    templates.full =
+      {
         path = ./.;
         description = "λ well-tailored and configureable NixOS system!";
-      } // import ./templates;
+      }
+      // import ./templates;
 
     templates.default = self.templates.full;
 
