@@ -46,7 +46,8 @@
       };
       browsers = {
         default = "firefox";
-        ungoogled.enable = true;
+        ungoogled.enable = false;
+        # google.enable = true;
         firefox.enable = true;
       };
       extensions = {
@@ -55,6 +56,11 @@
       education = {
         #   memory.enable = true;
         vidcom.enable = false;
+      };
+
+      distraction = {
+        steam.enable = true;
+        youtube.enable = true;
       };
 
       toolset = {

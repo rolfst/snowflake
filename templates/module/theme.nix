@@ -133,10 +133,10 @@ in {
     # })
 
     (mkIf config.services.xserver.enable {
-      fonts.fonts = attrValues ({
+      fonts.packages = attrValues {
         inherit (pkgs) noto-fonts-emoji;
         font = cfg.font.package;
-      });
+      };
 
       hm.programs.rofi = {
         extraConfig = let

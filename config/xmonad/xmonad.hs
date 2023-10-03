@@ -120,7 +120,7 @@ myConfig =
     , handleEventHook =
         followIfNoMagicFocus
           <> minimizeEventHook
-          -- <> restartEventHook
+          <> restartEventHook
           <> myScratchPadEventHook
     , startupHook = myStartup
     , keys = customKeys (const []) addKeys
@@ -160,16 +160,16 @@ writeToHomeDirLog stuff = io $ getLogFile >>= flip appendFile (stuff ++ "\n")
 logWindowSet message =
   withWindowSet $ \ws -> writeToHomeDirLog $ printf "%s -- " message $ show ws
 
-(<..>) :: Functor f => (a -> b) -> f (f a) -> f (f b)
+(<..>) :: (Functor f) => (a -> b) -> f (f a) -> f (f b)
 (<..>) = fmap . fmap
 
-forkM :: Monad m => (i -> m a) -> (i -> m b) -> i -> m (a, b)
+forkM :: (Monad m) => (i -> m a) -> (i -> m b) -> i -> m (a, b)
 forkM a b = sequenceT . (a A.&&& b)
 
-tee :: Monad m => (i -> m a) -> (i -> m b) -> i -> m a
+tee :: (Monad m) => (i -> m a) -> (i -> m b) -> i -> m a
 tee = (fmap . fmap . fmap) (fmap fst) forkM
 
-(>>=/) :: Monad m => m a -> (a -> m b) -> m a
+(>>=/) :: (Monad m) => m a -> (a -> m b) -> m a
 (>>=/) a = (a >>=) . tee return
 
 findM :: (Monad m) => (a -> m (Maybe b)) -> [a] -> m (Maybe b)
@@ -184,20 +184,20 @@ ifL a b c = if' c a b
 
 infixl 4 <$$>
 
-(<$$>) :: Functor f => f (a -> b) -> a -> f b
+(<$$>) :: (Functor f) => f (a -> b) -> a -> f b
 functor <$$> value = ($ value) <$> functor
 
-toggleInMap' :: Ord k => Bool -> k -> M.Map k Bool -> M.Map k Bool
+toggleInMap' :: (Ord k) => Bool -> k -> M.Map k Bool -> M.Map k Bool
 toggleInMap' d k m =
   let existingValue = M.findWithDefault d k m
    in M.insert k (not existingValue) m
 
-toggleInMap :: Ord k => k -> M.Map k Bool -> M.Map k Bool
+toggleInMap :: (Ord k) => k -> M.Map k Bool -> M.Map k Bool
 toggleInMap = toggleInMap' True
 
 maybeRemap k = M.findWithDefault k k
 
-(<$.>) :: Functor f => (b -> c) -> (a -> f b) -> a -> f c
+(<$.>) :: (Functor f) => (b -> c) -> (a -> f b) -> a -> f c
 (<$.>) l r = fmap l . r
 
 withFocusedR f = withWindowSet (f . W.peek)
@@ -324,7 +324,7 @@ toggleHandlers =
 instance Eq (Toggle Window) where
   (Toggle v) == v2 = Just v == fromToggle v2
 
-fromToggle :: forall t. Typeable t => Toggle Window -> Maybe t
+fromToggle :: forall t. (Typeable t) => Toggle Window -> Maybe t
 fromToggle (Toggle v)
   | typeOf v == typeRep (Proxy :: Proxy t) = Just $ unsafeCoerce v
   | otherwise = Nothing
@@ -490,7 +490,7 @@ myDecorateName ws w = do
       entryString = printf "%-20s%-40s %+30s in %s \0icon\x1f%s" classTitle (take 40 name) " " (fromMaybe "" $ workspaceToName (W.tag ws)) iconName
   return entryString
 
-menuIndexArgs :: MonadIO m => String -> [String] -> [(String, a)] -> m (Maybe a)
+menuIndexArgs :: (MonadIO m) => String -> [String] -> [(String, a)] -> m (Maybe a)
 menuIndexArgs menuCmd args selectionPairs = do
   selection <- menuFunction (map fst selectionPairs)
   pure $ snd <$> (readMay selection >>= atMay selectionPairs)
@@ -744,11 +744,6 @@ myScratchpads = do
         >-> (toInput $ " start --class " <> sysMonID)
         >-> execute "btop"
   -- \| E-Mail session managed by Emacs, because why not? :P
-  mailSession <-
-    getInput $
-      inEditor
-        >-> setFrameName mailSessionID
-        >-> eval (elispFun "notmuch")
   telegramClient <-
     getInput $
       inEditor
@@ -756,12 +751,10 @@ myScratchpads = do
         >-> eval (elispFun "telega")
   pure
     [ NS "Discord" "discordcanary" (className =? "discord") nearFullFloat
-    , NS "Mail" mailSession (title =? mailSessionID) floatCenter
-    , NS "System Monitor" btopLaunch (className =? sysMonID) nearFullFloat
+    , NS "System Monitor" btopLaunch (appName =? sysMonID) floatCenter
     , NS "Telegram" "telegramClient" (title =? "telegramSessionID") nearFullFloat
     ]
  where
-  mailSessionID = "notmuch-scratch"
   sysMonID = "system-monitor"
   telegramSessionID = "telega-scratch"
   nearFullFloat = customFloating $ W.RationalRect 0.02 0.02 0.95 0.95
@@ -877,7 +870,7 @@ addKeys conf@XConfig{modMask = modm} =
 
     -- Specific program spawning
     ++ bindBringAndRaiseMany
-      [ (modalt, xK_g, spawn "chromium", chromiumSelector)
+      [ (modalt, xK_g, spawn "google-chrome", chromiumSelector)
       , (modalt, xK_f, spawn "firefox", firefoxSelector)
       ]
     -- Window manipulation
@@ -914,6 +907,7 @@ addKeys conf@XConfig{modMask = modm} =
        , -- ScratchPad(s)
          ((modalt, xK_b), doScratchpad "System Monitor")
        , ((modalt, xK_d), doScratchpad "Discord")
+       , ((modalt, xK_s), doScratchpad "slack")
        , ((modalt, xK_k), doScratchpad "Matrix")
        , ((modalt, xK_h), doScratchpad "Telegram")
        , -- :NOTE| Program-specific launches
