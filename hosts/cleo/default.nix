@@ -11,8 +11,10 @@
       default = "zsh";
       git.enable = true;
       gnupg.enable = true;
+      android.enable = false;
+      tmux.enable = true;
     };
-
+    hardware.xkbLayout = { hyperCtrl.enable = true; };
     networking = {
       networkManager.enable = true;
     };
@@ -20,41 +22,57 @@
     services = {ssh.enable = true;};
 
     develop = {
-      dart.enable = false;
+      node.enable = true;
       haskell.enable = true;
       python.enable = true;
       rust.enable = true;
+      lua.enable = true;
     };
 
-    themes.active = "tokyonight";
+    # virtualize = {
+    #   enable = true;
+    # };
+    themes.active = "rose-pine";
 
     desktop = {
       xmonad.enable = true;
       terminal = {
         default = "kitty";
-        alacritty.enable = true;
+        kitty.enable = true;
       };
       editors = {
         default = "nvim";
-        emacs.irkalla.enable = true;
-        neovim.agasaya.enable = true;
+        neovim.rolfst.enable = true;
       };
       browsers = {
-        default = "firefox-devedition";
+        default = "firefox";
         ungoogled.enable = true;
         firefox.enable = true;
       };
-      education = {
-        memory.enable = true;
-        vidcom.enable = true;
+      extensions = {
+        keybase.enable = true; # the gui
       };
+      education = {
+      #   memory.enable = true;
+        vidcom.enable = false;
+      };
+
       toolset = {
         player = {
-          music.enable = true;
-          video.enable = true;
+          music.enable = false;
+          video.enable = false;
         };
-        social.base.enable = true;
+        docView = {
+          zathura.enable = false;
+          sioyek.enable = false;
+        };
+        social = {
+            base.enable = false;
+            discord.enable = false;
+        };
+        keybase.enable = true;
       };
+      
     };
   };
 }
