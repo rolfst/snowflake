@@ -1,13 +1,15 @@
-{ inputs, lib, pkgs, ... }:
+{ inputs, lib, pkgs, self, ... }:
 
 let
+  inherit (inputs.nixpkgs.lib) nixosSystem;
   inherit (builtins) baseNameOf elem;
-  inherit (lib) filterAttrs mkDefault nixosSystem removeSuffix;
-  inherit (lib.my) mapModules mkHost;
+  inherit (lib.attrsets) filterAttrs;
+  inherit (lib.strings) removeSuffix;
+  inherit (lib.modules) mkDefault;
+  inherit (self.modules) mapModules mkHost;
 
-in {
-  mkHost = path:
-    attrs@{ system ? "x86_64-linux", ... }:
+in rec {
+  mkHost = path: attrs@{ system ? "x86_64-linux", ... }:
     nixosSystem {
       inherit system;
 

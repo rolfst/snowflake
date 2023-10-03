@@ -2,8 +2,9 @@
 
 let
   inherit (builtins) attrValues readDir pathExists concatLists;
-  inherit (lib) id mapAttrsToList filterAttrs nameValuePair;
+  inherit (lib.attrsets) mapAttrsToList filterAttrs nameValuePair;
   inherit (lib.strings) hasPrefix hasSuffix removeSuffix;
+  inherit (lib.trivial) id;
   inherit (self.attrs) mapFilterAttrs;
 
 in rec {
