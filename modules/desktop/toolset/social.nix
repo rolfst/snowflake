@@ -22,27 +22,27 @@ in {
       // {
         default = cfg.base.enable;
       };
-    matrix = {
-      withDaemon = {
-        enable =
-          mkEnableOption "matrix daemon for ement.el"
-          // {
-            default = config.modules.desktop.editors.emacs.enable && !cfg.matrix.withClient.enable;
-          };
-      };
-      withClient = {
-        enable =
-          mkEnableOption "rust-based matrix client"
-          // {
-            default = cfg.base.enable && !cfg.matrix.withDaemon.enable;
-          };
-        package = mkOption {
-          type = nullOr (enum ["element" "fractal"]);
-          default = "element";
-          description = "What display protocol to use.";
-        };
-      };
-    };
+    # matrix = {
+    #   withDaemon = {
+    #     enable =
+    #       mkEnableOption "matrix daemon for ement.el"
+    #       // {
+    #         default = !cfg.matrix.withClient.enable;
+    #       };
+    #   };
+    #   withClient = {
+    #     enable =
+    #       mkEnableOption "rust-based matrix client"
+    #       // {
+    #         default = cfg.base.enable && !cfg.matrix.withDaemon.enable;
+    #       };
+    #     package = mkOption {
+    #       type = nullOr (enum ["element" "fractal"]);
+    #       default = "element";
+    #       description = "What display protocol to use.";
+    #     };
+    #   };
+    # };
   };
 
   config = mkMerge [
@@ -50,56 +50,56 @@ in {
       user.packages = attrValues {inherit (pkgs) signal-desktop tdesktop;};
     })
 
-    (mkIf cfg.matrix.withDaemon.enable {
-      hm.nixpkgs.overlays = [
-        (final: prev: {
-          pantalaimon = prev.pantalaimon.overrideAttrs (old: {
-            version = "0.10.5-dev";
-            src = final.fetchFromGitHub {
-              owner = "matrix-org";
-              repo = old.pname;
-              rev = "3968c69aa846889970df1372ba9aa54c1c5e4290";
-              sha256 = "sha256-JdoJB68QtxPhFeZCHd+0ZOlUDbQV3HeBsxW0KbhnDSs=";
-            };
-          });
-        })
-      ];
+    # (mkIf cfg.matrix.withDaemon.enable {
+    #   hm.nixpkgs.overlays = [
+    #     (final: prev: {
+    #       pantalaimon = prev.pantalaimon.overrideAttrs (old: {
+    #         version = "0.10.5-dev";
+    #         src = final.fetchFromGitHub {
+    #           owner = "matrix-org";
+    #           repo = old.pname;
+    #           rev = "3968c69aa846889970df1372ba9aa54c1c5e4290";
+    #           sha256 = "sha256-JdoJB68QtxPhFeZCHd+0ZOlUDbQV3HeBsxW0KbhnDSs=";
+    #         };
+    #       });
+    #     })
+    #   ];
 
-      hm.services.pantalaimon = {
-        enable = true;
-        settings = {
-          Default = {
-            LogLevel = "Debug";
-            SSL = true;
-          };
-          local-matrix = {
-            Homeserver = "https://matrix.org";
-            ListenAddress = "localhost";
-            ListenPort = 8009;
-            IgnoreVerification = true;
-            UseKeyring = false;
-          };
-        };
-      };
-    })
+    #   hm.services.pantalaimon = {
+    #     enable = true;
+    #     settings = {
+    #       Default = {
+    #         LogLevel = "Debug";
+    #         SSL = true;
+    #       };
+    #       local-matrix = {
+    #         Homeserver = "https://matrix.org";
+    #         ListenAddress = "localhost";
+    #         ListenPort = 8009;
+    #         IgnoreVerification = true;
+    #         UseKeyring = false;
+    #       };
+    #     };
+    #   };
+    # })
 
-    (mkIf cfg.matrix.withClient.enable {
-      user.packages = let
-        inherit (pkgs) makeWrapper symlinkJoin element-desktop;
-        element-desktop' = symlinkJoin {
-          name = "element-desktop-in-dataHome";
-          paths = [element-desktop];
-          nativeBuildInputs = [makeWrapper];
-          postBuild = ''
-            wrapProgram "$out/bin/element-desktop" \
-              --add-flags '--profile-dir $XDG_DATA_HOME/Element'
-          '';
-        };
-      in
-        if (cfg.matrix.withClient.package == "element")
-        then [element-desktop']
-        else [pkgs.fractal-next];
-    })
+    # (mkIf cfg.matrix.withClient.enable {
+    #   user.packages = let
+    #     inherit (pkgs) makeWrapper symlinkJoin element-desktop;
+    #     element-desktop' = symlinkJoin {
+    #       name = "element-desktop-in-dataHome";
+    #       paths = [element-desktop];
+    #       nativeBuildInputs = [makeWrapper];
+    #       postBuild = ''
+    #         wrapProgram "$out/bin/element-desktop" \
+    #           --add-flags '--profile-dir $XDG_DATA_HOME/Element'
+    #       '';
+    #     };
+    #   in
+    #     if (cfg.matrix.withClient.package == "element")
+    #     then [element-desktop']
+    #     else [pkgs.fractal-next];
+    # })
 
     (mkIf cfg.discord.enable {
       home.configFile.openSAR-settings = {
