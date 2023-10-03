@@ -747,7 +747,7 @@ myScratchpads = do
   mailSession <-
     getInput $
       inEditor
-        >-> setFrameName mailInst
+        >-> setFrameName mailSessionID
         >-> eval (elispFun "notmuch")
   telegramClient <-
     getInput $
