@@ -14,7 +14,7 @@
       android.enable = false;
       tmux.enable = true;
     };
-    hardware.xkbLayout = { hyperCtrl.enable = true; };
+    hardware.xkbLayout = {hyperCtrl.enable = true;};
     networking = {
       networkManager.enable = true;
     };
@@ -53,7 +53,7 @@
         keybase.enable = true; # the gui
       };
       education = {
-      #   memory.enable = true;
+        #   memory.enable = true;
         vidcom.enable = false;
       };
 
@@ -67,12 +67,12 @@
           sioyek.enable = false;
         };
         social = {
-            base.enable = false;
-            discord.enable = false;
+          base.enable = true;
+          discord.enable = false;
+          slack.enable = true;
         };
         keybase.enable = true;
       };
-      
     };
   };
 }

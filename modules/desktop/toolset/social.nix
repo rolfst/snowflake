@@ -22,6 +22,7 @@ in {
       // {
         default = cfg.base.enable;
       };
+    slack.enable = mkEnableOption "slack client";
     # matrix = {
     #   withDaemon = {
     #     enable =
@@ -48,6 +49,9 @@ in {
   config = mkMerge [
     (mkIf cfg.base.enable {
       user.packages = attrValues {inherit (pkgs) signal-desktop tdesktop;};
+    })
+    (mkIf cfg.slack.enable {
+      user.packages = attrValues {inherit (pkgs) slack;};
     })
 
     # (mkIf cfg.matrix.withDaemon.enable {
