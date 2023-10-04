@@ -14,7 +14,13 @@
       android.enable = false;
       tmux.enable = true;
     };
-    hardware.xkbLayout = {hyperCtrl.enable = true;};
+    hardware = {
+      xkbLayout = {
+        hyperCtrl.enable = true;
+      };
+      printer.enable = true;
+      bluetooth.enable = true;
+    };
     networking = {
       networkManager.enable = true;
     };
