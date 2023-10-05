@@ -232,9 +232,11 @@ isChromiumClass = isInfixOf "Chromium"
 
 chromiumSelectorBase = isChromiumClass <$> className
 
-chromiumSelector = className =? "chromium-browser" <&&> appName =? "Chromium"
+chromiumSelector = className =? "google-chrome" -- <&&> appName =? "google-chrome"
 
 firefoxSelector = className =? "firefox-aurora" <&&> appName =? "Navigator"
+
+thunarSelector = className =? "Thunar" <&&> appName =? "Thunar"
 
 protonMailSelector = chromiumSelectorBase
 
@@ -752,10 +754,12 @@ myScratchpads = do
   pure
     [ NS "Discord" "discordcanary" (className =? "discord") nearFullFloat
     , NS "System Monitor" btopLaunch (appName =? sysMonID) floatCenter
-    , NS "Telegram" "telegramClient" (title =? "telegramSessionID") nearFullFloat
+    , NS "Slack" "slack" (className =? "slack") nearFullFloat
+    , NS "Youtube Music" "youtube-music" (className =? "youtube music") nearFullFloat
+    , NS "Telegram" telegramClient (title =? telegramSessionID) nearFullFloat
     ]
  where
-  sysMonID = "system-monitor"
+  sysMonID = "System Monitor"
   telegramSessionID = "telega-scratch"
   nearFullFloat = customFloating $ W.RationalRect 0.02 0.02 0.95 0.95
 
@@ -870,8 +874,9 @@ addKeys conf@XConfig{modMask = modm} =
 
     -- Specific program spawning
     ++ bindBringAndRaiseMany
-      [ (modalt, xK_g, spawn "google-chrome", chromiumSelector)
+      [ (modalt, xK_g, spawn "google-chrome-stable", chromiumSelector)
       , (modalt, xK_f, spawn "firefox", firefoxSelector)
+      , (modalt, xK_e, spawn "thunar", thunarSelector)
       ]
     -- Window manipulation
     ++ [ ((modm, xK_g), myGoToWindow)
@@ -907,7 +912,7 @@ addKeys conf@XConfig{modMask = modm} =
        , -- ScratchPad(s)
          ((modalt, xK_b), doScratchpad "System Monitor")
        , ((modalt, xK_d), doScratchpad "Discord")
-       , ((modalt, xK_s), doScratchpad "slack")
+       , ((modalt, xK_s), doScratchpad "Slack")
        , ((modalt, xK_k), doScratchpad "Matrix")
        , ((modalt, xK_h), doScratchpad "Telegram")
        , -- :NOTE| Program-specific launches
