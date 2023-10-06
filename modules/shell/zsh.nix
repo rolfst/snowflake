@@ -148,7 +148,7 @@ in {
         bindkey "^[[1;5D" backward-word                 # Ctrl-<L-arrow> -> move back 1 word
         bindkey '^[[Z' reverse-menu-complete            # Shift-Tab -> reverse menu navigation
         bindkey '^/' autosuggest-accept                 # C-/ => accept suggestion
-        bindkey '^t' tsession
+        bindkey -s '^t' 'tsession\n'
 
         # -------===[ Useful Functions ]===------- #
         function sysdate {
