@@ -76,12 +76,12 @@
           video.enable = false;
         };
         docView = {
-          zathura.enable = false;
+          zathura.enable = true;
           sioyek.enable = false;
         };
         social = {
           base.enable = true;
-          discord.enable = false;
+          discord.enable = true;
           slack.enable = true;
         };
         keybase.enable = true;
