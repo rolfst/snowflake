@@ -1,23 +1,26 @@
-{ options, config, lib, pkgs, ... }:
-
-let
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (lib.attrsets) attrValues optionalAttrs;
   inherit (lib.modules) mkIf mkMerge;
 
   cfg = config.modules.desktop.toolset.fileManager;
 in {
-  options.modules.desktop.toolset.fileManager =
-    let
-        inherit (lib.options) mkEnableOption mkOption;
-        inherit (lib.types) nullOr enum;
-    in {
-        enable = mkEnableOption "A file-browser for our desktop";
-        program = mkOption {
-            type = nullOr (enum ["dolphin" "nautilus" "thunar"]);
-            default = "thunar";
-            description = "which file-browser to install";
-        };
+  options.modules.desktop.toolset.fileManager = let
+    inherit (lib.options) mkEnableOption mkOption;
+    inherit (lib.types) nullOr enum;
+  in {
+    enable = mkEnableOption "A file-browser for our desktop";
+    program = mkOption {
+      type = nullOr (enum ["dolphin" "nautilus" "thunar"]);
+      default = "thunar";
+      description = "which file-browser to install";
     };
+  };
 
   config = mkMerge [
     {
@@ -25,14 +28,22 @@ in {
       modules.desktop.extensions.mimeApps.defApps.fileBrowser = cfg.program;
       services.gvfs.enable = true;
 
-      environment.systemPackages = attrValues ({ }
+      environment.systemPackages = attrValues ({}
         // optionalAttrs (cfg.program == "dolphin") {
-           inherit (pkgs) dolphin dolphin-plugins;
-        } // optionalAttrs (cfg.program == "nautilus") {
+          inherit (pkgs) dolphin dolphin-plugins;
+        }
+        // optionalAttrs (cfg.program == "nautilus") {
           inherit (pkgs.gnome) nautilus;
-        } // optionalAttrs (cfg.program == "thunar") {
-          inherit (pkgs.xfce)
-            thunar thunar-volman thunar-archive-plugin thunar-media-tags-plugin;
+        }
+        // optionalAttrs (cfg.program == "thunar") {
+          inherit
+            (pkgs.xfce)
+            thunar
+            thunar-volman
+            thunar-archive-plugin
+            thunar-media-tags-plugin
+            ;
+          inherit (pkgs.mate) engrampa;
         });
     }
 
