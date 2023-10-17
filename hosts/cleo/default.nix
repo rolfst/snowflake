@@ -25,7 +25,9 @@
       networkManager.enable = true;
     };
 
-    services = {ssh.enable = true;};
+    services = {
+      ssh.enable = true;
+    };
 
     develop = {
       node.enable = true;
@@ -48,6 +50,7 @@
       };
       editors = {
         default = "nvim";
+        libreoffice.enabled = true;
         neovim.rolfst.enable = true;
       };
       browsers = {
@@ -58,6 +61,7 @@
       };
       extensions = {
         keybase.enable = true; # the gui
+        "2fa".enable = true;
       };
       education = {
         #   memory.enable = true;
