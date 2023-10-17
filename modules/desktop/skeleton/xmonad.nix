@@ -46,7 +46,7 @@ in {
     nixpkgs.overlays = [inputs.xmonad-contrib.overlay];
 
     environment.systemPackages = attrValues {
-      inherit (pkgs) libnotify playerctl gxmessage xdotool feh;
+      inherit (pkgs) libnotify playerctl gxmessage xdotool feh arandr;
       inherit (pkgs.xorg) xwininfo;
     };
 
