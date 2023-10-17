@@ -1,20 +1,25 @@
-{ config, options, lib, pkgs, ... }:
-
-let
+{
+  config,
+  options,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (lib.attrsets) attrValues optionalAttrs;
   inherit (lib.modules) mkIf;
 in {
-  options.modules.shell.git = let inherit (lib.options) mkEnableOption;
-  in { enable = mkEnableOption "version-control system"; };
+  options.modules.shell.git = let
+    inherit (lib.options) mkEnableOption;
+  in {enable = mkEnableOption "version-control system";};
 
   config = mkIf config.modules.shell.git.enable {
     user.packages = attrValues ({
         inherit (pkgs) act dura gitui sad;
         inherit (pkgs.gitAndTools) gh git-open;
-    } // optionalAttrs config.modules.shell.gnupg.enable {
-      inherit (pkgs.gitAndTools) git-crypt;
-
-    });
+      }
+      // optionalAttrs config.modules.shell.gnupg.enable {
+        inherit (pkgs.gitAndTools) git-crypt;
+      });
 
     # Prevent x11 askPass prompt on git push:
     programs.ssh.askPassword = "";
@@ -31,23 +36,23 @@ in {
     };
 
     hm.programs.git = let
-        inherit (config.modules.themes.colors.main) types normal bright;
-        in {
+      inherit (config.modules.themes.colors.main) types normal bright;
+    in {
+      enable = true;
+      delta = {
         enable = true;
-        delta = {
-            enable = true;
-            options = {
-            decorations = {
-                commit-decoration-style = "bold ${normal.yellow} box ${normal.red}";
-                minus-style = "${normal.white} bold ul ${normal.red}";
-                plus-style = "${normal.white} bold ul ${normal.green}";
-                file-decoration-style = "none";
-                file-style = "bold ${normal.yellow} ul";
-            };
-            features = "decorations";
-            whitespace-error-style = "22 reverse";
-            };
+        options = {
+          decorations = {
+            commit-decoration-style = "bold ${normal.yellow} box ${normal.red}";
+            minus-style = "${normal.white} bold ul ${normal.red}";
+            plus-style = "${normal.white} bold ul ${normal.green}";
+            file-decoration-style = "none";
+            file-style = "bold ${normal.yellow} ul";
+          };
+          features = "decorations";
+          whitespace-error-style = "22 reverse";
         };
+      };
       package = pkgs.gitFull;
       # difftastic = {
       #   enable = true;
@@ -106,8 +111,17 @@ in {
         "*.o"
         "*.pyc"
         "*.elc"
-      ];
 
+        # backups files:
+        "*.orig"
+        "*.swp"
+        "*.swo"
+
+        # Directories
+        "node_modules"
+        "dist"
+        "__pycache__"
+      ];
 
       extraConfig = {
         init.defaultBranch = "main";
@@ -119,9 +133,9 @@ in {
         # credential.helper = "${pkgs.gitFull}/bin/git-credential-libsecret";
 
         user = {
-            name = "rolfst";
-            email = "rolfst@gmail.com";
-            signKey = "7CE0453D6767DBD1";
+          name = "rolfst";
+          email = "rolfst@gmail.com";
+          signKey = "7CE0453D6767DBD1";
         };
 
         tag.gpgSign = true;
@@ -151,20 +165,19 @@ in {
           "https://bitbucket.org/".insteadOf = "bb:";
         };
         merge = {
-            tool = "nvim";
+          tool = "nvim";
         };
         mergetool = {
-            nvim = {
-                cmd = "nvim -d -c \"wincmd l\" -c \"norm ]c\" \"$LOCAL\" \"$MERGED\" \"$REMOTE\"";
-            };
-            keepBackup = false;
+          nvim = {
+            cmd = "nvim -d -c \"wincmd l\" -c \"norm ]c\" \"$LOCAL\" \"$MERGED\" \"$REMOTE\"";
+          };
+          keepBackup = false;
         };
 
         diff = {
           "lisp".xfuncname = "^(((;;;+ )|\\(|([ 	]+\\(((cl-|el-patch-)?def(un|var|macro|method|custom)|gb/))).*)$";
           "org".xfuncname = "^(\\*+ +.*)$";
         };
-
       };
     };
   };
