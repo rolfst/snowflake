@@ -50,7 +50,7 @@
       };
       editors = {
         default = "nvim";
-        libreoffice.enabled = true;
+        libreoffice.enable = true;
         neovim.rolfst.enable = true;
       };
       browsers = {
