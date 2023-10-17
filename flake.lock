@@ -277,11 +277,11 @@
       },
       "locked": {
         "dir": "nix",
-        "lastModified": 1697479195,
-        "narHash": "sha256-LYrBY0ze0T6NybmYh+GnGs2vBl1glgy695PMhTuZ5EA=",
+        "lastModified": 1697534720,
+        "narHash": "sha256-hh5a82fbujCOitFjbzClCMZ/XZQeFsdOHxZWCXXv1i4=",
         "owner": "kmonad",
         "repo": "kmonad",
-        "rev": "159e33d76ec2a15adc5011d96d3fc0f4a3787724",
+        "rev": "a1aea16c7a3239c0a3d7522b09edb1d6988bae02",
         "type": "github"
       },
       "original": {
@@ -369,10 +369,10 @@
     },
     "nixpkgs_5": {
       "locked": {
-        "lastModified": 1696193975,
-        "narHash": "sha256-mnQjUcYgp9Guu3RNVAB2Srr1TqKcPpRXmJf4LJk6KRY=",
-        "path": "/nix/store/5rb11cz8xmv8cdk7b0w80pzczbzk0p26-source",
-        "rev": "fdd898f8f79e8d2f99ed2ab6b3751811ef683242",
+        "lastModified": 1697059129,
+        "narHash": "sha256-9NJcFF9CEYPvHJ5ckE8kvINvI84SZZ87PvqMbH6pro0=",
+        "path": "/nix/store/xjviahzwa7x51vl51kc3c1k1n1jmhpd5-source",
+        "rev": "5e4c2ada4fcd54b99d56d7bd62f384511a7e2593",
         "type": "path"
       },
       "original": {
@@ -396,10 +396,10 @@
     },
     "nixpkgs_7": {
       "locked": {
-        "lastModified": 1696193975,
-        "narHash": "sha256-mnQjUcYgp9Guu3RNVAB2Srr1TqKcPpRXmJf4LJk6KRY=",
-        "path": "/nix/store/5rb11cz8xmv8cdk7b0w80pzczbzk0p26-source",
-        "rev": "fdd898f8f79e8d2f99ed2ab6b3751811ef683242",
+        "lastModified": 1697059129,
+        "narHash": "sha256-9NJcFF9CEYPvHJ5ckE8kvINvI84SZZ87PvqMbH6pro0=",
+        "path": "/nix/store/xjviahzwa7x51vl51kc3c1k1n1jmhpd5-source",
+        "rev": "5e4c2ada4fcd54b99d56d7bd62f384511a7e2593",
         "type": "path"
       },
       "original": {
@@ -410,19 +410,19 @@
     "nvim-dir": {
       "flake": false,
       "locked": {
-        "lastModified": 1697532815,
-        "narHash": "sha256-94OBkbfmdaDXJn/M6dGFaVFJ+Ov+DnhffHVHLnKjOq0=",
+        "lastModified": 1697536192,
+        "narHash": "sha256-zTkP/xVICukRE7ygJ/skTtaXdZHDn1ZwVFaKHSrCHKU=",
         "ref": "refs/heads/master",
-        "rev": "b587225356f37e313f861a909e0edee0a3326ecf",
-        "revCount": 82,
+        "rev": "94cda0ddd2ba857a4f386879c830ccf1bdf3a4da",
+        "revCount": 84,
         "submodules": true,
         "type": "git",
-        "url": "https://github.com/rolfst/nvim.git?rev=b587225356f37e313f861a909e0edee0a3326ecf"
+        "url": "https://github.com/rolfst/nvim.git?rev=94cda0ddd2ba857a4f386879c830ccf1bdf3a4da"
       },
       "original": {
         "submodules": true,
         "type": "git",
-        "url": "https://github.com/rolfst/nvim.git?rev=b587225356f37e313f861a909e0edee0a3326ecf"
+        "url": "https://github.com/rolfst/nvim.git?rev=94cda0ddd2ba857a4f386879c830ccf1bdf3a4da"
       }
     },
     "ragenix": {
