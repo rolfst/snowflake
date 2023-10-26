@@ -155,6 +155,18 @@ in {
             nixos-rebuild switch --use-remote-sudo --flake .#"$(hostname)" --impure
         }
 
+        function mcdir {
+            mkdir $@ && cd "$@[-1]"
+        }
+
+        function gwa {
+            git worktree add $@[1] $@[2] -b $@[-1]
+        }
+
+        function gwr {
+            git worktree remove $@
+        }
+
         # -------===[ External Plugins ]===------- #
         any-nix-shell zsh --info-right | source /dev/stdin
         eval "$(zoxide init zsh)"
