@@ -64,7 +64,7 @@
         "2fa".enable = true;
       };
       education = {
-        #   memory.enable = true;
+        memory.enable = true;
         vidcom.enable = false;
       };
 
