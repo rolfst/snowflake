@@ -14,7 +14,8 @@ in {
 
   config = mkIf config.modules.desktop.editors.libreoffice.enable {
     user.packages = attrValues {
-      inherit (pkgs) libreoffice;
+      inherit (pkgs) libreoffice hunspell;
+      inherit (pkgs.hunspellDicts) nl_NL en_US;
     };
   };
 }
