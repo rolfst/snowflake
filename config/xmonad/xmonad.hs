@@ -340,10 +340,10 @@ followIfNoMagicFocus =
 
 -- FIXME
 togglesMap =
-  fmap M.fromList $
-    sequence $
-      map toggleTuple myToggles
-        ++ map toggleTuple otherToggles
+  fmap M.fromList
+    $ sequence
+    $ map toggleTuple myToggles
+    ++ map toggleTuple otherToggles
  where
   toggleTuple toggle = do
     toggleString <- toggleToStringWithState toggle
@@ -462,13 +462,13 @@ getClass w = fromMaybe <$> getClassRaw w <*> getVirtualClass w
 {-# NOINLINE desktopEntriesMap #-}
 desktopEntriesMap :: MM.MultiMap String DesktopEntry
 desktopEntriesMap =
-  unsafePerformIO $
-    indexDesktopEntriesByClassName
-      <$> getDirectoryEntriesDefault
+  unsafePerformIO
+    $ indexDesktopEntriesByClassName
+    <$> getDirectoryEntriesDefault
 
 lookupIconFromClasses classes =
-  getFirst $
-    foldMap
+  getFirst
+    $ foldMap
       (First . deIcon)
       (classes >>= idAndLower >>= flip MM.lookup desktopEntriesMap)
  where
@@ -529,9 +529,10 @@ myGoToWindow = myWindowAction False $ windows . greedyFocusWindow
 myBringWindow = myWindowAction True doBringWindow
 
 myReplaceWindow =
-  swapMinimizeStateAfter $
-    myWindowAct myWindowBringerConfig True $
-      windows . swapFocusedWith
+  swapMinimizeStateAfter
+    $ myWindowAct myWindowBringerConfig True
+    $ windows
+    . swapFocusedWith
 
 -- Workspace Names for EWMH
 setWorkspaceNames :: X ()
@@ -644,7 +645,8 @@ restoreAllMinimized = minimizedWindows >>= restoreAll
 
 restoreOrMinimizeOtherClasses =
   maximizedOtherClass
-    >>= ifL restoreAllMinimized minimizeOtherClassesInWorkspace . null
+    >>= ifL restoreAllMinimized minimizeOtherClassesInWorkspace
+    . null
 
 restoreThisClassOrMinimizeOtherClasses =
   minimizedSameClass
@@ -693,8 +695,8 @@ gatherThisClass = thisClass >>= flip whenJust gatherClass
 -- Use greedyView to switch to the correct workspace, and then focus on the
 -- appropriate window within that workspace.
 greedyFocusWindow w ws =
-  W.focusWindow w $
-    W.greedyView (fromMaybe (W.currentTag ws) $ W.findTag w ws) ws
+  W.focusWindow w
+    $ W.greedyView (fromMaybe (W.currentTag ws) $ W.findTag w ws) ws
 
 shiftThenView i = W.greedyView i . W.shift i
 
@@ -740,20 +742,21 @@ swapMinimizeStateAfter action = withFocused $ \originalWindow -> do
 -- :NOTE| Introduction of our namedScratchpads
 myScratchpads :: X [NamedScratchpad]
 myScratchpads = do
-  btopLaunch <-
-    getInput $
-      inTerm
-        >-> (toInput $ " start --class " <> sysMonID)
-        >-> execute "btop"
+  -- btopLaunch <-
+  --   getInput $
+  --     inTerm
+  --       >-> toInput (" @ launch --title " <> sysMonID)
+  --       >-> execute "btop"
+  -- btopLaunch = "kitty @ launch btop"
   -- \| E-Mail session managed by Emacs, because why not? :P
   telegramClient <-
-    getInput $
-      inEditor
-        >-> setFrameName telegramSessionID
-        >-> eval (elispFun "telega")
+    getInput
+      $ inEditor
+      >-> setFrameName telegramSessionID
+      >-> eval (elispFun "telega")
   pure
     [ NS "Discord" "discordcanary" (className =? "discord") nearFullFloat
-    , NS "System Monitor" btopLaunch (appName =? sysMonID) floatCenter
+    , NS "System Monitor" "kitty @ launch btop" (appName =? sysMonID) floatCenter
     , NS "Slack" "slack" (className =? "slack") nearFullFloat
     , NS "Youtube Music" "youtube-music" (className =? "youtube music") nearFullFloat
     , NS "Telegram" telegramClient (title =? telegramSessionID) nearFullFloat
@@ -776,7 +779,8 @@ myScratchPadEventHook =
 
 runScratchPadManageHookOnCurrent =
   join (withFocusedD (Endo id) $ runQuery myScratchPadManageHook)
-    >>= windows . appEndo
+    >>= windows
+    . appEndo
 
 scratchPadIsDisplayed :: String -> X Bool
 scratchPadIsDisplayed name = join $ withFocusedD False =<< query
@@ -790,9 +794,9 @@ manageIfScratchPadIsDisplayed name =
 
 -- :TODO| doScratchpad does not work well when minimized..
 doScratchpad name = do
-  maybeUnminimizeAfter $
-    deactivateFullAnd $
-      namedScratchpadAction [] name
+  maybeUnminimizeAfter
+    $ deactivateFullAnd
+    $ namedScratchpadAction [] name
   manageIfScratchPadIsDisplayed name
 
 myRaiseNextMaybe =

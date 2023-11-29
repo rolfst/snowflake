@@ -91,5 +91,9 @@
         keybase.enable = true;
       };
     };
+    virtualize = {
+      enable = true;
+      podman.enable = true;
+    };
   };
 }

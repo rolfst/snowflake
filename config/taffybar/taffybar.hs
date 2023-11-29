@@ -70,27 +70,27 @@ main = do
         , cssPaths = cssFiles
         }
     selectedConfig =
-      fromMaybe baseConfig $
-        lookup
+      fromMaybe baseConfig
+        $ lookup
           hostName
           [ ("thinkpad-e595", baseConfig{endWidgets = laptopEndWidgets})
           , ("probook-440g3", baseConfig{endWidgets = laptopEndWidgets})
           ]
     simpleTaffyConfig = selectedConfig{centerWidgets = [myClock]}
 
-  startTaffybar $
-    appendHook (void $ getTrayHost False) $
-      withLogServer $
-        withToggleServer $
-          toTaffyConfig simpleTaffyConfig
+  startTaffybar
+    $ appendHook (void $ getTrayHost False)
+    $ withLogServer
+    $ withToggleServer
+    $ toTaffyConfig simpleTaffyConfig
 
 setClassAndBoundingBoxes ::
-  MonadIO m => Data.Text.Text -> Gtk.Widget -> m Gtk.Widget
+  (MonadIO m) => Data.Text.Text -> Gtk.Widget -> m Gtk.Widget
 setClassAndBoundingBoxes klass =
   buildContentsBox >=> flip widgetSetClassGI klass
 
 deocrateWithSetClassAndBoxes ::
-  MonadIO m => Data.Text.Text -> m Gtk.Widget -> m Gtk.Widget
+  (MonadIO m) => Data.Text.Text -> m Gtk.Widget -> m Gtk.Widget
 deocrateWithSetClassAndBoxes klass builder =
   builder >>= setClassAndBoundingBoxes klass
 
@@ -166,24 +166,24 @@ cssFilesByHostname =
   ]
 
 myCPU =
-  deocrateWithSetClassAndBoxes "cpu" $
-    pollingGraphNew cpuCfg 5 cpuCallback
+  deocrateWithSetClassAndBoxes "cpu"
+    $ pollingGraphNew cpuCfg 5 cpuCallback
 
 myMem =
-  deocrateWithSetClassAndBoxes "mem" $
-    pollingGraphNew memCfg 5 memCallback
+  deocrateWithSetClassAndBoxes "mem"
+    $ pollingGraphNew memCfg 5 memCallback
 
 myNet =
-  deocrateWithSetClassAndBoxes "net" $
-    networkGraphNew netCfg Nothing
+  deocrateWithSetClassAndBoxes "net"
+    $ networkGraphNew netCfg Nothing
 
 myLayout =
-  deocrateWithSetClassAndBoxes "layout" $
-    layoutNew defaultLayoutConfig
+  deocrateWithSetClassAndBoxes "layout"
+    $ layoutNew defaultLayoutConfig
 
 myWindows =
-  deocrateWithSetClassAndBoxes "windows" $
-    windowsNew defaultWindowsConfig
+  deocrateWithSetClassAndBoxes "windows"
+    $ windowsNew defaultWindowsConfig
 
 myWorkspaces =
   flip widgetSetClassGI "workspaces"
@@ -191,10 +191,10 @@ myWorkspaces =
       defaultWorkspacesConfig
         { minIcons = 1
         , getWindowIconPixbuf =
-            scaledWindowIconPixbufGetter $
-              getWindowIconPixbufFromChrome
-                <|||> unscaledDefaultGetWindowIconPixbuf
-                <|||> (\size _ -> lift $ loadPixbufByName size "application-default-icon")
+            scaledWindowIconPixbufGetter
+              $ getWindowIconPixbufFromChrome
+              <|||> unscaledDefaultGetWindowIconPixbuf
+              <|||> (\size _ -> lift $ loadPixbufByName size "application-default-icon")
         , widgetGap = 0
         , showWorkspaceFn = hideEmpty
         , updateRateLimitMicroseconds = 100000
@@ -202,30 +202,30 @@ myWorkspaces =
         , widgetBuilder = buildLabelOverlayController
         }
 
-myLabelSetter workspace = return $
-  case workspaceName workspace of
-    "1" -> "一"
-    "2" -> "二"
-    "3" -> "三"
-    "4" -> "四"
-    "5" -> "五"
-    "6" -> "六"
-    "7" -> "七"
-    "8" -> "八"
-    "9" -> "九"
+myLabelSetter workspace = return
+  $ case workspaceName workspace of
+    "1" -> "일"
+    "2" -> "이"
+    "3" -> "삼"
+    "4" -> "사"
+    "5" -> "오"
+    "6" -> "육"
+    "7" -> "칠"
+    "8" -> "팔"
+    "9" -> "구"
     n -> n
 
 myClock =
-  deocrateWithSetClassAndBoxes "clock" $
-    textClockNewWith
+  deocrateWithSetClassAndBoxes "clock"
+    $ textClockNewWith
       defaultClockConfig
         { clockUpdateStrategy = RoundedTargetInterval 60 0.0
         , clockFormatString = "\61463  %H:%M   \61555  %d/%m/%y"
         }
 
 myTray =
-  deocrateWithSetClassAndBoxes "tray" $
-    sniTrayNewFromParams
+  deocrateWithSetClassAndBoxes "tray"
+    $ sniTrayNewFromParams
       defaultTrayParams
         { trayRightClickAction = PopupMenu
         , trayLeftClickAction = Activate
@@ -243,7 +243,7 @@ myMpris =
       }
 
 myBattery =
-  [ deocrateWithSetClassAndBoxes "battery" $
-      makeCombinedWidget
+  [ deocrateWithSetClassAndBoxes "battery"
+      $ makeCombinedWidget
         [batteryIconNew, textBatteryNew "$percentage$%"]
   ]

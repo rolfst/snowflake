@@ -14,7 +14,7 @@ in {
   config = mkIf config.modules.hardware.printer.enable {
     services.printing = {
       enable = true;
-      drivers = [pkgs.hplip pkgs.hplipWithPlugin pkgs.xsane];
+      drivers = [pkgs.hplipWithPlugin pkgs.xsane];
     };
     user.packages = [pkgs.xsane pkgs.gtklp];
 
