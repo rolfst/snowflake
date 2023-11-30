@@ -20,7 +20,7 @@
     };
 
     # Window Manager(s) + Extensions
-    xmonad-contrib.url = "github:icy-thought/xmonad-contrib"; # TODO: replace with official after #582 == merged!
+    xmonad-contrib.url = "github:icy-thought/xmonad-contrib";
     hyprland.url = "github:hyprwm/Hyprland";
 
     # Toolset ++ Application(s)
