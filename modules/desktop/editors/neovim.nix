@@ -27,10 +27,10 @@ in {
       user.packages = attrValues ({
           inherit (pkgs) neovide;
           inherit (pkgs.vimPlugins) markdown-preview-nvim;
+          inherit (pkgs.lua51Packages) luarocks;
         }
         // optionalAttrs (config.modules.develop.cc.enable == false) {
           inherit (pkgs) gcc; # Treesitter
-          inherit (pkgs.lua51Packages) luarocks-nix;
         });
 
       hm.programs.neovim = {
