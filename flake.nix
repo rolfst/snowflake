@@ -2,10 +2,11 @@
   description = "λ simple and configureable Nix-Flake repository!";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable";
-    nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "nixpkgs/nixos-23.11";
+    # nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
     home-manager = {
-      url = "github:nix-community/home-manager/master";
+      # url = "github:nix-community/home-manager/master";
+      url = "github:nix-community/home-manager/release-23.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -27,7 +28,7 @@
     rust.url = "github:oxalica/rust-overlay";
 
     nvim-dir = {
-      url = "https://github.com/rolfst/nvim.git?rev=e5f6823ebee02d44fcb882a81eac2da77ee1544e";
+      url = "https://github.com/rolfst/nvim.git?rev=8c91da329009ca3b1cd4e597f1238023fe2b88ce";
       type = "git";
       submodules = true;
       flake = false;
@@ -58,7 +59,7 @@
         lib = final;
       };
     });
-  in {
+  in rec {
     lib = lib.my;
 
     overlays =
@@ -79,6 +80,9 @@
       // mapModulesRec ./modules import;
 
     nixosConfigurations = mapHosts ./hosts {};
+    homeConfigurations = {
+      cleo = nixosConfigurations.cleo.config.home-manager.users.${nixosConfigurations.cleo.config.user.name}.home;
+    };
 
     devShells."${system}".default = import ./shell.nix {
       inherit pkgs;
