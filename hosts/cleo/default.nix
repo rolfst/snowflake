@@ -35,6 +35,7 @@
       python.enable = true;
       rust.enable = true;
       lua.enable = true;
+      java.enable = true;
     };
 
     # virtualize = {
@@ -55,8 +56,7 @@
       };
       browsers = {
         default = "firefox";
-        ungoogled.enable = false;
-        # google.enable = true;
+        google.enable = true;
         firefox.enable = true;
       };
       extensions = {

@@ -20,18 +20,19 @@ in {
     in [
       (makeDesktopItem {
         name = "google-private";
-        desktopName = "Google Web Browser (Private)";
+        desktopName = "Googled Web Browser (Private)";
         genericName = "Launch a Private Google Chrome Instance";
-        icon = "chrome";
+        icon = "google-chrome";
         exec = "${getExe google-chrome} --incognito";
         categories = ["Network"];
       })
     ];
 
+    # hm.programs.chromium = {
     hm.programs.google-chrome = {
       enable = true;
       package = let
-        googleFlags = toString [
+        chromeFlags = toString [
           "--force-dark-mode"
           # "--disable-search-engine-collection"
           "--extension-mime-request-handling=always-prompt-for-install"
@@ -60,30 +61,30 @@ in {
         ];
       in
         pkgs.google-chrome.override {
-          commandLineArgs = [googleFlags];
+          commandLineArgs = [chromeFlags];
         };
-      extensions = [
-        {id = "jhnleheckmknfcgijgkadoemagpecfol";} # Auto-Tab-Discard
-        {id = "nngceckbapebfimnlniiiahkandclblb";} # Bitwarden
-        {id = "dlnejlppicbjfcfcedcflplfjajinajd";} # Bonjourr (New-Tab Page)
-        {id = "eimadpbcbfnmbkopoojfekhnkhdbieeh";} # Dark-Reader
-        {id = "ldpochfccmkkmhdbclfhpagapcfdljkj";} # Decentraleyes
-        {id = "bkdgflcldnnnapblkhphbgpggdiikppg";} # DuckDuckGo
-        {id = "hlepfoohegkhhmjieoechaddaejaokhf";} # Refined GitHub
-        {id = "iaiomicjabeggjcfkbimgmglanimpnae";} # Tab-Session-Manager
-        {id = "cjpalhdlnbpafiamejdnhcphjbkeiagm";} # Ublock-Origin
-        {id = "dbepggeogbaibhgnhhndojpepiihcmeb";} # Vimium
-        {id = "jinjaccalgkegednnccohejagnlnfdag";} # Violentmonkey
-        {
-          id = "dcpihecpambacapedldabdbpakmachpb";
-          updateUrl = "https://raw.githubusercontent.com/iamadamdev/bypass-paywalls-chrome/master/src/updates/updates.xml";
-        }
-        (mkIf config.modules.desktop.gnome.enable [
-          {
-            id = "gphhapmejobijbbhgpjhcjognlahblep";
-          } # Gnome-Shell-Integration
-        ])
-      ];
+      #   extensions = [
+      #     {id = "jhnleheckmknfcgijgkadoemagpecfol";} # Auto-Tab-Discard
+      #     {id = "nngceckbapebfimnlniiiahkandclblb";} # Bitwarden
+      #     {id = "dlnejlppicbjfcfcedcflplfjajinajd";} # Bonjourr (New-Tab Page)
+      #     {id = "eimadpbcbfnmbkopoojfekhnkhdbieeh";} # Dark-Reader
+      #     {id = "ldpochfccmkkmhdbclfhpagapcfdljkj";} # Decentraleyes
+      #     {id = "bkdgflcldnnnapblkhphbgpggdiikppg";} # DuckDuckGo
+      #     {id = "hlepfoohegkhhmjieoechaddaejaokhf";} # Refined GitHub
+      #     {id = "iaiomicjabeggjcfkbimgmglanimpnae";} # Tab-Session-Manager
+      #     {id = "cjpalhdlnbpafiamejdnhcphjbkeiagm";} # Ublock-Origin
+      #     {id = "dbepggeogbaibhgnhhndojpepiihcmeb";} # Vimium
+      #     {id = "jinjaccalgkegednnccohejagnlnfdag";} # Violentmonkey
+      #     {
+      #       id = "dcpihecpambacapedldabdbpakmachpb";
+      #       updateUrl = "https://raw.githubusercontent.com/iamadamdev/bypass-paywalls-chrome/master/src/updates/updates.xml";
+      #     }
+      #     (mkIf config.modules.desktop.gnome.enable [
+      #       {
+      #         id = "gphhapmejobijbbhgpjhcjognlahblep";
+      #       } # Gnome-Shell-Integration
+      #     ])
+      #   ];
     };
   };
 }
