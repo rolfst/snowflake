@@ -21,7 +21,7 @@ in {
         if [[ $# -eq 1 ]]; then
             selected=$1
         else
-            selected=$(fd -td --full-path . "$HOME/workspaces" --exclude={node_modules,src,build,dist,bin} --min-depth 1 --max-depth 2 | fzf)
+            selected=$(fd -td --full-path . "$HOME/workspaces" --exclude={node_modules,src,build,dist,bin} --min-depth 1 --max-depth 3 | fzf)
         fi
 
         if [[ -z $selected ]]; then
