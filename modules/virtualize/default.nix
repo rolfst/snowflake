@@ -25,17 +25,26 @@ in {
       libvirtd = {
         enable = true;
         # extraOptions = ["--verbose"];
+        extraConfig = ''user="rolfst"'';
+        onBoot = "ignore";
+        onShutdown = "shutdown";
         qemu = {
+          package = pkgs.qemu_kvm;
           runAsRoot = false;
+          swtpm.enable = true;
           ovmf = {
             enable = true;
             packages = [pkgs.OVMFFull.fd];
           };
+          verbatimConfig = ''
+            namespaces = []
+            user = "rolfst"
+          '';
         };
       };
       spiceUSBRedirection.enable = true;
     };
-    user.extraGroups = ["libvirtd"];
+    user.extraGroups = ["libvirtd" "qemu-libvirtd"];
 
     services.spice-vdagentd.enable = true;
 

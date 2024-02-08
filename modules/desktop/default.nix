@@ -84,6 +84,7 @@ in {
       xdg.portal = {
         enable = true;
         extraPortals = [pkgs.xdg-desktop-portal-gtk];
+        gtkUsePortal = false;
         config = {
           common.default = "gtk";
         };
@@ -100,12 +101,9 @@ in {
       programs.light.enable = true;
 
       # KDE-Connect + Start-up indicator
-      programs.kdeconnect.enable = true;
-
-      systemd.user.services.kdeconnect-indicator = {
-        serviceConfig.ExecStart = "${pkgs.plasma5Packages.kdeconnect-kde}/bin/kdeconnect-indicator";
-        wantedBy = ["graphical-session.target"];
-        partOf = ["graphical-session.target"];
+      programs.kdeconnect = {
+        enable = true;
+        package = pkgs.valent;
       };
     }
 

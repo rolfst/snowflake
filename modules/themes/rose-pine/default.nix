@@ -17,7 +17,8 @@ in {
         wallpaper = mkDefault ./assets/loaki-solarpunk.jpg;
         gtk = {
           name = "rose-pine";
-          package = pkgs.my.rose-pine-gtk;
+          package = pkgs.rose-pine-gtk-theme;
+          # package = pkgs.my.rose-pine-gtk;
         };
 
         iconTheme = {
@@ -143,24 +144,6 @@ in {
           };
         };
       };
-
-      home.configFile = let
-        themeDir = "${cfg.gtk.package}/share/themes/${cfg.gtk.name}/gtk-4.0/";
-      in {
-        gtk4Theme-light = {
-          target = "gtk-4.0/gtk.css";
-          source = "${themeDir}/gtk.css";
-        };
-        gtk4Theme-dark = {
-          target = "gtk-4.0/gtk-dark.css";
-          source = "${themeDir}/gtk-dark.css";
-        };
-        gtk4Theme-assets = {
-          target = "gtk-4.0/assets";
-          source = "${themeDir}/assets";
-          recursive = true;
-        };
-      };
     }
 
     # (mkIf config.modules.desktop.browsers.firefox.enable {
@@ -168,14 +151,22 @@ in {
     #     concatMapStringsSep "\n" readFile
     #     [ "${configDir}/firefox/vertical-tabs.css" ];
     # })
+    # (mkIf config.modules.desktop.browsers.firefox.enable {
+    #   modules.desktop.browsers.firefox.userChrome = let
+    #     usrChromeDir = "${config.snowflake.configDir}/firefox/userChrome";
+    #   in
+    #     concatMapStringsSep "\n" readFile [
+    #       "${usrChromeDir}/treestyle-tabs.css"
+    #     ];
+    # })
 
     (mkIf config.services.xserver.enable {
       hm.programs.rofi = {
         extraConfig = {
           icon-theme = let inherit (cfg.iconTheme) name; in "${name}";
           font = let
-            inherit (cfg.font.sans) family weight size;
-          in "${family} ${weight} ${toString size}";
+            inherit (cfg.font) mono sans;
+          in "${mono.family} Italic ${mono.weight} ${toString sans.size}";
         };
 
         theme = let
@@ -332,20 +323,8 @@ in {
         "page_separator_color" = "0.81 0.79 0.76";
         "status_bar_color" = "0.34 0.37 0.54";
 
-        "font_size" = "${toString (sans.size)}";
+        "font_size" = "${toString sans.size}";
         "ui_font" = "${mono.family} ${mono.weight}";
-      };
-    })
-    (mkIf (config.modules.desktop.envProto == "x11") {
-      services.xserver.displayManager = {
-        lightdm.greeters.mini.extraConfig = let
-          inherit (cfg.colors.main) normal types;
-        in ''
-          text-color = "${types.bg}"
-          password-background-color = "${normal.black}"
-          window-color = "${types.border}"
-          border-color = "${types.border}"
-        '';
       };
     })
   ]);

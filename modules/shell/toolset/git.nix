@@ -76,15 +76,16 @@ in {
 
       attributes = ["*.lisp diff=lisp" "*.el diff=lisp" "*.org diff=org"];
 
+      # for my git and flakes
+      # "*.envrc"
       ignores = [
         # General:
         "*.bloop"
         "*.bsp"
+        "*.direnv"
         "*.metals"
         "*.metals.sbt"
         "*metals.sbt"
-        "*.direnv"
-        "*.envrc"
         "*hie.yaml"
         "*.mill-version"
         "*.jvmopts"
@@ -139,7 +140,7 @@ in {
         };
 
         tag.gpgSign = true;
-        pull.rebase = true;
+        pull.rebase = false;
         # push = {
         #   default = "current";
         #   gpgSign = "if-asked";

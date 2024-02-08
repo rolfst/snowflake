@@ -85,6 +85,7 @@
         };
         social = {
           base.enable = true;
+          matrix.withClient.enable = true;
           discord.enable = true;
           slack.enable = true;
         };

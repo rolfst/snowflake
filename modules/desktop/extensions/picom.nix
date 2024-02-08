@@ -1,16 +1,20 @@
-{ options, config, lib, pkgs, ... }:
-
-let
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (lib.modules) mkIf mkMerge;
 
   cfg = config.modules.desktop.extensions.picom;
 in {
-  options.modules.desktop.extensions.picom =
-    let inherit (lib.options) mkEnableOption;
-    in {
-      enable = mkEnableOption "lightweight X11 compositor";
-      animation.enable = mkEnableOption "animated picom";
-    };
+  options.modules.desktop.extensions.picom = let
+    inherit (lib.options) mkEnableOption;
+  in {
+    enable = mkEnableOption "lightweight X11 compositor";
+    animation.enable = mkEnableOption "animated picom";
+  };
 
   config = mkMerge [
     {
@@ -19,7 +23,7 @@ in {
         vSync = true;
         settings = {
           inactive-dim = 0.2;
-          focus-exclude = [ "class_g ?= 'rofi'" "class_g ?= 'Steam'" ];
+          focus-exclude = ["class_g ?= 'rofi'" "class_g ?= 'Steam'"];
           rounded-corners-exclude = [
             "! name~=''" # Qtile == empty wm_class..
             "window_type = 'dock'"
@@ -32,14 +36,10 @@ in {
             "! name~=''" # Qtile == empty wm_class..
           ];
 
-          blur = {
-            method = "dual_kawase";
-            strength = 10.0;
-            background = true;
-            background-frame = false;
-            background-fixed = false;
-          };
-          blur-background-exclude = [ "window_type != 'dock'" ];
+          blur-method = "dual_kawase";
+          blur-strength = 10.0;
+          blur-background = true;
+          blur-include = ["class_g = 'Taffybar'"];
 
           daemon = false;
           dbus = false;
@@ -49,11 +49,11 @@ in {
           detect-client-opacity = true;
 
           unredir-if-possible = false;
-          unredir-if-possible-exclude = [ ];
+          unredir-if-possible-exclude = [];
           detect-transient = true;
           detect-client-leader = true;
 
-          invert-color-include = [ ];
+          invert-color-include = [];
           glx-no-stencil = true;
           use-damage = false;
           transparent-clipping = false;
@@ -62,7 +62,7 @@ in {
     }
 
     (mkIf (cfg.enable && !cfg.animation.enable) {
-      services.picom = { backend = "egl"; };
+      services.picom = {backend = "egl";};
     })
 
     (mkIf cfg.animation.enable {
@@ -81,23 +81,35 @@ in {
       ];
 
       hm.services.picom = {
+        # package = pkgs.picom.overrideAttrs (old: rec {
+        #   pname = "compfy";
+        #   version = "1.7.2";
+        #   src = pkgs.fetchFromGitHub {
+        #     owner = "allusive-dev";
+        #     repo = "compfy";
+        #     rev = version;
+        #     hash = "sha256-7hvzwLEG5OpJzsrYa2AaIW8X0CPyOnTLxz+rgWteNYY";
+        #   };
+        #   postInstall = "";
+        #   meta.mainProgram = "compfy";
+        # });
+
         backend = "glx";
-        extraArgs = [ "--experimental-backends" ];
+        extraArgs = ["--experimental-backends"];
 
         settings = {
           animations = true;
           animation-window-mass = 1;
           animation-dampening = 20;
-          animation-stiffness = 250;
+          animation-stiffness = 200;
           animation-clamping = false;
-          animation-for-open-window = "zoom";
-          animation-for-unmap-window = "zoom";
-          animation-for-transient-window = "slide-up";
+          animation-for-open-window = "slide-up";
+          animation-for-unmap-window = "slide-down";
         };
 
         wintypes = {
-          dock = { animation = "slide-down"; };
-          toolbar = { animation = "slide-down"; };
+          dock = {animation = "slide-down";};
+          toolbar = {animation = "slide-down";};
         };
       };
     })

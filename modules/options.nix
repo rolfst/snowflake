@@ -76,9 +76,6 @@ in {
     # Necessary for nixos-rebuild build-vm to work.
     home-manager.useUserPackages = true;
 
-    # Re-defining home-manager settings for modified option-names:
-    # home.configFile  ->  home-manager.users.icy-thought.home.xdg.configFile
-    # home.dataFile    ->  home-manager.users.icy-thought.home.xdg.dataFile
     hm.home = {
       activation = mkAliasDefinitions options.home.activation;
       file = mkAliasDefinitions options.home.file;

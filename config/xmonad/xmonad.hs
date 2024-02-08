@@ -47,6 +47,7 @@ import XMonad.Actions.DynamicWorkspaces hiding (
   withWorkspace,
  )
 import XMonad.Actions.Minimize
+import XMonad.Actions.MouseGestures
 import XMonad.Actions.Navigation2D
 import qualified XMonad.Actions.SwapWorkspaces as SW
 import XMonad.Actions.UpdatePointer
@@ -102,6 +103,8 @@ main =
     . withNavigation2DConfig myNavigation2DConfig
     . spawnExternalProcess def
     $ myConfig
+
+myMouseBindings = ((0, button3), mouseGesture gestures)
 
 myConfig =
   def
@@ -742,28 +745,24 @@ swapMinimizeStateAfter action = withFocused $ \originalWindow -> do
 -- :NOTE| Introduction of our namedScratchpads
 myScratchpads :: X [NamedScratchpad]
 myScratchpads = do
-  -- btopLaunch <-
-  --   getInput $
-  --     inTerm
-  --       >-> toInput (" @ launch --title " <> sysMonID)
-  --       >-> execute "btop"
+  btopLaunch <- getInput $ inTerm >-> setXClass sysMonID >-> execute "btop"
   -- btopLaunch = "kitty @ launch btop"
   -- \| E-Mail session managed by Emacs, because why not? :P
-  telegramClient <-
-    getInput
-      $ inEditor
-      >-> setFrameName telegramSessionID
-      >-> eval (elispFun "telega")
+  telegramClient <- getInput $ inEditor >-> setFrameName telegramSessionID >-> eval (elispFun "telega")
+  youtubeMusicClient <- getInput $ inEditor >-> setFrameName youtubeMusicClientID >-> eval (elispFun "youtube-music")
+  matrixClient <- getInput $ inEditor >-> setFrameName matrixSessionID >-> eval (elispFun "irkala/connect-to-matrix")
   pure
     [ NS "Discord" "discordcanary" (className =? "discord") nearFullFloat
-    , NS "System Monitor" "kitty @ launch btop" (appName =? sysMonID) floatCenter
+    , NS "System Monitor" btopLaunch (appName =? sysMonID) floatCenter
     , NS "Slack" "slack" (className =? "slack") nearFullFloat
-    , NS "Youtube Music" "youtube-music" (className =? "youtube music") nearFullFloat
+    , NS "Youtube Music" youtubeMusicClient (title =? youtubeMusicClientID) floatCenter
     , NS "Telegram" telegramClient (title =? telegramSessionID) nearFullFloat
     ]
  where
   sysMonID = "System Monitor"
   telegramSessionID = "telega-scratch"
+  matrixSessionID = "matrix-scratch"
+  youtubeMusicClientID = "youtube-music-scratch"
   nearFullFloat = customFloating $ W.RationalRect 0.02 0.02 0.95 0.95
 
   -- \| Defining our custom floats
@@ -867,6 +866,14 @@ myWindowGo direction = do
       U -> windows W.focusDown
     else windowGo direction True
 
+gestures =
+  M.fromList
+    [ ([], focus)
+    , ([U], \w -> focus w >> windows W.swapUp)
+    , ([D], \w -> focus w >> windows W.swapDown)
+    , ([R, D], \_ -> sendMessage NextLayout)
+    ]
+
 addKeys conf@XConfig{modMask = modm} =
   -- Directional navigation
   buildDirectionalBindings modm myWindowGo
@@ -916,6 +923,7 @@ addKeys conf@XConfig{modMask = modm} =
        , -- ScratchPad(s)
          ((modalt, xK_b), doScratchpad "System Monitor")
        , ((modalt, xK_d), doScratchpad "Discord")
+       , ((modalt, xK_y), doScratchpad "Youtube Music")
        , ((modalt, xK_s), doScratchpad "Slack")
        , ((modalt, xK_k), doScratchpad "Matrix")
        , ((modalt, xK_h), doScratchpad "Telegram")

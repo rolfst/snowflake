@@ -13,8 +13,8 @@ in {
   in {enable = mkEnableOption "Java development";};
 
   config = mkMerge [
-    (mkIf config.modules.develop.clojure.enable {
-      user.packages = attrValues {inherit (pkgs) jdk20 jdt-language-server netbeans;};
+    (mkIf config.modules.develop.java.enable {
+      user.packages = attrValues {inherit (pkgs) jdk20 jdt-language-server;};
     })
   ];
 }

@@ -23,27 +23,27 @@ in {
         default = cfg.base.enable;
       };
     slack.enable = mkEnableOption "slack client";
-    # matrix = {
-    #   withDaemon = {
-    #     enable =
-    #       mkEnableOption "matrix daemon for ement.el"
-    #       // {
-    #         default = !cfg.matrix.withClient.enable;
-    #       };
-    #   };
-    #   withClient = {
-    #     enable =
-    #       mkEnableOption "rust-based matrix client"
-    #       // {
-    #         default = cfg.base.enable && !cfg.matrix.withDaemon.enable;
-    #       };
-    #     package = mkOption {
-    #       type = nullOr (enum ["element" "fractal"]);
-    #       default = "element";
-    #       description = "What display protocol to use.";
-    #     };
-    #   };
-    # };
+    matrix = {
+      #   withDaemon = {
+      #     enable =
+      #       mkEnableOption "matrix daemon for ement.el"
+      #       // {
+      #         default = !cfg.matrix.withClient.enable;
+      #       };
+      #   };
+      withClient = {
+        enable =
+          mkEnableOption "rust-based matrix client"
+          // {
+            default = cfg.base.enable && !cfg.matrix.withDaemon.enable;
+          };
+        package = mkOption {
+          type = nullOr (enum ["element" "fractal"]);
+          default = "element";
+          description = "What display protocol to use.";
+        };
+      };
+    };
   };
 
   config = mkMerge [
@@ -87,23 +87,23 @@ in {
     #   };
     # })
 
-    # (mkIf cfg.matrix.withClient.enable {
-    #   user.packages = let
-    #     inherit (pkgs) makeWrapper symlinkJoin element-desktop;
-    #     element-desktop' = symlinkJoin {
-    #       name = "element-desktop-in-dataHome";
-    #       paths = [element-desktop];
-    #       nativeBuildInputs = [makeWrapper];
-    #       postBuild = ''
-    #         wrapProgram "$out/bin/element-desktop" \
-    #           --add-flags '--profile-dir $XDG_DATA_HOME/Element'
-    #       '';
-    #     };
-    #   in
-    #     if (cfg.matrix.withClient.package == "element")
-    #     then [element-desktop']
-    #     else [pkgs.fractal-next];
-    # })
+    (mkIf cfg.matrix.withClient.enable {
+      user.packages = let
+        inherit (pkgs) makeWrapper symlinkJoin element-desktop;
+        element-desktop' = symlinkJoin {
+          name = "element-desktop-in-dataHome";
+          paths = [element-desktop];
+          nativeBuildInputs = [makeWrapper];
+          postBuild = ''
+            wrapProgram "$out/bin/element-desktop" \
+              --add-flags '--profile-dir $XDG_DATA_HOME/Element'
+          '';
+        };
+      in
+        if (cfg.matrix.withClient.package == "element")
+        then [element-desktop']
+        else [pkgs.fractal-next];
+    })
 
     (mkIf cfg.discord.enable {
       home.configFile.openSAR-settings = {

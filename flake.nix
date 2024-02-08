@@ -2,7 +2,7 @@
   description = "λ simple and configureable Nix-Flake repository!";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-23.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
     # nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
     home-manager = {
       # url = "github:nix-community/home-manager/master";
@@ -28,7 +28,7 @@
     rust.url = "github:oxalica/rust-overlay";
 
     nvim-dir = {
-      url = "https://github.com/rolfst/nvim.git?rev=54c22ac72240406dca54ff990e1492ae13bcce1b";
+      url = "https://github.com/rolfst/nvim.git?rev=23914ed601f42344d7fce3f352b820d7d8ed0428";
       type = "git";
       submodules = true;
       flake = false;
@@ -47,7 +47,11 @@
     mkPkgs = pkgs: extraOverlays:
       import pkgs {
         inherit system;
+        config.nvidia.acceptLicense = true;
         config.allowUnfree = true;
+        config.permittedInsecurePackages = [
+          "electron-25.9.0"
+        ];
         overlays = extraOverlays ++ (lib.attrValues self.overlays);
       };
     pkgs = mkPkgs nixpkgs [self.overlays.default];
