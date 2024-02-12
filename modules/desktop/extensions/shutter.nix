@@ -6,7 +6,7 @@
   ...
 }: let
   inherit (lib) attrValues mkIf mkEnableOption;
-  cfg = config.modules.desktop.extensions."2fa";
+  cfg = config.modules.desktop.extensions."screenshot";
 in {
   options.modules.desktop.extensions."screenshot" = {
     enable = mkEnableOption "screenshot";

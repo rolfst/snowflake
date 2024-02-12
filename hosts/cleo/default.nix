@@ -62,6 +62,7 @@
       extensions = {
         keybase.enable = true; # the gui
         "2fa".enable = true;
+        screenshot.enable = true;
       };
       education = {
         memory.enable = true;

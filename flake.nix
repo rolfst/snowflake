@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
-    # nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
+    nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
     home-manager = {
       # url = "github:nix-community/home-manager/master";
       url = "github:nix-community/home-manager/release-23.11";
@@ -28,7 +28,7 @@
     rust.url = "github:oxalica/rust-overlay";
 
     nvim-dir = {
-      url = "https://github.com/rolfst/nvim.git?rev=23914ed601f42344d7fce3f352b820d7d8ed0428";
+      url = "https://github.com/rolfst/nvim.git?rev=c5d91678a4a8feac32b8825019fa2f98558c8103";
       type = "git";
       submodules = true;
       flake = false;
