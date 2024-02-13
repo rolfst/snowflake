@@ -249,17 +249,17 @@ in {
         };
       };
 
-      hm.programs.vscode.extensions = let
-        inherit (cfg.vscode.extension) name publisher version hash;
-      in
-        pkgs.vscode-utils.extensionsFromVscodeMarketplace [
-          {
-            name = "${name}";
-            publisher = "${publisher}";
-            version = "${version}";
-            hash = "${hash}";
-          }
-        ];
+      # hm.programs.vscode.extensions = let
+      #   inherit (cfg.editor.vscode.extension) name publisher version hash;
+      # in
+      #   pkgs.vscode-utils.extensionsFromVscodeMarketplace [
+      #     {
+      #       name = "${name}";
+      #       publisher = "${publisher}";
+      #       version = "${version}";
+      #       hash = "${hash}";
+      #     }
+      #   ];
     }
 
     (mkIf (envProto == "wayland") {

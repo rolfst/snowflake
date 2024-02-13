@@ -28,7 +28,7 @@
     rust.url = "github:oxalica/rust-overlay";
 
     nvim-dir = {
-      url = "https://github.com/rolfst/nvim.git?rev=c5d91678a4a8feac32b8825019fa2f98558c8103";
+      url = "https://github.com/rolfst/nvim.git?rev=04d3cc4f66114fa24f1642ed5a30d41e9c8f3b8c";
       type = "git";
       submodules = true;
       flake = false;
@@ -49,6 +49,7 @@
         inherit system;
         config.nvidia.acceptLicense = true;
         config.allowUnfree = true;
+
         config.permittedInsecurePackages = [
           "electron-25.9.0"
         ];
