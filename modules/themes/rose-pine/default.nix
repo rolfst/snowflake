@@ -134,13 +134,13 @@ in {
           };
           vscode = {
             dark = "rose-pine";
-            light = "rose-pine-dawn";
-            extension = {
-              name = "rose-pine";
-              publisher = "mvllow";
-              version = "2.8.0 ";
-              hash = "";
-            };
+            light = "rose-pine-moon";
+            # extension = {
+            #   name = "rose-pine";
+            #   publisher = "mvllow";
+            #   version = "2.9.0 ";
+            #   hash = "";
+            # };
           };
         };
       };

@@ -1,6 +1,10 @@
-{ options, config, lib, pkgs, ... }:
-
-let
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (lib.attrsets) attrValues;
   inherit (lib.modules) mkIf mkMerge;
   cfg = config.modules.shell;
@@ -23,21 +27,21 @@ in {
     })
 
     (mkIf cfg.corePkgs.enable {
-      modules.shell.btop.enable = true;
+      modules.shell.toolset.btop.enable = true;
 
       hm.programs.direnv = {
         enable = true;
         nix-direnv.enable = true;
-        config.whitelist.prefix = [ "/home" ];
+        config.whitelist.prefix = ["/home"];
       };
 
-      user.packages = attrValues ({
-        inherit (pkgs) any-nix-shell fzf pwgen yt-dlp csview ripdrag yazi;
+      user.packages = attrValues {
+        inherit (pkgs) any-nix-shell pwgen yt-dlp csview ripdrag yazi;
 
         # GNU Alternatives
         inherit (pkgs) bat eza fd zoxide;
-        rgFull = pkgs.ripgrep.override { withPCRE2 = true; };
-      });
+        rgFull = pkgs.ripgrep.override {withPCRE2 = true;};
+      };
     })
   ];
 }

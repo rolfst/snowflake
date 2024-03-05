@@ -34,12 +34,24 @@ in {
         // optionalAttrs (config.modules.develop.cc.enable == false) {
           inherit (pkgs) gcc; # Treesitter
         });
+
       hm.programs.neovim = {
         enable = true;
         package = cfg.package;
         viAlias = true;
         vimAlias = true;
         vimdiffAlias = true;
+        extraPackages = with pkgs.unstable; [
+          python3Packages.pynvim
+          python3Packages.prompt-toolkit
+          python3Packages.requests
+        ];
+        extraPython3Packages = ps:
+          with ps; [
+            pynvim
+            prompt_toolkit
+            requests
+          ];
         # plugins = with pkgs.unstable.vimPlugins; [
         #   nvim-treesitter.withAllGrammars
         #   nvim-treesitter-parsers.css

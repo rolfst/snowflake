@@ -9,10 +9,13 @@
   modules = {
     shell = {
       default = "zsh";
-      git.enable = true;
       gnupg.enable = true;
       android.enable = false;
       tmux.enable = true;
+      toolset = {
+        fzf.enable = true;
+        git.enable = true;
+      };
     };
     hardware = {
       xkbLayout = {

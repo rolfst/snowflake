@@ -8,11 +8,11 @@
   inherit (lib.attrsets) attrValues optionalAttrs;
   inherit (lib.modules) mkIf;
 in {
-  options.modules.shell.git = let
+  options.modules.shell.toolset.git = let
     inherit (lib.options) mkEnableOption;
   in {enable = mkEnableOption "version-control system";};
 
-  config = mkIf config.modules.shell.git.enable {
+  config = mkIf config.modules.shell.toolset.git.enable {
     user.packages = attrValues ({
         inherit (pkgs) act dura gitui sad;
         inherit (pkgs.gitAndTools) gh git-open;
