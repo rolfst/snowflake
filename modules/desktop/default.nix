@@ -81,6 +81,10 @@ in {
       # Enabling xserver + x-related settings:
       services.xserver.enable = true;
 
+      # Enabling usb connection for devices
+      services.udisks2.enable = true;
+      services.gvfs.enable = true;
+
       xdg.portal = {
         enable = true;
         extraPortals = [pkgs.xdg-desktop-portal-gtk];
@@ -108,12 +112,12 @@ in {
     }
 
     (mkIf (cfg.envProto == "x11") {
+      services.displayManager = {
+        autoLogin.enable = true;
+        autoLogin.user = config.user.name;
+      };
       services.xserver = {
         enable = true;
-        displayManager = {
-          autoLogin.enable = true;
-          autoLogin.user = config.user.name;
-        };
         displayManager.lightdm = {
           enable = true;
           # greeters.mini = {
