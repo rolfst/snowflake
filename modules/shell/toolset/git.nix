@@ -14,7 +14,7 @@ in {
 
   config = mkIf config.modules.shell.toolset.git.enable {
     user.packages = attrValues ({
-        inherit (pkgs) act dura gitui sad;
+        inherit (pkgs) act dura gitui lazygit sad;
         inherit (pkgs.gitAndTools) gh git-open;
       }
       // optionalAttrs config.modules.shell.gnupg.enable {
