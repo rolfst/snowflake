@@ -18,11 +18,13 @@
       };
     };
     hardware = {
+      laptop.enable = true;
       xkbLayout = {
         hyperCtrl.enable = true;
       };
       printer.enable = true;
       bluetooth.enable = true;
+      kmonad.enable = true;
     };
     networking = {
       networkManager.enable = true;
@@ -30,6 +32,7 @@
 
     services = {
       ssh.enable = true;
+      flatpak.enable = true;
     };
 
     develop = {
@@ -39,6 +42,7 @@
       rust.enable = true;
       lua.enable = true;
       java.enable = true;
+      cc.enable = true;
     };
 
     # virtualize = {
@@ -56,6 +60,7 @@
         default = "nvim";
         libreoffice.enable = true;
         neovim.rolfst.enable = true;
+        vscodium.enable = true;
       };
       browsers = {
         default = "firefox";
@@ -64,12 +69,11 @@
       };
       extensions = {
         keybase.enable = true; # the gui
-        "2fa".enable = true;
         screenshot.enable = true;
       };
       education = {
         memory.enable = true;
-        vidcom.enable = false;
+        vidcom.enable = true;
       };
 
       distraction = {
@@ -79,6 +83,7 @@
       };
 
       toolset = {
+        citrix.enable = true;
         player = {
           music.enable = false;
           video.enable = false;
@@ -86,6 +91,7 @@
         docView = {
           zathura.enable = true;
           sioyek.enable = false;
+          calibre.enable = true;
         };
         social = {
           base.enable = true;
@@ -93,12 +99,16 @@
           discord.enable = true;
           slack.enable = true;
         };
+        graphics = {
+          raster.enable = true;
+        };
         keybase.enable = true;
       };
     };
     virtualize = {
       enable = true;
-      podman.enable = true;
+      podman.enable = false;
+      docker.enable = true;
     };
   };
 }
