@@ -66,7 +66,7 @@ in {
     in {
       inherit name;
       description = "Primary user account";
-      extraGroups = ["wheel" "input" "audio" "video" "storage" "scanner" "lp"];
+      extraGroups = ["wheel" "dialout" "input" "audio" "video" "storage" "scanner" "lp" "disk"];
       isNormalUser = true;
       home = "/home/${name}";
       group = "users";
@@ -75,6 +75,9 @@ in {
 
     # Necessary for nixos-rebuild build-vm to work.
     home-manager.useUserPackages = true;
+    home-manager.backupFileExtension = "backup";
+
+    home-manager.useGlobalPkgs = true;
 
     hm.home = {
       activation = mkAliasDefinitions options.home.activation;

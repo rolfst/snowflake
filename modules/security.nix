@@ -1,4 +1,8 @@
-{ config, lib, ... }: {
+{
+  config,
+  lib,
+  ...
+}: {
   ## System security tweaks
   # sets hidepid=2 on /proc (make process info visible only to owning user)
   # NOTE Was removed on nixpkgs-unstable because it doesn't do anything
@@ -58,7 +62,7 @@
     "net.core.default_qdisc" = "cake";
   };
 
-  boot.kernelModules = [ "tcp_bbr" ];
+  boot.kernelModules = ["tcp_bbr"];
 
   # Change me later!
   user.initialPassword = "nixos";
@@ -66,4 +70,15 @@
 
   # So we don't have to do this later...
   security.acme.acceptTerms = true;
+  security.polkit = {
+    enable = true;
+    extraConfig = ''
+      polkit.addRule(function(action, subject) {
+        if (action.id == "org.freedesktop.udisks2.filesystem-*;org.freedesktop.udisks2.encrypted-*;org.freedesktop.udisks2.loop-*" &&
+            subject.user == "${config.user.name}") {
+          return polkit.Result.YES;
+        }
+      });
+    '';
+  };
 }

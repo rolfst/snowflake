@@ -41,7 +41,7 @@ in {
     hm.services.gpg-agent = {
       enable = true;
       enableSshSupport = true;
-      pinentryFlavor = "gnome3";
+      pinentryPackage = pkgs.pinentry-gtk2;
 
       defaultCacheTtl = cfg.cacheTTL;
       defaultCacheTtlSsh = cfg.cacheTTL;

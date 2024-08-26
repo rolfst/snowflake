@@ -2,13 +2,17 @@
   description = "λ simple and configureable Nix-Flake repository!";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    # nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
     home-manager = {
       # url = "github:nix-community/home-manager/master";
-      url = "github:nix-community/home-manager/release-23.11";
+      url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # flatpak
+    nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.4.1";
 
     # System application(s)
     ragenix = {
@@ -28,7 +32,7 @@
     rust.url = "github:oxalica/rust-overlay";
 
     nvim-dir = {
-      url = "https://github.com/rolfst/nvim.git?rev=7e980ff126472258a52bb7222a44b608c3ebae4b";
+      url = "https://github.com/rolfst/nvim.git?rev=5f75fecb4120182459f0c6f73bce0d433d16ed47";
       type = "git";
       submodules = true;
       flake = false;

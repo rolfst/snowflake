@@ -54,7 +54,7 @@ in {
   modules.hardware = {
     pipewire.enable = true;
     bluetooth.enable = false;
-    # kmonad.deviceID = "/dev/input/by-path/platform-i8042-serio-0-event-kbd";
+    kmonad.deviceID = "/dev/input/by-path/platform-i8042-serio-0-event-kbd";
     pointer.enable = true;
     printer.enable = true;
     razer.enable = true;
@@ -63,20 +63,20 @@ in {
   services = {
     upower.enable = true;
     xserver = {
-      videoDrivers = [];
+      videoDrivers = ["nvidia" "displayLink" "modeSetting"];
       deviceSection = ''
         Option "TearFree" "true"
       '';
-      libinput = {
-        enable = true;
-        touchpad = {
-          accelSpeed = "0.5";
-          accelProfile = "adaptive";
-          disableWhileTyping = true;
-          naturalScrolling = true;
-          scrollMethod = "twofinger";
-          tapping = true;
-        };
+    };
+    libinput = {
+      enable = true;
+      touchpad = {
+        accelSpeed = "0.5";
+        accelProfile = "adaptive";
+        disableWhileTyping = true;
+        naturalScrolling = true;
+        scrollMethod = "twofinger";
+        tapping = true;
       };
     };
   };
