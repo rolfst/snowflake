@@ -15,15 +15,16 @@ in {
   config = mkMerge [
     (mkIf config.modules.develop.python.enable {
       user.packages = attrValues {
-        inherit (pkgs) python3 rye;
+        # inherit (pkgs) python3 rye;
+        inherit (pkgs) python3 pdm;
         inherit (pkgs.nodePackages) pyright;
-        inherit (pkgs.python3Packages) black isort ipython;
+        inherit (pkgs.python3Packages) pip black isort ipython;
         inherit (pkgs.unstable.python3Packages) pynvim;
       };
 
       environment.shellAliases = {
         py = "python";
-        pip = "rye";
+        # pip = "rye";
         ipy = "ipython --no-banner";
         ipylab = "ipython --pylab=qt5 --no-banner";
       };

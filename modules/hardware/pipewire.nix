@@ -30,6 +30,10 @@ in {
       #jack.enable = true;
     };
 
+    hardware.pulseaudio.extraConfig = ''
+      load-module module-switch-on-connect
+    '';
+
     home.configFile = mkIf config.modules.hardware.bluetooth.enable {
       wireplumber-bluetooth = {
         target = "wireplumber/bluetooth.lua.d/51-bluez-config.lua";

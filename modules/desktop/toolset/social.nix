@@ -51,7 +51,7 @@ in {
       user.packages = attrValues {inherit (pkgs) signal-desktop tdesktop;};
     })
     (mkIf cfg.slack.enable {
-      user.packages = attrValues {inherit (pkgs) slack;};
+      user.packages = attrValues {inherit (pkgs) slack teamviewer;};
     })
 
     # (mkIf cfg.matrix.withDaemon.enable {
@@ -148,14 +148,17 @@ in {
             "--enable-webrtc-pipewire-capturer"
           ];
 
-        discord-canary' =
-          (pkgs.discord-canary.override {withOpenASAR = true;}).overrideAttrs
+        # discord-canary' =
+        discord' =
+          # (pkgs.discord-canary.override {withOpenASAR = true;}).overrideAttrs
+          (pkgs.discord.override {withOpenASAR = true;}).overrideAttrs
           (old: {
             preInstall = ''
               gappsWrapperArgs+=("--add-flags" "${concatStringsSep " " flags}")
             '';
           });
-      in [discord-canary'];
+        # in [discord-canary'];
+      in [discord'];
     })
   ];
 }

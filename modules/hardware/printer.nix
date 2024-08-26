@@ -23,6 +23,14 @@ in {
         "*:631"
       ];
     };
+    services.printing.browsedConf = ''
+      BrowseDNSSDSubTypes _cups,_print
+      BrowseLocalProtocols all
+      BrowseRemoteProtocols all
+      CreateIPPPrinterQueues All
+
+      BrowseProtocols all
+    '';
     user.packages = [pkgs.xsane pkgs.gtklp];
 
     # hardware.sane = {
@@ -33,7 +41,8 @@ in {
     # Enable wireless access to printers
     services.avahi = {
       enable = true;
-      nssmdns = true;
+      nssmdns4 = true;
+      # nssmdns = true;
       openFirewall = true;
       publish = {
         enable = true;

@@ -16,14 +16,23 @@ in {
   };
 
   config = mkMerge [
-    (mkIf cfg.enable {
-      user.packages = attrValues {
-        inherit (pkgs) blueman;
-      };
-      hardware.bluetooth = {
-        enable = true;
-        disabledPlugins = ["sap"];
-      };
-    })
+    (
+      mkIf cfg.enable {
+        services.blueman.enable = true;
+
+        hardware.bluetooth = {
+          enable = true;
+          # supportA2dp = true;
+          # supportHfp = true;
+          # supportHsp = true;
+          powerOnBoot = true;
+          settings.General = {
+            ControllerMode = "bredr";
+            Experimental = true;
+            Enable = "Source,Sink,Media,Socket";
+          };
+        };
+      }
+    )
   ];
 }

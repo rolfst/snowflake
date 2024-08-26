@@ -21,6 +21,7 @@ in {
   imports =
     [
       inputs.home-manager.nixosModules.home-manager
+      inputs.nix-flatpak.nixosModules.nix-flatpak
       (mkAliasOptionModule ["hm"] ["home-manager" "users" config.user.name])
     ]
     ++ (mapModulesRec' (toString ./modules) import);
@@ -38,7 +39,7 @@ in {
     nixPathInputs = mapAttrsToList (n: v: "${n}=${v}") filteredInputs;
     registryInputs = mapAttrs (_: v: {flake = v;}) filteredInputs;
   in {
-    package = pkgs.nixVersions.unstable;
+    package = pkgs.nixVersions.git;
     extraOptions = "experimental-features = nix-command flakes";
 
     nixPath =
@@ -99,6 +100,8 @@ in {
   };
 
   time.timeZone = mkDefault "Europe/Amsterdam";
+  services.geoclue2.enable = true;
+  services.localtimed.enable = true;
 
   i18n = {
     defaultLocale = mkDefault "en_US.UTF-8";
@@ -119,5 +122,5 @@ in {
   environment.defaultPackages = [];
 
   environment.systemPackages =
-    attrValues {inherit (pkgs) cached-nix-shell gnumake unrar unzip corefonts;};
+    attrValues {inherit (pkgs) cached-nix-shell gnumake unrar xz unzip corefonts udisks udiskie usbutils e2fsprogs dosfstools;};
 }

@@ -48,6 +48,7 @@ in {
     environment.systemPackages = attrValues {
       inherit (pkgs) libnotify playerctl gxmessage xdotool feh arandr;
       inherit (pkgs.xorg) xwininfo;
+      inherit (pkgs.gnome) zenity;
     };
 
     services.greetd = {
