@@ -49,6 +49,8 @@ import XMonad.Actions.DynamicWorkspaces hiding (
 import XMonad.Actions.Minimize
 import XMonad.Actions.MouseGestures
 import XMonad.Actions.Navigation2D
+
+-- import XMonad.Actions.PhysicalScreens
 import qualified XMonad.Actions.SwapWorkspaces as SW
 import XMonad.Actions.UpdatePointer
 import XMonad.Actions.WindowBringer
@@ -82,6 +84,7 @@ import XMonad.Layout.Spacing
 import XMonad.Layout.Tabbed
 import XMonad.Main (launch)
 import qualified XMonad.Operations
+import XMonad.StackSet (screens)
 import qualified XMonad.StackSet as W
 import XMonad.Util.CustomKeys
 import qualified XMonad.Util.Dmenu as DM
@@ -238,6 +241,8 @@ chromiumSelectorBase = isChromiumClass <$> className
 chromiumSelector = className =? "google-chrome" -- <&&> appName =? "google-chrome"
 
 firefoxSelector = className =? "firefox-aurora" <&&> appName =? "Navigator"
+
+youtubeMusicSelector = className =? "firefox-aurora" <&&> appName =? "Navigator"
 
 thunarSelector = className =? "Thunar" <&&> appName =? "Thunar"
 
@@ -747,19 +752,18 @@ myScratchpads :: X [NamedScratchpad]
 myScratchpads = do
   btopLaunch <- getInput $ inTerm >-> setXClass sysMonID >-> execute "btop"
   -- btopLaunch = "kitty @ launch btop"
-  -- \| E-Mail session managed by Emacs, because why not? :P
-  telegramClient <- getInput $ inEditor >-> setFrameName telegramSessionID >-> eval (elispFun "telega")
-  youtubeMusicClient <- getInput $ inEditor >-> setFrameName youtubeMusicClientID >-> eval (elispFun "youtube-music")
-  matrixClient <- getInput $ inEditor >-> setFrameName matrixSessionID >-> eval (elispFun "irkala/connect-to-matrix")
+  telegramClient <- getInput $ inEditor >-> setFrameName telegramSessionID >-> execute "telegram-desktop"
+  matrixClient <- getInput $ inEditor >-> setFrameName matrixSessionID >-> execute "element-desktop"
   pure
-    [ NS "Discord" "discordcanary" (className =? "discord") nearFullFloat
-    , NS "System Monitor" btopLaunch (appName =? sysMonID) floatCenter
+    [ NS "Discord" "discord" (className =? "discord") nearFullFloat
+    , NS "System-Monitor" btopLaunch (appName =? sysMonID) floatCenter
     , NS "Slack" "slack" (className =? "slack") nearFullFloat
-    , NS "Youtube Music" youtubeMusicClient (title =? youtubeMusicClientID) floatCenter
-    , NS "Telegram" telegramClient (title =? telegramSessionID) nearFullFloat
+    , NS "Youtube-Music" "youtube-music" (className =? "Youtube Music") floatCenter
+    , NS "Telegram" "telegram-desktop" (className =? "telegram-desktop") nearFullFloat
+    , NS "Element" "element-desktop" (className =? "Element") nearFullFloat
     ]
  where
-  sysMonID = "System Monitor"
+  sysMonID = "system-monitor"
   telegramSessionID = "telega-scratch"
   matrixSessionID = "matrix-scratch"
   youtubeMusicClientID = "youtube-music-scratch"
@@ -921,12 +925,13 @@ addKeys conf@XConfig{modMask = modm} =
        , ((hyper .|. shiftMask, xK_r), renameWorkspace def)
        , ((hyper, xK_l), selectLayout)
        , -- ScratchPad(s)
-         ((modalt, xK_b), doScratchpad "System Monitor")
+         ((modalt, xK_b), doScratchpad "System-Monitor")
        , ((modalt, xK_d), doScratchpad "Discord")
-       , ((modalt, xK_y), doScratchpad "Youtube Music")
+       , ((modalt, xK_y), doScratchpad "Youtube-Music")
        , ((modalt, xK_s), doScratchpad "Slack")
-       , ((modalt, xK_k), doScratchpad "Matrix")
+       , ((modalt, xK_k), doScratchpad "Element")
        , ((modalt, xK_h), doScratchpad "Telegram")
+       , ((modalt, xK_slash), spawn "zenity --text-info --filename=keybindings.txt --title 'Xmonad keybindings'")
        , -- :NOTE| Program-specific launches
          -- Rofi(s)
          ((modm, xK_p), spawn "rofi -show power-menu")
@@ -938,9 +943,9 @@ addKeys conf@XConfig{modMask = modm} =
          -- , ((hyper, xK_q),                         spawn "rofi -show power") <- rofi power controls
 
          -- Playerctl
-         ((modm, xK_Left), spawn "playerctl previous")
-       , ((modm, xK_Down), spawn "playerctl play-pause")
-       , ((modm, xK_Right), spawn "playerctl next")
+         ((modm, xK_Left), unsafeSpawn "playerctl --player playerctld previous")
+       , ((modm, xK_Down), unsafeSpawn "playerctl --player playerctld play-pause")
+       , ((modm, xK_Right), unsafeSpawn "playerctl --player playerctld next")
        , -- Volume control
          ((0, xF86XK_AudioRaiseVolume), spawn "volctl increase")
        , ((0, xF86XK_AudioLowerVolume), spawn "volctl decrease")
@@ -960,6 +965,12 @@ addKeys conf@XConfig{modMask = modm} =
          ((shiftMask, xK_Print), spawn "captScr system --selection")
        , ((controlMask .|. shiftMask, xK_Print), spawn "captScr clipboard --selection")
        ]
+    -- ++
+    -- -- move to physical screens
+    -- [ ((modm .|. mask, key), f sc)
+    -- \| (key, sc) <- zip [xK_1 .. xK_9] [0 ..]
+    -- , (f, mask) <- [(viewScreen def, 0), (sendToScreen def, shiftMask)]
+    -- ]
     ++
     -- Replace moving bindings
     [ ((additionalMask .|. modm, key), windows $ function workspace)
