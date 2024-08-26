@@ -27,7 +27,7 @@ in {
       user.packages = attrValues ({
           inherit (pkgs) neovide;
           # inherit (pkgs.vimPlugins) markdown-preview-nvim;
-          inherit (pkgs.lua51Packages) luarocks;
+          inherit (pkgs.lua51Packages) luarocks tiktoken_core;
           # inherit (pkgs.unstable.vimPlugins.nvim-treesitter) withAllGrammars;
           # inherit (pkgs.unstable.vimPlugins.nvim-treesitter-parsers) css haskell javascript jsdoc json nix markdown python rust typescript tsx toml yaml;
         }
@@ -42,13 +42,11 @@ in {
         vimAlias = true;
         vimdiffAlias = true;
         extraPackages = with pkgs.unstable; [
-          python3Packages.pynvim
           python3Packages.prompt-toolkit
           python3Packages.requests
         ];
         extraPython3Packages = ps:
           with ps; [
-            pynvim
             prompt_toolkit
             requests
           ];
