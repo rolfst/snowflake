@@ -225,7 +225,7 @@ in {
         ];
         gtk4.extraConfig = {
           gtk-cursor-blink = false;
-          gtk-recent-files-limit = 20;
+          # gtk-recent-files-limit = 20;
         };
       };
 
