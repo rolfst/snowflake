@@ -84,13 +84,29 @@ in {
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
     package = config.boot.kernelPackages.nvidiaPackages.latest;
     prime = {
-      offload.enable = true;
+      offload = {
+        enable = true;
+        enableOffloadCmd = true;
+      };
       # Make sure to use the correct Bus ID values for your system!
       intelBusId = "PCI:0:2:0";
       nvidiaBusId = "PCI:1:0:0";
     };
   };
 
+  # specialisation = {
+  #   no-offload = {
+  #     hardware.nvidia = {
+  #       gaming-time.configuration = {
+  #         prime.sync.enable = lib.mkForce true;
+  #         prime.offload = {
+  #           enable = lib.mkForce false;
+  #           enableOffloadCmd = lib.mkForce false;
+  #         };
+  #       };
+  #     };
+  #   };
+  # };
   powerManagement.cpuFreqGovernor = mkDefault "schedutil";
   environment.systemPackages = [nvidia-offload];
 
@@ -104,16 +120,16 @@ in {
       deviceSection = ''
         Option "TearFree" "true"
       '';
-      libinput = {
-        enable = true;
-        touchpad = {
-          accelSpeed = "0.5";
-          accelProfile = "adaptive";
-          disableWhileTyping = true;
-          naturalScrolling = true;
-          scrollMethod = "twofinger";
-          tapping = true;
-        };
+    };
+    libinput = {
+      enable = true;
+      touchpad = {
+        accelSpeed = "0.5";
+        accelProfile = "adaptive";
+        disableWhileTyping = true;
+        naturalScrolling = true;
+        scrollMethod = "twofinger";
+        tapping = true;
       };
     };
   };
@@ -125,7 +141,7 @@ in {
       # lowLatency.enable = true;
     };
     bluetooth.enable = true;
-    # kmonad.deviceID = "/dev/input/by-path/platform-i8042-serio-0-event-kbd";
+    kmonad.deviceID = "/dev/input/by-path/platform-i8042-serio-0-event-kbd";
     pointer.enable = true;
     printer.enable = true;
     razer.enable = true;
