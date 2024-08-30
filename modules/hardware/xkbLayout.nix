@@ -9,6 +9,7 @@
   inherit (lib.meta) getExe;
   inherit (lib.modules) mkIf mkMerge;
   inherit (pkgs) writeText xorg;
+
   cfg = config.modules.hardware.xkbLayout;
 in {
   options.modules.hardware.xkbLayout = let
@@ -17,12 +18,12 @@ in {
 
   config = mkMerge [
     (mkIf cfg.hyperCtrl.enable {
-      services = {
-        xserver.displayManager.sessionCommands = ''
+      services.xserver = {
+        displayManager.sessionCommands = ''
           ${getExe xorg.setxkbmap} -layout us-hyperCtrl
         '';
 
-        xserver.xkb.extraLayouts.us-hyperCtrl = {
+        xkb.extraLayouts.us-hyperCtrl = {
           description = "US Layout with Right Ctrl = Hyper";
           languages = ["eng"];
           symbolsFile = writeText "us-hyperCtrl" ''
@@ -39,7 +40,7 @@ in {
         };
       };
 
-      home.dataFile.fcitx5-hyprCtrl = mkIf config.modules.desktop.extensions.fcitx5.enable {
+      create.dataFile.fcitx5-hyprCtrl = mkIf (config.modules.desktop.extensions.input-method.framework == "fcitx5") {
         target = "fcitx5/inputmethod/keyboard-us-hyprCtrl.conf";
         text = ''
           [InputMethod]

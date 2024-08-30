@@ -61,7 +61,7 @@ main = do
     laptopEndWidgets = myBattery ++ baseEndWidgets
     baseConfig =
       defaultSimpleTaffyConfig
-        { startWidgets = [myWorkspaces, myLayout]
+        { startWidgets = [myLauncher, myWorkspaces, myLayout]
         , endWidgets = baseEndWidgets
         , barPosition = Top
         , widgetSpacing = 0
@@ -70,19 +70,20 @@ main = do
         , cssPaths = cssFiles
         }
     selectedConfig =
-      fromMaybe baseConfig
-        $ lookup
+      fromMaybe baseConfig $
+        lookup
           hostName
-          [ ("thinkpad-e595", baseConfig{endWidgets = laptopEndWidgets})
+          [ ("cleo", baseConfig{endWidgets = laptopEndWidgets})
+          , ("thinkpad-e595", baseConfig{endWidgets = laptopEndWidgets})
           , ("probook-440g3", baseConfig{endWidgets = laptopEndWidgets})
           ]
     simpleTaffyConfig = selectedConfig{centerWidgets = [myClock]}
 
-  startTaffybar
-    $ appendHook (void $ getTrayHost False)
-    $ withLogServer
-    $ withToggleServer
-    $ toTaffyConfig simpleTaffyConfig
+  startTaffybar $
+    appendHook (void $ getTrayHost False) $
+      withLogServer $
+        withToggleServer $
+          toTaffyConfig simpleTaffyConfig
 
 setClassAndBoundingBoxes ::
   (MonadIO m) => Data.Text.Text -> Gtk.Widget -> m Gtk.Widget
@@ -163,27 +164,30 @@ logDebug = do
 cssFilesByHostname =
   [ ("thinkpad-e595", ["taffybar.css"])
   , ("probook-440g3", ["taffybar.css"])
+  , ("cleo", ["taffybar.css"])
   ]
 
 myCPU =
-  deocrateWithSetClassAndBoxes "cpu"
-    $ pollingGraphNew cpuCfg 5 cpuCallback
+  deocrateWithSetClassAndBoxes "cpu" $
+    pollingGraphNew cpuCfg 5 cpuCallback
 
 myMem =
-  deocrateWithSetClassAndBoxes "mem"
-    $ pollingGraphNew memCfg 5 memCallback
+  deocrateWithSetClassAndBoxes "mem" $
+    pollingGraphNew memCfg 5 memCallback
 
 myNet =
-  deocrateWithSetClassAndBoxes "net"
-    $ networkGraphNew netCfg Nothing
+  deocrateWithSetClassAndBoxes "net" $
+    networkGraphNew netCfg Nothing
 
 myLayout =
-  deocrateWithSetClassAndBoxes "layout"
-    $ layoutNew defaultLayoutConfig
+  deocrateWithSetClassAndBoxes "layout" $
+    layoutNew defaultLayoutConfig
 
 myWindows =
-  deocrateWithSetClassAndBoxes "windows"
-    $ windowsNew defaultWindowsConfig
+  deocrateWithSetClassAndBoxes "windows" $
+    windowsNew defaultWindowsConfig
+
+myLauncher = deocrateWithSetClassAndBoxes "windows" $ simpleCommandButtonNew "\62227 NixOs" "rofi -no-lazy-grab -show drun -modi drun"
 
 myWorkspaces =
   flip widgetSetClassGI "workspaces"
@@ -191,10 +195,10 @@ myWorkspaces =
       defaultWorkspacesConfig
         { minIcons = 1
         , getWindowIconPixbuf =
-            scaledWindowIconPixbufGetter
-              $ getWindowIconPixbufFromChrome
-              <|||> unscaledDefaultGetWindowIconPixbuf
-              <|||> (\size _ -> lift $ loadPixbufByName size "application-default-icon")
+            scaledWindowIconPixbufGetter $
+              getWindowIconPixbufFromChrome
+                <|||> unscaledDefaultGetWindowIconPixbuf
+                <|||> (\size _ -> lift $ loadPixbufByName size "application-default-icon")
         , widgetGap = 0
         , showWorkspaceFn = hideEmpty
         , updateRateLimitMicroseconds = 100000
@@ -202,8 +206,8 @@ myWorkspaces =
         , widgetBuilder = buildLabelOverlayController
         }
 
-myLabelSetter workspace = return
-  $ case workspaceName workspace of
+myLabelSetter workspace = return $
+  case workspaceName workspace of
     "1" -> "일"
     "2" -> "이"
     "3" -> "삼"
@@ -216,23 +220,23 @@ myLabelSetter workspace = return
     n -> n
 
 myClock =
-  deocrateWithSetClassAndBoxes "clock"
-    $ textClockNewWith
+  deocrateWithSetClassAndBoxes "clock" $
+    textClockNewWith
       defaultClockConfig
         { clockUpdateStrategy = RoundedTargetInterval 60 0.0
         , clockFormatString = "\61463  %H:%M   \61555  %d/%m/%y"
         }
 
 myTray =
-  deocrateWithSetClassAndBoxes "tray"
-    $ sniTrayNewFromParams
+  deocrateWithSetClassAndBoxes "tray" $
+    sniTrayNewFromParams
       defaultTrayParams
         { trayRightClickAction = PopupMenu
         , trayLeftClickAction = Activate
         }
 
 myBattery =
-  [ deocrateWithSetClassAndBoxes "battery"
-      $ makeCombinedWidget
-        [batteryIconNew, textBatteryNew "$percentage$%"]
+  [ deocrateWithSetClassAndBoxes "battery" $
+      makeCombinedWidget
+        [textBatteryNew "$percentage$%", batteryIconNew]
   ]

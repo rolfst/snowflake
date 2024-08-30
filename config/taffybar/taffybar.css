@@ -1,36 +1,43 @@
 .taffy-window * {
-    color: @bar-foreground;
-    font-family: "FiraCode Nerd Font";
-    font-size: 12px;
-    font-style: italic; 
-    font-weight: 900;
+  color: @bar-foreground;
+  font-family: "FiraCode Nerd Font";
+  font-size: 12px;
+  font-style: italic;
+  font-weight: 900;
 }
 
 .taffy-box {
-    background-color: @bar-background;
-    padding: 3px;
+  background-color: @bar-background;
+  border-radius: 4px;
 }
 
-.contents { 
-    background-color: @widget-background;
-    border-radius: 9px;
-    margin: 0px 3px 0px 3px;
-    padding: 8px;
+.contents {
+  background-color: @widget-background;
+  border-radius: 8px;
+  margin: 0px 3px 0px 3px;
+  padding: 3px;
 }
 
 .active .contents {
-    background-color: @bar-foreground;
+  background-color: @bar-foreground;
+  padding-left: 6px;
+  padding-right: 6px;
 }
 
 .workspace-label {
-    color: @bar-foreground;
-    padding: 7px;
+  color: @bar-foreground;
+  padding: 7px;
 }
 
 .active .workspace-label {
-    color: @bar-foreground;
+  color: @bar-foreground;
+}
+.auto-size-image,
+.sni-tray {
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
 .no-visible-children * {
-    background-color: @button-background;
+  background-color: @button-background;
 }

@@ -15,7 +15,7 @@ in {
   config = mkIf config.modules.virtualize.docker.enable {
     user.packages = attrValues {inherit (pkgs) docker docker-compose;};
 
-    env = {
+    home.sessionVariables = {
       DOCKER_CONFIG = "$XDG_CONFIG_HOME/docker";
       MACHINE_STORAGE_PATH = "$XDG_DATA_HOME/docker/machine";
     };

@@ -36,24 +36,6 @@ in {
       modulesDir = mkOpt path "${config.snowflake.dir}/modules";
       themesDir = mkOpt path "${config.snowflake.modulesDir}/themes";
     };
-
-    home = {
-      file = mkOpt' attrs {} "Files to place directly in $HOME";
-      configFile = mkOpt' attrs {} "Files to place in $XDG_CONFIG_HOME";
-      dataFile = mkOpt' attrs {} "Files to place in $XDG_DATA_HOME";
-      pointerCursor = mkOpt' attrs {} "Cursor to be applied on running system";
-      activation = mkOpt' attrs {} "Script block to run after NixOS rebuild";
-    };
-
-    env = mkOption {
-      type = attrsOf (oneOf [str path (listOf (either str path))]);
-      apply = mapAttrs (n: v:
-        if isList v
-        then concatMapStringsSep ":" (x: toString x) v
-        else (toString v));
-      default = {};
-      description = "Provides easy-access to `environment.extraInit`";
-    };
   };
 
   config = {
@@ -76,20 +58,17 @@ in {
     # Necessary for nixos-rebuild build-vm to work.
     home-manager.useUserPackages = true;
     home-manager.backupFileExtension = "backup";
-
     home-manager.useGlobalPkgs = true;
 
-    hm.home = {
-      activation = mkAliasDefinitions options.home.activation;
-      file = mkAliasDefinitions options.home.file;
-      pointerCursor = mkAliasDefinitions options.home.pointerCursor;
+    home = {
       stateVersion = config.system.stateVersion;
+      sessionPath = ["$SNOWFLAKE_BIN" "$XDG_BIN_HOME" "$PATH"];
     };
 
-    hm.xdg = {
-      configFile = mkAliasDefinitions options.home.configFile;
-      dataFile = mkAliasDefinitions options.home.dataFile;
-    };
+    # hm.xdg = {
+    #   configFile = mkAliasDefinitions options.home.configFile;
+    #   dataFile = mkAliasDefinitions options.home.dataFile;
+    # };
 
     users.users.${config.user.name} = mkAliasDefinitions options.user;
 
@@ -100,10 +79,8 @@ in {
       allowed-users = users;
     };
 
-    env.PATH = ["$SNOWFLAKE_BIN" "$XDG_BIN_HOME" "$PATH"];
-
-    environment.extraInit =
-      concatStringsSep "\n"
-      (mapAttrsToList (n: v: ''export ${n}="${v}"'') config.env);
+    # environment.extraInit =
+    #   concatStringsSep "\n"
+    #   (mapAttrsToList (n: v: ''export ${n}="${v}"'') config.env);
   };
 }

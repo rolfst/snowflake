@@ -7,24 +7,28 @@
 }: let
   inherit (lib.attrsets) attrValues;
   inherit (lib.modules) mkIf mkMerge;
+  cfg = config.modules.develop.python;
 in {
   options.modules.develop.python = let
     inherit (lib.options) mkEnableOption;
   in {enable = mkEnableOption "Python development";};
 
-  config = mkMerge [
-    (mkIf config.modules.develop.python.enable {
+  config = mkIf cfg.enable (mkMerge [
+    {
       user.packages = attrValues {
-        # inherit (pkgs) python3 rye;
-        inherit (pkgs) python3 pdm;
-        inherit (pkgs.nodePackages) pyright;
-        inherit (pkgs.python3Packages) pip black isort ipython;
+        pyWithEnv = pkgs.python3.withPackages (ps:
+          with ps; [
+            black
+            isort
+            ipython
+          ]);
+        inherit (pkgs) pyright rye pdm;
         inherit (pkgs.unstable.python3Packages) pynvim;
       };
 
       environment.shellAliases = {
         py = "python";
-        # pip = "rye";
+        pip = "rye";
         ipy = "ipython --no-banner";
         ipylab = "ipython --pylab=qt5 --no-banner";
       };
@@ -33,14 +37,14 @@ in {
         inherit (pkgs.vscode-extensions.ms-python) python;
         inherit (pkgs.vscode-extensions.ms-toolsai) jupyter;
       };
-    })
+    }
 
     (mkIf config.modules.develop.xdg.enable {
-      env = {
+      home.sessionVariables = {
+        PYTHON_HISTORY_FILE = "$XDG_DATA_HOME/python/history";
         IPYTHONDIR = "$XDG_CONFIG_HOME/ipython";
-        PYTHONSTARTUP = "$XDG_CONFIG_HOME/python/pythonrc";
         JUPYTER_CONFIG_DIR = "$XDG_CONFIG_HOME/jupyter";
       };
     })
-  ];
+  ]);
 }

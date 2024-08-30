@@ -23,11 +23,11 @@ in {
         ya = "yarn";
       };
 
-      env.PATH = ["$(${getExe pkgs.yarn} global bin)"];
+      home.sessionPath = ["$(${getExe pkgs.yarn} global bin)"];
     })
 
     (mkIf config.modules.develop.xdg.enable {
-      env = {
+      home.sessionVariables = {
         NPM_CONFIG_USERCONFIG = "$XDG_CONFIG_HOME/npm/config";
         NPM_CONFIG_CACHE = "$XDG_CACHE_HOME/npm";
         NPM_CONFIG_TMP = "$XDG_RUNTIME_DIR/npm";
@@ -35,7 +35,7 @@ in {
         NODE_REPL_HISTORY = "$XDG_CACHE_HOME/node/repl_history";
       };
 
-      home.configFile.npm-conf = {
+      create.configFile.npm-conf = {
         target = "npm/config";
         text = ''
           cache=$XDG_CACHE_HOME/npm

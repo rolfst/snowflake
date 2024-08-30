@@ -14,8 +14,11 @@ in {
 
   config = mkIf config.modules.desktop.gnome.enable {
     modules.desktop = {
-      envProto = "wayland";
-      extensions.ibus.enable = true;
+      type = "wayland";
+      extensions.input-method = {
+        enable = true;
+        framework = "ibus";
+      };
     };
 
     programs.dconf.enable = true;
@@ -26,7 +29,7 @@ in {
     };
 
     services.gnome = {
-      # chrome-gnome-shell.enable = true;
+      gnome-browser-connector.enable = true;
       sushi.enable = true;
     };
 

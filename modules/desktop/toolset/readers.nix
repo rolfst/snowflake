@@ -10,9 +10,9 @@
   inherit (lib.modules) mkIf mkMerge;
   inherit (lib.strings) concatStringsSep;
 
-  cfg = config.modules.desktop.toolset.docView;
+  cfg = config.modules.desktop.toolset.readers;
 in {
-  options.modules.desktop.toolset.docView = let
+  options.modules.desktop.toolset.readers = let
     inherit (lib.options) mkEnableOption;
   in {
     zathura.enable = mkEnableOption "plugin-based doc-viewer";

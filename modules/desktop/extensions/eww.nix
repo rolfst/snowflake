@@ -1,22 +1,29 @@
-{ options, config, lib, pkgs, ... }:
-
-let
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (lib.attrsets) attrValues;
   inherit (lib.meta) getExe;
   inherit (lib.modules) mkIf;
   inherit (lib.strings) makeBinPath;
 
   cfg = config.modules.desktop.extensions.elkowar;
-  envProto = config.modules.desktop.envProto;
+  desktop = config.modules.desktop;
 in {
-  options.modules.desktop.extensions.elkowar =
-    let inherit (lib.options) mkEnableOption mkPackageOption;
-    in {
-      enable = mkEnableOption "wacky x11/wayland widgets";
-      package = mkPackageOption pkgs "eww" {
-        default = if (envProto == "wayland") then "eww-wayland" else "eww";
-      };
+  options.modules.desktop.extensions.elkowar = let
+    inherit (lib.options) mkEnableOption mkPackageOption;
+  in {
+    enable = mkEnableOption "wacky x11/wayland widgets";
+    package = mkPackageOption pkgs "eww" {
+      default =
+        if (desktop.type == "wayland")
+        then "eww-wayland"
+        else "eww";
     };
+  };
 
   config = mkIf cfg.enable {
     # Allow tray-icons to be displayed:
@@ -34,18 +41,18 @@ in {
     hm.systemd.user.services.eww = {
       Unit = {
         Description = "Elkowars wacky widgets => daemon.";
-        PartOf = [ "graphical-session.target" ];
+        PartOf = ["graphical-session.target"];
       };
       Service = {
         Environment = let
-          dependencies = attrValues ({
+          dependencies = attrValues {
             inherit (pkgs) bash coreutils mpc_cli util-linux wmctrl;
-          });
+          };
         in "PATH=/run/wrappers/bin:${makeBinPath dependencies}";
         ExecStart = "${getExe cfg.package} daemon --no-daemonize";
         Restart = "on-failure";
       };
-      Install.WantedBy = [ "graphical-session.target" ];
+      Install.WantedBy = ["graphical-session.target"];
     };
   };
 }

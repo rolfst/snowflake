@@ -10,7 +10,7 @@
   inherit (lib.strings) concatStringsSep;
 
   cfg = config.modules.desktop.toolset.social;
-  envProto = config.modules.desktop.envProto;
+  desktop = config.modules.desktop;
 in {
   options.modules.desktop.toolset.social = let
     inherit (lib.options) mkEnableOption mkOption;
@@ -106,7 +106,7 @@ in {
     })
 
     (mkIf cfg.discord.enable {
-      home.configFile.openSAR-settings = {
+      create.configFile.openSAR-settings = {
         target = "discordcanary/settings.json";
         text = builtins.toJSON {
           openasar = {
@@ -138,11 +138,11 @@ in {
             "--enable-zero-copy"
             "--ignore-gpu-blocklist"
           ]
-          ++ optionals (envProto == "x11") [
+          ++ optionals (desktop.type == "x11") [
             "--disable-features=UseOzonePlatform"
             "--enable-features=VaapiVideoDecoder"
           ]
-          ++ optionals (envProto == "wayland") [
+          ++ optionals (desktop.type == "wayland") [
             "--enable-features=UseOzonePlatform,WebRTCPipeWireCapturer"
             "--ozone-platform=wayland"
             "--enable-webrtc-pipewire-capturer"

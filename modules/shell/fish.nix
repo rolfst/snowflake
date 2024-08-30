@@ -1,14 +1,15 @@
-{ config, options, lib, pkgs, ... }:
-
-let
+{
+  config,
+  options,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (builtins) map;
   inherit (lib) mkIf getExe;
 in {
   config = mkIf (config.modules.shell.default == "fish") {
     modules.shell.corePkgs.enable = true;
-
-    # Custom shell modules:
-    modules.shell.macchina.enable = true;
 
     # Enable starship-rs:
     modules.shell.starship.enable = true;
@@ -57,10 +58,11 @@ in {
           inherit name;
           inherit (pkgs.fishPlugins."${name}") src;
         };
-      in map (p: mkPlugin p) [ "done" "autopair-fish" "fzf-fish" ];
+      in
+        map (p: mkPlugin p) ["done" "autopair-fish" "fzf-fish"];
     };
 
-    home.configFile = let
+    create.configFile = let
       inherit (config.modules.themes) active;
       inherit (config.modules.themes.colors.main) normal bright types;
     in (mkIf (active != null) {
@@ -76,7 +78,8 @@ in {
 
       fish-theme = {
         target = "fish/conf.d/${active}.fish";
-        text = let inherit (config.modules.themes.colors) fishColor;
+        text = let
+          inherit (config.modules.themes.colors) fishColor;
         in ''
           # --> General
           set -l foreground ${fishColor types.fg}

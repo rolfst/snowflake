@@ -25,7 +25,7 @@ in {
         }
         // optionalAttrs (cfg.fennel.enable) {inherit (pkgs) fennel fnlfmt;});
 
-      home.configFile.stylua-conf = {
+      create.configFile.stylua-conf = {
         target = "stylua/stylua.toml";
         text = ''
           column_width = 80

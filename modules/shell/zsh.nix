@@ -14,9 +14,6 @@ in {
   config = mkIf (cfg.default == "zsh") {
     modules.shell.corePkgs.enable = true;
 
-    # Custom shell modules:
-    modules.shell.macchina.enable = true;
-
     # Enable starship-rs:
     modules.shell.starship.enable = true;
     hm.programs.starship.enableZshIntegration = true;
@@ -183,7 +180,7 @@ in {
         ];
     };
 
-    home.configFile = {
+    create.configFile = {
       zsh-abbreviations = {
         target = "zsh/abbreviations";
         text = let

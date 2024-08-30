@@ -7,8 +7,6 @@ in {
   config = mkIf (config.modules.shell.default == "nushell") {
     modules.shell.corePkgs.enable = true;
 
-    # Custom shell modules:
-    modules.shell.macchina.enable = true;
 
     # Enable starship-rs:
     modules.shell.starship.enable = true;
@@ -487,7 +485,7 @@ in {
       # in map (p: mkPlugin p) [ "done" "autopair-nushell" "fzf-nushell" ];
     };
 
-    # home.configFile = let inherit (config.modules.themes) active;
+    # create.configFile = let inherit (config.modules.themes) active;
     # in (mkIf (active != null) {
     #   nushell-fzf-theme = {
     #     target = "nushell/conf.d/fzf.nushell";

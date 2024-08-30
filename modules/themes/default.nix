@@ -12,7 +12,7 @@
   inherit (lib.strings) concatStringsSep optionalString removePrefix;
 
   cfg = config.modules.themes;
-  envProto = config.modules.desktop.envProto;
+  desktop = config.modules.desktop;
 in {
   options.modules.themes = let
     inherit (lib.options) mkOption mkPackageOption;
@@ -55,7 +55,7 @@ in {
     pointer = {
       name = mkOpt str "";
       package = mkPackageOption pkgs "pointer" {};
-      size = mkOpt int "";
+      size = mkOpt int 24;
     };
 
     onReload = mkOpt (attrsOf lines) {};
@@ -262,7 +262,7 @@ in {
       #   ];
     }
 
-    (mkIf (envProto == "wayland") {
+    (mkIf (desktop.type == "wayland") {
       programs.regreet.settings.GTK = let
         inherit (cfg) pointer font iconTheme gtk;
       in {
@@ -273,7 +273,7 @@ in {
       };
     })
 
-    (mkIf (envProto == "x11") (mkMerge [
+    (mkIf (desktop.type == "x11") (mkMerge [
       {
         # Read xresources files in ~/.config/xtheme/* to allow modular configuration
         # of Xresources.
@@ -281,7 +281,7 @@ in {
           cat "$XDG_CONFIG_HOME"/xtheme/* | ${getExe pkgs.xorg.xrdb} -load
         '';
 
-        home.configFile = {
+        create.configFile = {
           xtheme-init = {
             target = "xtheme.init";
             text = cfg.onReload.xtheme;
@@ -388,7 +388,7 @@ in {
         services.xserver.displayManager.sessionCommands = command;
         modules.themes.onReload.wallpaper = command;
 
-        home.dataFile =
+        create.dataFile =
           mkIf (cfg.wallpaper != null) {"wallpaper".source = cfg.wallpaper;};
       }))
 

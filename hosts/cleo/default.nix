@@ -9,7 +9,6 @@
   modules = {
     shell = {
       default = "zsh";
-      gnupg.enable = true;
       android.enable = false;
       tmux.enable = true;
       toolset = {
@@ -66,6 +65,7 @@
         default = "firefox";
         google.enable = true;
         firefox.enable = true;
+        zen.enable = true;
       };
       extensions = {
         keybase.enable = true; # the gui
@@ -83,12 +83,12 @@
       };
 
       toolset = {
-        citrix.enable = true;
+        citrix.enable = false;
         player = {
           music.enable = false;
           video.enable = false;
         };
-        docView = {
+        readers = {
           zathura.enable = true;
           sioyek.enable = false;
           calibre.enable = true;

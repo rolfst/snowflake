@@ -1,7 +1,10 @@
 # Copyright (c) 2022 felschr. All Rights Reserved.
-{ options, config, lib, ... }:
-
-let
+{
+  options,
+  config,
+  lib,
+  ...
+}: let
   inherit (builtins) listToAttrs;
   inherit (lib.attrsets) mapAttrsToList nameValuePair;
   inherit (lib.lists) flatten;
@@ -9,24 +12,24 @@ let
 
   cfg = config.modules.desktop.extensions.mimeApps;
 in {
-  options.modules.desktop.extensions.mimeApps =
-    let inherit (lib.options) mkEnableOption;
+  options.modules.desktop.extensions.mimeApps = let
+    inherit (lib.options) mkEnableOption;
     inherit (lib.types) str;
     inherit (lib.my) mkOpt;
-    in {
-        enable = mkEnableOption "default applications";
-        defApps = {
-            docViewer = mkOpt str "org.pwmt.zathura.desktop";
-            editor = mkOpt str "emacsclient.desktop";
-            fileBrowser = mkOpt str "org.gnome.Nautilus.desktop";
-            imageViewer = mkOpt str "feh.desktop";
-            mediaPlayer = mkOpt str "mpv.desktop";
-            webBrowser = mkOpt str "firefox.desktop";
-        };
+  in {
+    enable = mkEnableOption "default applications";
+    defApps = {
+      docViewer = mkOpt str "org.pwmt.zathura.desktop";
+      editor = mkOpt str "emacsclient.desktop";
+      fileBrowser = mkOpt str "org.gnome.Nautilus.desktop";
+      imageViewer = mkOpt str "feh.desktop";
+      mediaPlayer = mkOpt str "mpv.desktop";
+      webBrowser = mkOpt str "firefox.desktop";
     };
+  };
 
   config = mkIf cfg.enable {
-    home.configFile."mimeapps.list".force = true;
+    create.configFile."mimeapps.list".force = true;
 
     hm.xdg.mimeApps = {
       enable = true;
@@ -86,7 +89,7 @@ in {
             "application/x-xz-compressed-tar"
             "application/zip"
           ];
-          directory = [ "inode/directory" ];
+          directory = ["inode/directory"];
           image = [
             "image/bmp"
             "image/gif"
@@ -99,8 +102,8 @@ in {
             "image/webp"
           ];
           # mail = [ "x-scheme-handler/mailto" ];
-          pdf = [ "application/pdf" ];
-          text = [ "text/plain" ];
+          pdf = ["application/pdf"];
+          text = ["text/plain"];
           video = [
             "video/mp2t"
             "video/mp4"
@@ -112,8 +115,10 @@ in {
             "video/x-msvideo"
           ];
         };
-      in listToAttrs (flatten (mapAttrsToList (key: types:
-        map (type: nameValuePair type (defaultApps."${key}")) types) mimeMap));
+      in
+        listToAttrs (flatten (mapAttrsToList (key: types:
+          map (type: nameValuePair type (defaultApps."${key}")) types)
+        mimeMap));
     };
   };
 }

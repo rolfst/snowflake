@@ -69,13 +69,13 @@ in {
       };
 
       # Required API key for ChatGPT:
-      # env.OPENAI_API_KEY = "$(cat /run/agenix/closedAI)";
+      # home.sessionVariables.OPENAI_API_KEY = "$(cat /run/agenix/closedAI)";
     }
 
     (mkIf cfg.rolfst.enable {
       modules.develop.lua.enable = true;
 
-      home.configFile = {
+      create.configFile = {
         rolfst-config = {
           target = "nvim";
           source = "${inputs.nvim-dir}";

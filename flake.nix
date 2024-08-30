@@ -2,12 +2,12 @@
   description = "λ simple and configureable Nix-Flake repository!";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
-    # nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
+    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
     home-manager = {
-      # url = "github:nix-community/home-manager/master";
-      url = "github:nix-community/home-manager/release-24.05";
+      url = "github:nix-community/home-manager/master";
+      # url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -25,9 +25,21 @@
     };
 
     # Window Manager(s) + Extensions
-    xmonad-contrib.url = "github:icy-thought/xmonad-contrib";
-    hyprland.url = "github:hyprwm/Hyprland";
+    # hyprland.url = "github:hyprwm/Hyprland";
+    xmonad = {
+      url = "github:xmonad/xmonad";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    xmonad-contrib = {
+      url = "github:xmonad/xmonad-contrib"; # TODO: replace with official after #582 == merged!;
+      # url = "github:icy-thought/xmonad-contrib"; # TODO: replace with official after #582 == merged!;
+      inputs.nixpkgs.follows = "xmonad";
+    };
 
+    picom = {
+      url = "github:yshui/picom";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # Toolset ++ Application(s)
     rust.url = "github:oxalica/rust-overlay";
 
@@ -36,6 +48,11 @@
       type = "git";
       submodules = true;
       flake = false;
+    };
+
+    zen-browser = {
+      url = "github:MarceColl/zen-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -51,7 +68,6 @@
     mkPkgs = pkgs: extraOverlays:
       import pkgs {
         inherit system;
-        config.nvidia.acceptLicense = true;
         config.allowUnfree = true;
 
         config.permittedInsecurePackages = [
@@ -60,7 +76,7 @@
         overlays = extraOverlays ++ (lib.attrValues self.overlays);
       };
     pkgs = mkPkgs nixpkgs [self.overlays.default];
-    pkgs' = mkPkgs nixpkgs-unstable [];
+    pkgs-unstable = mkPkgs nixpkgs-unstable [];
 
     lib = nixpkgs.lib.extend (final: prev: {
       my = import ./lib {
@@ -75,8 +91,16 @@
       (mapModules ./overlays import)
       // {
         default = final: prev: {
-          unstable = pkgs';
+          unstable = pkgs-unstable;
           my = self.packages.${system};
+        };
+
+        nvfetcher = final: prev: {
+          sources =
+            builtins.mapAttrs (_: p: p.src)
+            ((import ./packages/_sources/generated.nix) {
+              inherit (final) fetchurl fetchgit fetchFromGitHub dockerTools;
+            });
         };
       };
 
@@ -86,17 +110,15 @@
       {
         snowflake = import ./.;
       }
-      // mapModulesRec ./modules import;
+      # // mapModulesRec ./modules import;
+      ;
 
     nixosConfigurations = mapHosts ./hosts {};
     homeConfigurations = {
       cleo = nixosConfigurations.cleo.config.home-manager.users.${nixosConfigurations.cleo.config.user.name}.home;
     };
 
-    devShells."${system}".default = import ./shell.nix {
-      inherit pkgs;
-      inherit lib;
-    };
+    devShells."${system}".default = import ./shell.nix {inherit lib pkgs;};
 
     templates.full =
       {

@@ -16,7 +16,7 @@ in {
 
   config = mkIf config.modules.desktop.xmonad.enable {
     modules.desktop = {
-      envProto = "x11";
+      type = "x11";
       toolset.fileManager = {
         enable = true;
         program = "thunar";
@@ -43,12 +43,11 @@ in {
     };
     # modules.hardware.kmonad.enable = true;
 
-    nixpkgs.overlays = [inputs.xmonad-contrib.overlay];
+    # nixpkgs.overlays = [inputs.xmonad-contrib.overlay];
 
     environment.systemPackages = attrValues {
-      inherit (pkgs) libnotify playerctl gxmessage xdotool feh arandr;
+      inherit (pkgs) libnotify playerctl gxmessage xdotool feh arandr zenity;
       inherit (pkgs.xorg) xwininfo;
-      inherit (pkgs.gnome) zenity;
     };
 
     services.greetd = {

@@ -108,7 +108,7 @@ in {
         '';
     };
 
-    home.configFile = let
+    create.configFile = let
       inherit (config.modules.themes) active;
     in (mkMerge [
       {

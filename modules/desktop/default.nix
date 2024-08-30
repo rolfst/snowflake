@@ -12,39 +12,39 @@
 
   cfg = config.modules.desktop;
 in {
-  options.modules.desktop = {
-    envProto = mkOption {
-      type = nullOr (enum ["x11" "wayland"]);
-      description = "What display protocol to use.";
-      default = null;
-    };
+  options.modules.desktop = let
+    inherit (lib.types) either str;
+    inherit (lib.my) mkOpt;
+  in {
+    type = mkOpt (either str null) null;
   };
 
   config = mkMerge [
     {
-      assertions = [
+      assertions = let
+        isEnabled = _: v: v.enable or false;
+        hasDesktopEnabled = cfg:
+          (anyAttrs isEnabled cfg)
+          || !(anyAttrs (_: v: isAttrs v && anyAttrs isEnabled v) cfg);
+      in [
         {
-          assertion = (countAttrs (n: v: n == "enable" && value) cfg) < 2;
-          message = "Prevent DE/WM > 1 from being enabled.";
+          assertion =
+            (countAttrs (_: v: v.enable or false) cfg) < 2;
+          message = "Can't have more than one desktop environment enabled at a time";
         }
         {
-          assertion = let
-            srv = config.services;
-          in
-            srv.xserver.enable
-            || srv.sway.enable
-            || !(anyAttrs
-              (n: v: isAttrs v && anyAttrs (n: v: isAttrs v && v.enable))
-              cfg);
-          message = "Prevent desktop applications from enabling without a DE/WM.";
+          assertion = hasDesktopEnabled cfg;
+          message = "Can't enable a desktop sub-module without a desktop environment";
+        }
+        {
+          assertion = !(hasDesktopEnabled cfg) || cfg.type != null;
+          message = "Downstream desktop module did not set modules.desktop.type!";
         }
       ];
+    }
 
-      env = {
-        GTK_DATA_PREFIX = ["${config.system.path}"];
-        QT_QPA_PLATFORMTHEME = "gnome";
-        QT_STYLE_OVERRIDE = "Adwaita";
-      };
+    (mkIf (cfg.type != null) {
+      home.sessionVariables.GTK_DATA_PREFIX = "${config.system.path}";
 
       system.userActivationScripts.cleanupHome = ''
         pushd "${config.user.home}"
@@ -56,6 +56,8 @@ in {
       user.packages = attrValues {
         inherit
           (pkgs)
+          nvfetcher
+          clipboard-jh
           hyperfine
           gucharmap
           qgnomeplatform # Qt -> GTK Theme
@@ -78,20 +80,22 @@ in {
         packages = attrValues {inherit (pkgs) sarasa-gothic scheherazade-new;};
       };
 
-      # Enabling xserver + x-related settings:
-      services.xserver.enable = true;
+      hm.qt = {
+        enable = true;
+        style.name = "adwaita-dark";
+        platformTheme.name = "adwaita";
+      };
 
       # Enabling usb connection for devices
       services.udisks2.enable = true;
       services.gvfs.enable = true;
 
+      # Enabling xserver + x-related settings:
+      services.xserver.enable = true;
       xdg.portal = {
         enable = true;
         extraPortals = [pkgs.xdg-desktop-portal-gtk];
-        gtkUsePortal = false;
-        config = {
-          common.default = "gtk";
-        };
+        config.common.default = "*";
       };
 
       # Retain secrets inside Gnome Keyring
@@ -109,9 +113,9 @@ in {
         enable = true;
         package = pkgs.valent;
       };
-    }
+    })
 
-    (mkIf (cfg.envProto == "x11") {
+    (mkIf (cfg.type == "x11") {
       services.displayManager = {
         autoLogin.enable = true;
         autoLogin.user = config.user.name;

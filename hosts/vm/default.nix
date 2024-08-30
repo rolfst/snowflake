@@ -1,4 +1,9 @@
-{ pkgs, config, lib, ... }: {
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}: {
   # imports = [./hardware-configuration.nix];
 
   modules = {
@@ -9,7 +14,7 @@
       android.enable = false;
       tmux.enable = true;
     };
-    hardware.xkbLayout = { hyperCtrl.enable = true; };
+    hardware.xkbLayout = {hyperCtrl.enable = true;};
     networking = {
       networkManager.enable = true;
     };
@@ -45,7 +50,7 @@
         keybase.enable = true; # the gui
       };
       education = {
-      #   memory.enable = true;
+        #   memory.enable = true;
         vidcom.enable = false;
       };
 
@@ -54,13 +59,13 @@
           music.enable = false;
           video.enable = false;
         };
-        docView = {
+        readers = {
           zathura.enable = false;
           sioyek.enable = false;
         };
         social = {
-            base.enable = false;
-            element.withClient.enable = false;
+          base.enable = false;
+          element.withClient.enable = false;
         };
         keybase.enable = true;
       };

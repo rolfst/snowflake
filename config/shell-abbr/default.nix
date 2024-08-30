@@ -21,6 +21,7 @@ let
     d2nix = "dconf dump / | dconf2nix > dconf.nix";
 
     # Other
+    lzg = "lazygit";
     yta = "youtube-dl -x --audio-format mp3";
     ytv = "youtube-dl --best-quality";
   };

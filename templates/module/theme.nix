@@ -111,7 +111,7 @@ in {
         };
       };
 
-      home.configFile = let
+      create.configFile = let
         themeDir = "${cfg.gtk.package}/share/themes/${cfg.gtk.name}/gtk-4.0/";
       in {
         gtk4Theme-light = {
@@ -310,7 +310,7 @@ in {
       };
     })
 
-    (mkIf (config.modules.desktop.envProto == "x11") {
+    (mkIf (config.modules.desktop.type == "x11") {
       services.xserver.displayManager = {
         lightdm.greeters.mini.extraConfig = let
           inherit (cfg.colors.main) normal types;

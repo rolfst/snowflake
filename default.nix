@@ -23,6 +23,9 @@ in {
       inputs.home-manager.nixosModules.home-manager
       inputs.nix-flatpak.nixosModules.nix-flatpak
       (mkAliasOptionModule ["hm"] ["home-manager" "users" config.user.name])
+      (mkAliasOptionModule ["home"] ["hm" "home"])
+      (mkAliasOptionModule ["create" "configFile"] ["hm" "xdg" "configFile"])
+      (mkAliasOptionModule ["create" "dataFile"] ["hm" "xdg" "dataFile"])
     ]
     ++ (mapModulesRec' (toString ./modules) import);
 

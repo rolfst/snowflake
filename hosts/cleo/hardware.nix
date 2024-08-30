@@ -55,11 +55,11 @@ in {
 
   nix.settings.max-jobs = mkDefault 4;
 
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
-    driSupport = true;
-    driSupport32Bit = true;
+    enable32Bit = true;
   };
+
   hardware.nvidia = {
     modesetting.enable = true;
     # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
@@ -94,27 +94,33 @@ in {
     };
   };
 
-  # specialisation = {
-  #   no-offload = {
-  #     hardware.nvidia = {
-  #       gaming-time.configuration = {
-  #         prime.sync.enable = lib.mkForce true;
-  #         prime.offload = {
-  #           enable = lib.mkForce false;
-  #           enableOffloadCmd = lib.mkForce false;
-  #         };
-  #       };
-  #     };
-  #   };
-  # };
   powerManagement.cpuFreqGovernor = mkDefault "schedutil";
   environment.systemPackages = [nvidia-offload];
 
   # Manage device power-control:
   services = {
     upower.enable = true;
-    power-profiles-daemon.enable = true;
+    # power-profiles-daemon.enable = true;
     thermald.enable = true;
+    tlp = {
+      enable = true;
+      settings = {
+        START_CHARGE_THRESH_BAT0 = 75;
+        STOP_CHARGE_THRESH_BAT0 = 80;
+        RESTORE_THRESHOLDS_ON_BAT = 1;
+
+        CPU_BOOST_ON_AC = 1;
+        CPU_BOOST_ON_BAT = 0;
+        CPU_SCALING_GOVERNOR_ON_AC = "performance";
+        CPU_SCALING_GOVERNOR_ON_BAT = "schedutil";
+
+        PCIE_ASPM_ON_AC = "performance";
+        PCIE_ASPM_ON_BAT = "powersave";
+
+        # Prevents bluez from hanging:
+        USB_EXCLUDE_BTUSB = 1;
+      };
+    };
     xserver = {
       videoDrivers = ["nvidia"];
       deviceSection = ''

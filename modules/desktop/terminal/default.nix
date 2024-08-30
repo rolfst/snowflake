@@ -1,6 +1,10 @@
-{ options, config, lib, pkgs, ... }:
-
-let
+{
+  options,
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (lib) mkDefault mkIf mkMerge mkOption;
   inherit (lib.types) str;
 
@@ -15,16 +19,16 @@ in {
     };
   };
 
-  config = mkMerge ([
+  config = mkMerge [
     {
       services.xserver.desktopManager.xterm.enable =
         mkDefault (cfg.default == "xterm");
-      env.TERMINAL = cfg.default;
+      home.sessionVariables.TERMINAL = cfg.default;
     }
 
-    (mkIf (config.modules.desktop.envProto == "x11") {
+    (mkIf (config.modules.desktop.type == "x11") {
       services.xserver.excludePackages =
-        mkIf (cfg.default != "xterm") [ pkgs.xterm ];
+        mkIf (cfg.default != "xterm") [pkgs.xterm];
     })
-  ]);
+  ];
 }
