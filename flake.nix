@@ -31,8 +31,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     xmonad-contrib = {
-      url = "github:xmonad/xmonad-contrib"; # TODO: replace with official after #582 == merged!;
-      # url = "github:icy-thought/xmonad-contrib"; # TODO: replace with official after #582 == merged!;
+      # url = "github:xmonad/xmonad-contrib"; # TODO: replace with official after #582 == merged!;
+      url = "github:icy-thought/xmonad-contrib"; # TODO: replace with official after #582 == merged!;
       inputs.nixpkgs.follows = "xmonad";
     };
 

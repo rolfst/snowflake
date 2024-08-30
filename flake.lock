@@ -698,15 +698,15 @@
         "xmonad": "xmonad_2"
       },
       "locked": {
-        "lastModified": 1724739799,
-        "narHash": "sha256-Fb91gmKkT7Ngruz6PbYCOpvF/oN00HgNX/aPAsGm+UA=",
-        "owner": "xmonad",
+        "lastModified": 1722897216,
+        "narHash": "sha256-jrbZjIf8K+MZWqQB1Mw9VUz1J5VDTOmSDFA6XwCmDMI=",
+        "owner": "icy-thought",
         "repo": "xmonad-contrib",
-        "rev": "b3c249434d7482eb9dee236b150f7a8fba0380ce",
+        "rev": "bb1aa32ee44b7da7969fe70a0e7a49c604f76a50",
         "type": "github"
       },
       "original": {
-        "owner": "xmonad",
+        "owner": "icy-thought",
         "repo": "xmonad-contrib",
         "type": "github"
       }
