@@ -33,10 +33,11 @@ in {
     '';
     user.packages = [pkgs.xsane pkgs.gtklp];
 
-    # hardware.sane = {
-    #   enable = true;
-    #   extraBackends = [pkgs.hplipWithPlugin];
-    # };
+    hardware.sane = {
+      enable = true;
+      extraBackends = [pkgs.hplipWithPlugin];
+    };
+    services.ipp-usb.enable = true;
 
     # Enable wireless access to printers
     services.avahi = {
