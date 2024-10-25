@@ -19,6 +19,7 @@ in {
 
     security.rtkit.enable = true;
 
+    environment.systemPackages = [pkgs.speechd];
     services.pipewire = {
       enable = true;
       wireplumber.enable = true;
