@@ -42,7 +42,7 @@ in {
     nixPathInputs = mapAttrsToList (n: v: "${n}=${v}") filteredInputs;
     registryInputs = mapAttrs (_: v: {flake = v;}) filteredInputs;
   in {
-    package = pkgs.nixVersions.git;
+    # package = pkgs.nixVersions.git;
     extraOptions = "experimental-features = nix-command flakes";
 
     nixPath =
@@ -102,9 +102,10 @@ in {
     useXkbConfig = mkDefault true;
   };
 
-  time.timeZone = mkDefault "Europe/Amsterdam";
+  time.timeZone = "Europe/Amsterdam";
   services.geoclue2.enable = true;
-  services.localtimed.enable = true;
+  # services.automatic-timezoned.enable = true;
+  # services.localtimed.enable = true;
 
   i18n = {
     defaultLocale = mkDefault "en_US.UTF-8";

@@ -51,7 +51,7 @@
     };
 
     zen-browser = {
-      url = "github:MarceColl/zen-browser-flake";
+      url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -69,6 +69,7 @@
       import pkgs {
         inherit system;
         config.allowUnfree = true;
+        config.allowUnsupportedSystem = true;
 
         config.permittedInsecurePackages = [
           "electron-25.9.0"

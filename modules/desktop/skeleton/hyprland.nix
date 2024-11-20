@@ -37,7 +37,7 @@ in {
       brightness.enable = true;
       screenshot.enable = true; # TODO
     };
-    modules.hardware.kmonad.enable = true;
+    modules.hardware.kmonad.enable = false;
 
     environment.systemPackages = attrValues {
       inherit (pkgs) imv libnotify playerctl wf-recorder wlr-randr;

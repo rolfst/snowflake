@@ -30,21 +30,27 @@ in {
       };
     }
 
-    # (mkIf (config.modules.desktop.type == "x11") {
-    #   services.imwheel = {
-    #     enable = true;
-    #     extraOptions = [ "--buttons=45" ];
-    #     rules = {
-    #       "epiphany|chromium|discord" = ''
-    #         None,      Up,   Button4, 4
-    #         None,      Down, Button5, 4
-    #         Shift_L,   Up,   Shift_L|Button4, 4
-    #         Shift_L,   Down, Shift_L|Button5, 4
-    #         Control_L, Up,   Control_L|Button4
-    #         Control_L, Down, Control_L|Button5
-    #       '';
-    #     };
-    #   };
-    # })
+    (mkIf (config.modules.desktop.type == "x11") {
+      #   services.imwheel = {
+      #     enable = true;
+      #     extraOptions = [ "--buttons=45" ];
+      #     rules = {
+      #       "epiphany|chromium|discord" = ''
+      #         None,      Up,   Button4, 4
+      #         None,      Down, Button5, 4
+      #         Shift_L,   Up,   Shift_L|Button4, 4
+      #         Shift_L,   Down, Shift_L|Button5, 4
+      #         Control_L, Up,   Control_L|Button4
+      #         Control_L, Down, Control_L|Button5
+      #       '';
+      #     };
+      #   };
+      services.unclutter-xfixes = {
+        enable = true;
+        extraOptions = ["exclude-root" "ignore-scrolling"];
+        threshold = 1;
+        timeout = 1;
+      };
+    })
   ]);
 }

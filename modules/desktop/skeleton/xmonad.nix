@@ -54,20 +54,28 @@ in {
       settings.initial_session = {command = "none+xmonad";};
     };
 
-    services.xserver = {
-      windowManager.session = [
+    services.xserver.displayManager = {
+      session = [
         {
+          manage = "window";
           name = "xmonad";
           start = ''
-            /usr/bin/env birostrisWM &
+            systemd-cat -t xmonad -- ${getExe pkgs.haskellPackages.birostrisWM} &
             waitPID=$!
           '';
         }
       ];
-    };
-
-    hm.xsession.windowManager = {
-      command = "${getExe pkgs.haskellPackages.birostrisWM}";
+      defaultSession = "none+xmonad";
+      # windowManager.xmonad = {
+      #   enable = true;
+      #   enableContribAndExtras = true;
+      #   flake = {
+      #       enable = true;
+      #       compiler = "ghc947";
+      #   };
+      #   config = ${getExe pkgs.haskellPackages.birostrisWM};
+      #   enableConfiguredRecompile = true;
+      # }
     };
   };
 }

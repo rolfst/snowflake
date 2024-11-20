@@ -23,7 +23,7 @@
       };
       printer.enable = true;
       bluetooth.enable = true;
-      kmonad.enable = true;
+      kmonad.enable = false;
     };
     networking = {
       networkManager.enable = true;
@@ -111,4 +111,7 @@
       docker.enable = true;
     };
   };
+  security.pki.certificateFiles = [
+    ./rootCA.pem
+  ];
 }

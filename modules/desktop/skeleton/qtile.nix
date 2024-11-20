@@ -44,7 +44,7 @@ in {
       brightness.enable = true;
       screenshot.enable = true;
     };
-    modules.hardware.kmonad.enable = true;
+    modules.hardware.kmonad.enable = false;
 
     services.greetd.settings.initial_session = mkIf (cfg.backend == "wayland") {
       command = "none+qtile";

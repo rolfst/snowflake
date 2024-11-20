@@ -242,6 +242,8 @@ chromiumSelector = className =? "google-chrome" -- <&&> appName =? "google-chrom
 
 firefoxSelector = className =? "firefox-aurora" <&&> appName =? "Navigator"
 
+zenbrowserSelector = appName =? "zen-alpha" <&&> className =? "Navigator"
+
 youtubeMusicSelector = className =? "firefox-aurora" <&&> appName =? "Navigator"
 
 thunarSelector = className =? "Thunar" <&&> appName =? "Thunar"
@@ -890,6 +892,7 @@ addKeys conf@XConfig{modMask = modm} =
     ++ bindBringAndRaiseMany
       [ (modalt, xK_g, spawn "google-chrome-stable", chromiumSelector)
       , (modalt, xK_f, spawn "firefox", firefoxSelector)
+      , (modalt, xK_z, spawn "zen", zenbrowserSelector)
       , (modalt, xK_e, spawn "thunar", thunarSelector)
       ]
     -- Window manipulation

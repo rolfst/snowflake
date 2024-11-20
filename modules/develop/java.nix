@@ -14,7 +14,7 @@ in {
 
   config = mkMerge [
     (mkIf config.modules.develop.java.enable {
-      user.packages = attrValues {inherit (pkgs) jdk22 jdt-language-server;};
+      user.packages = attrValues {inherit (pkgs) jdk23 jdt-language-server;};
     })
   ];
 }

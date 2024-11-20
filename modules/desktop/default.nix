@@ -109,13 +109,14 @@ in {
       programs.light.enable = true;
 
       # KDE-Connect + Start-up indicator
-      programs.kdeconnect = {
-        enable = true;
-        package = pkgs.valent;
-      };
+      # programs.kdeconnect = {
+      #   enable = true;
+      #   package = pkgs.valent;
+      # };
     })
 
     (mkIf (cfg.type == "x11") {
+      security.pam.services.login.enableGnomeKeyring = true;
       services.displayManager = {
         autoLogin.enable = true;
         autoLogin.user = config.user.name;
