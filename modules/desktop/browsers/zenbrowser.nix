@@ -15,6 +15,6 @@ in {
   in {enable = mkEnableOption "Zen browser a modern firefox based browser";};
 
   config = mkIf config.modules.desktop.browsers.zen.enable {
-    user.packages = [inputs.zen-browser.packages.${pkgs.system}.specific];
+    user.packages = [inputs.zen-browser.packages."${pkgs.system}".default];
   };
 }
