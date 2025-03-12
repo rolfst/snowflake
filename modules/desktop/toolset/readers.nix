@@ -145,10 +145,11 @@ in {
 
     (mkIf cfg.calibre.enable {
       environment.systemPackages = with pkgs; [
+        libwebp
         (calibre.override {
           unrarSupport = true;
         })
-        calibre-web
+        # calibre-web
       ];
     })
   ];
