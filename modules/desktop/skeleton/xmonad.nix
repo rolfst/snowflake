@@ -54,6 +54,9 @@ in {
       settings.initial_session = {command = "none+xmonad";};
     };
 
+    services.displayManager = {
+      defaultSession = "none+xmonad";
+    };
     services.xserver.displayManager = {
       session = [
         {
@@ -65,7 +68,6 @@ in {
           '';
         }
       ];
-      defaultSession = "none+xmonad";
       # windowManager.xmonad = {
       #   enable = true;
       #   enableContribAndExtras = true;
