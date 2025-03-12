@@ -21,7 +21,7 @@ in {
       user.packages = attrValues ({
           inherit (pkgs.lua51Packages) lua;
           inherit (pkgs) lua-language-server stylua;
-          inherit (pkgs.luajitPackages) luacheck;
+          inherit (pkgs) selene;
         }
         // optionalAttrs (cfg.fennel.enable) {inherit (pkgs) fennel fnlfmt;});
 
