@@ -24,7 +24,7 @@ in {
 
     (mkIf (cfg.default == "nvim" || cfg.default == "emacs") {
       user.packages = attrValues {
-        inherit (pkgs) imagemagick editorconfig-core-c sqlite deno pandoc markdownlint-cli marksman;
+        inherit (pkgs) imagemagick editorconfig-core-c sqlite deno pandoc markdownlint-cli marksman yamllint;
         aspellPlusDict =
           pkgs.aspellWithDicts
           (dict: with dict; [en en-computers en-science]);
