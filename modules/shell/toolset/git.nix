@@ -130,6 +130,15 @@ in {
           editor = "nvim";
           whitespace = "trailing-space,space-before-tab";
         };
+        branch = {sort = "--committerdate";};
+        maintenance = {
+          auto = false;
+          strategy = "incremental";
+        };
+
+        column = {
+          ui = "auto";
+        };
         commit.gpgSign = false;
         # credential.helper = "${pkgs.gitFull}/bin/git-credential-libsecret";
 
