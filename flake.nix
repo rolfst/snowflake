@@ -2,12 +2,12 @@
   description = "λ simple and configureable Nix-Flake repository!";
 
   inputs = {
-    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
     home-manager = {
-      url = "github:nix-community/home-manager/master";
-      # url = "github:nix-community/home-manager/release-24.05";
+      url = "github:nix-community/home-manager/release-24.11";
+      # url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -44,14 +44,14 @@
     rust.url = "github:oxalica/rust-overlay";
 
     nvim-dir = {
-      url = "https://github.com/rolfst/nvim.git?rev=5f75fecb4120182459f0c6f73bce0d433d16ed47";
+      url = "https://github.com/rolfst/nvim.git?rev=bcb12b51ee100c59f8115c23980ed0528d151397";
       type = "git";
       submodules = true;
       flake = false;
     };
 
     zen-browser = {
-      url = "github:0xc000022070/zen-browser-flake";
+      url = "github:KeyZox71/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -70,6 +70,11 @@
         inherit system;
         config.allowUnfree = true;
         config.allowUnsupportedSystem = true;
+        config.allowUnfreePredicate = pkg:
+          builtins.elem (lib.getName pkg) [
+            "calibre"
+            "unrar"
+          ];
 
         config.permittedInsecurePackages = [
           "electron-25.9.0"
