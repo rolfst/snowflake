@@ -44,7 +44,7 @@
     rust.url = "github:oxalica/rust-overlay";
 
     nvim-dir = {
-      url = "https://github.com/rolfst/nvim.git?rev=bcb12b51ee100c59f8115c23980ed0528d151397";
+      url = "https://github.com/rolfst/nvim.git?rev=fc91c9b94b99fc393087fb42536d8841ac814056";
       type = "git";
       submodules = true;
       flake = false;
