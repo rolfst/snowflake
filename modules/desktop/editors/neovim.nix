@@ -25,7 +25,7 @@ in {
   config = mkMerge [
     {
       user.packages = attrValues ({
-          inherit (pkgs) neovide;
+          # inherit (pkgs) neovide;
           # inherit (pkgs.vimPlugins) markdown-preview-nvim;
           inherit (pkgs.lua51Packages) luarocks tiktoken_core;
           # inherit (pkgs.unstable.vimPlugins.nvim-treesitter) withAllGrammars;
