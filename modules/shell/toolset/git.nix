@@ -130,7 +130,7 @@ in {
           editor = "nvim";
           whitespace = "trailing-space,space-before-tab";
         };
-        branch = {sort = "--committerdate";};
+        branch = {sort = "-committerdate";};
         maintenance = {
           auto = false;
           strategy = "incremental";
