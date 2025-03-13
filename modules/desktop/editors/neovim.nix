@@ -27,7 +27,7 @@ in {
       user.packages = attrValues ({
           # inherit (pkgs) neovide;
           # inherit (pkgs.vimPlugins) markdown-preview-nvim;
-          inherit (pkgs.lua51Packages) luarocks tiktoken_core;
+          inherit (pkgs.lua51Packages) luarocks tiktoken_core jsregexp;
           # inherit (pkgs.unstable.vimPlugins.nvim-treesitter) withAllGrammars;
           # inherit (pkgs.unstable.vimPlugins.nvim-treesitter-parsers) css haskell javascript jsdoc json nix markdown python rust typescript tsx toml yaml;
         }
