@@ -34,6 +34,7 @@ in {
   swapDevices = [{device = "/dev/disk/by-uuid/e02f5046-315f-4f6e-a748-a843336fabf2";}];
 
   boot = {
+    kernelPackages = pkgs.linuxPackages_6_13;
     initrd = {
       availableKernelModules = [
         "ahci"
