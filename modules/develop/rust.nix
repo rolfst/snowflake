@@ -19,7 +19,14 @@ in {
       nixpkgs.overlays = [inputs.rust.overlays.default];
 
       user.packages = attrValues {
-        rust-package = pkgs.rust-bin.stable.latest.default;
+        # rust-package = pkgs.rust-bin.stable.latest.default;
+        rust-package = pkgs.rust-bin.selectLatestNightlyWith (toolchain:
+          toolchain.default.override {
+            extensions = [
+              "rust-analyzer"
+              "rust-src"
+            ];
+          });
         inherit (pkgs.unstable) rust-analyzer rust-script;
       };
 
