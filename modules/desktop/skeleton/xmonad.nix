@@ -17,6 +17,7 @@ in {
   config = mkIf config.modules.desktop.xmonad.enable {
     modules.desktop = {
       type = "x11";
+      terminal.default = "kitty";
       toolset.fileManager = {
         enable = true;
         program = "thunar";
@@ -24,7 +25,7 @@ in {
       extensions = {
         input-method = {
           enable = true;
-          framework = "ibus";
+          framework = "fcitx";
         };
         mimeApps.enable = true; # mimeApps -> default launch application
         picom = {
@@ -41,7 +42,7 @@ in {
       brightness.enable = true;
       screenshot.enable = true;
     };
-    # modules.hardware.kmonad.enable = true;
+    modules.hardware.kmonad.enable = true;
 
     nixpkgs.overlays = [inputs.xmonad.overlay inputs.xmonad-contrib.overlay];
 
@@ -49,21 +50,41 @@ in {
       inherit (pkgs) libnotify playerctl gxmessage xdotool feh arandr zenity;
       inherit (pkgs.xorg) xwininfo;
     };
+    hm.xsession.windowManager.xmonad = {
+      enable = true;
+      extraPackages = haskellPackages: [
+        haskellPackages.aeson
+        haskellPackages.bytestring
+        haskellPackages.hostname
+        haskellPackages.multimap
+        haskellPackages.tuple
+        haskellPackages.safe
+        haskellPackages.split
+        haskellPackages.utf8-string
+        haskellPackages.xdg-desktop-entry
+        haskellPackages.xmonad-contrib
+      ];
+    };
+    create.configFile.xmonad-conf = {
+      target = "${config.user.home}/.xmonad/xmonad.hs";
+      source = "${config.snowflake.configDir}/xmonad/xmonad.hs";
+    };
 
     services.greetd = {
       settings.initial_session = {command = "none+xmonad";};
     };
 
-    services.displayManager = {
-      defaultSession = "none+xmonad";
-    };
+    # services.displayManager = {
+    #   defaultSession = "none+xmonad";
+    # };
     services.xserver.displayManager = {
       session = [
         {
           manage = "window";
-          name = "xmonad";
+          name = "none_xmonad";
+          bgsupport = true;
           start = ''
-            systemd-cat -t xmonad -- ${getExe pkgs.haskellPackages.birostrisWM} &
+            systemd-cat -t xmonad -- ${pkgs.runtimeShell} $HOME/.xsession > /dev/null 2>&1 &
             waitPID=$!
           '';
         }
