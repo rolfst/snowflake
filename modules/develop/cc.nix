@@ -4,25 +4,47 @@
   lib,
   pkgs,
   ...
-}: let
-  inherit (lib.attrsets) attrValues;
-  inherit (lib.modules) mkIf mkMerge;
-in {
-  options.modules.develop.cc = let
-    inherit (lib.options) mkEnableOption;
-  in {enable = mkEnableOption "C/C++ development";};
+}:
+with lib; {
+  options.modules.develop.cc = {
+    enable = mkEnableOption "C/C++ development environment";
+  };
 
   config = mkIf config.modules.develop.cc.enable (mkMerge [
     {
-      user.packages =
-        attrValues {inherit (pkgs) clang cmake ccls clang-tools;};
-
-      hm.programs.vscode.extensions =
-        attrValues {inherit (pkgs.vscode-extensions.ms-vscode) cpptools;};
+      user.packages = with pkgs; [
+        gcc
+        gnumake
+        clang-tools
+        xmake
+      ];
     }
 
     (mkIf config.modules.develop.xdg.enable {
-      # TODO:
+      create.configFile."clangd/config.yaml" = {
+        text = generators.toYAML {} {
+          CompileFlags = {
+            Add = [
+              "-xc"
+              "-Wall"
+              "-Wextra"
+              "-Werror"
+            ];
+          };
+        };
+      };
+      create.homeFile.".clang-format" = {
+        text = ''
+          ---
+          BasedOnStyle: LLVM
+          IndentWidth: 8
+          UseTab: Always
+          BreakBeforeBraces: Linux
+          AllowShortIfStatementsOnASingleLine: false
+          IndentCaseLabels: false
+          ...
+        '';
+      };
     })
   ]);
 }
