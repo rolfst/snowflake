@@ -15,7 +15,6 @@ in {
   config = mkIf config.modules.shell.mise.enable {
     user.packages = attrValues {inherit (pkgs) mise;};
 
-    # Android Debug Bridge
-    programs.mise.enable = true;
+    hm.programs.mise.enable = true;
   };
 }

@@ -1,13 +1,13 @@
 name:           birostrisWM
 version:        0.1.0.0
 synopsis:       A fruitful XMonad configuration based on IvanMalison's work.
-homepage:       https://github.com/Icy-Thought/snowflake
+homepage:       https://codeberg.org/Icy-Thought/snowflake
 author:         Icy-Thought
 maintainer:     Icy-Thought
 build-type:     Simple
 cabal-version:  >=1.10
 
-executable birostrisWM
+executable xmonad-x86_64-linux
   main-is:             xmonad.hs
   build-depends:       aeson>=0.11.2.1
                      , X11>=1.8
@@ -29,3 +29,4 @@ executable birostrisWM
                      , xmonad
   hs-source-dirs: .
   default-language: Haskell2010
+
