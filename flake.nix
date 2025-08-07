@@ -44,7 +44,7 @@
     rust.url = "github:oxalica/rust-overlay";
 
     nvim-dir = {
-      # url = "https://rolfst@github.com/rolfst/nvim.git?rev=87b1cab7969e3e59fa1ad2c431d06c90e09fa68e";
+      # url = "https://rolfst@github.com/rolfst/nvim.git?rev=9c796b117b514e7c6f16fe9f235309dfac435d31";
       url = "https://github.com/rolfst/nvim.git";
       type = "git";
       submodules = true;
@@ -52,7 +52,7 @@
     };
 
     zen-browser = {
-      url = "github:KeyZox71/zen-browser-flake";
+      url = "github:youwen5/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

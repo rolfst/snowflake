@@ -26,6 +26,7 @@ in {
       (mkAliasOptionModule ["home"] ["hm" "home"])
       (mkAliasOptionModule ["create" "configFile"] ["hm" "xdg" "configFile"])
       (mkAliasOptionModule ["create" "dataFile"] ["hm" "xdg" "dataFile"])
+      (mkAliasOptionModule ["create" "homeFile"] ["hm" "home" "file"])
     ]
     ++ (mapModulesRec' (toString ./modules) import);
 
@@ -74,7 +75,7 @@ in {
   };
 
   system = {
-    stateVersion = "23.11";
+    stateVersion = "25.05";
     configurationRevision = with inputs; mkIf (self ? rev) self.rev;
     autoUpgrade = {
       enable = true;
@@ -85,6 +86,11 @@ in {
   # Some reasonable, global defaults
   ## This is here to appease 'nix flake check' for generic hosts with no
   ## hardware-configuration.nix or fileSystem config.
+  hardware.block.scheduler = {
+    "mmcblk[0-9]*" = "bfq";
+    "nvme[0-9]*" = "kyber";
+  };
+
   fileSystems."/".device = mkDefault "/dev/disk/by-uuid/238f6eb4-b155-499e-b75a-2f1d233797ed";
 
   boot = {

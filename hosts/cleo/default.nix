@@ -11,6 +11,7 @@
       default = "zsh";
       android.enable = false;
       tmux.enable = true;
+      mise.enable = true;
       toolset = {
         fzf.enable = true;
         git.enable = true;
