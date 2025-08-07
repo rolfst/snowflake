@@ -51,7 +51,7 @@ in {
       user.packages = attrValues {inherit (pkgs) signal-desktop tdesktop;};
     })
     (mkIf cfg.slack.enable {
-      user.packages = attrValues {inherit (pkgs) slack teamviewer;};
+      user.packages = attrValues {inherit (pkgs) slack;};
     })
 
     # (mkIf cfg.matrix.withDaemon.enable {
