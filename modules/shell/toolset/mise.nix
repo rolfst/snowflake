@@ -13,8 +13,12 @@ in {
   in {enable = mkEnableOption "mise-en-place";};
 
   config = mkIf config.modules.shell.mise.enable {
-    user.packages = attrValues {inherit (pkgs) mise;};
+    user.packages = attrValues {inherit (pkgs.unstable) mise;};
 
-    hm.programs.mise.enable = true;
+    hm.programs.mise = {
+      enable = true;
+      enableZshIntegration = true;
+    };
+    hm.programs.direnv.mise.enable = true;
   };
 }
