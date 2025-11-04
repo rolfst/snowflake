@@ -28,6 +28,7 @@ in {
             ];
           });
         inherit (pkgs.unstable) rust-analyzer rust-script;
+        inherit (pkgs.unstable.vscode-extensions.vadimcn) vscode-lldb;
       };
 
       environment.shellAliases = {

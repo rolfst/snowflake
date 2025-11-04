@@ -10,6 +10,7 @@
     };
 
     variables = {
+      GEMINI_API_KEY = "$(cat $HOME/gemini_api_key)";
       __GL_SHADER_DISK_CACHE_PATH = "$XDG_CACHE_HOME/nv";
       ASPELL_CONF = ''
         per-conf $XDG_CONFIG_HOME/aspell/aspell.conf;

@@ -15,8 +15,8 @@ in {
 
   config = mkMerge [
     (mkIf config.modules.develop.node.enable {
-      user.packages = attrValues {inherit (pkgs) nodejs_latest yarn;};
-      environment.systemPackages = attrValues {inherit (pkgs) mermaid-cli;};
+      user.packages = attrValues {inherit (pkgs) nodejs_latest yarn bruno bruno-cli ast-grep;};
+      environment.systemPackages = attrValues {inherit (pkgs) mermaid-cli vscode-js-debug;};
 
       # Run locally installed bin-script, e.g. n coffee file.coffee
       environment.shellAliases = {
