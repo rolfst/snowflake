@@ -32,11 +32,13 @@ in {
         };
 
         fontConfig = {
-          packages = attrValues {
-            inherit (pkgs) cascadia-code noto-fonts-emoji sarasa-gothic;
-            nerdfonts =
-              pkgs.nerdfonts.override {fonts = ["Arimo" "FiraCode"];};
-          };
+          packages = [
+            pkgs.cascadia-code
+            pkgs.noto-fonts-emoji
+            pkgs.sarasa-gothic
+            pkgs.nerd-fonts.arimo
+            pkgs.nerd-fonts.fira-code
+          ];
           sans = ["FiraCode Nerd Font" "Cascadia Code" "Sarasa Mono SC"];
           mono = ["FiraCode Nerd Font Mono" "Sarasa Gothic SC"];
           emoji = ["Noto Color Emoji"];

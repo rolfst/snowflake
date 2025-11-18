@@ -30,7 +30,7 @@ in {
           ;
       };
 
-      # hm.programs.vscode.extensions =
+      # hm.programs.vscode.profiles.default.extensions =
       #   attrValues ({ inherit (pkgs.vscode-extensions.jnoortheen) nix-ide; });
     })
 

@@ -20,20 +20,22 @@ in {
     security.rtkit.enable = true;
 
     environment.systemPackages = [pkgs.speechd];
-    services.pipewire = {
-      enable = true;
-      wireplumber.enable = true;
-      alsa = {
+    services = {
+      pipewire = {
         enable = true;
-        support32Bit = true;
+        wireplumber.enable = true;
+        alsa = {
+          enable = true;
+          support32Bit = true;
+        };
+        pulse.enable = true;
+        #jack.enable = true;
       };
-      pulse.enable = true;
-      #jack.enable = true;
-    };
 
-    hardware.pulseaudio.extraConfig = ''
-      load-module module-switch-on-connect
-    '';
+      pulseaudio.extraConfig = ''
+        load-module module-switch-on-connect
+      '';
+    };
 
     create.configFile = mkIf config.modules.hardware.bluetooth.enable {
       wireplumber-bluetooth = {

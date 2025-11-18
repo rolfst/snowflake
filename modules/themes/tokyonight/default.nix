@@ -34,10 +34,10 @@ in {
         };
 
         fontConfig = {
-          packages = attrValues {
-            inherit (pkgs) noto-fonts-emoji;
-            nerdfonts = pkgs.nerdfonts.override {fonts = ["VictorMono"];};
-          };
+          packages = [
+            pkgs.noto-fonts-emoji
+            pkgs.nerd-fonts.victor-mono
+          ];
           mono = ["VictorMono Nerd Font Mono"];
           sans = ["VictorMono Nerd Font"];
           emoji = ["Noto Color Emoji"];

@@ -24,7 +24,7 @@ in {
     # Prevent x11 askPass prompt on git push:
     programs.ssh.askPassword = "";
 
-    hm.programs.zsh.initExtra = ''
+    hm.programs.zsh.initContent = ''
       # -------===[ Helpful Git Fn's ]===------- #
       gitignore() {
         curl -s -o .gitignore https://gitignore.io/api/$1

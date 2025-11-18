@@ -21,37 +21,39 @@ in {
       mutableExtensionsDir = true;
 
       # Config imports
-      extensions =
-        # pkgs.vscode-utils.extensionsFromVscodeMarketplace
-        # ((import "${vscDir}/custom-extensions.nix").extensions)
-        # ++
-        with pkgs.vscode-extensions; [
-          # Editor
-          eamodio.gitlens
-          editorconfig.editorconfig
-          mhutchie.git-graph
-          vscodevim.vim
+      profiles.default = {
+        extensions =
+          # pkgs.vscode-utils.extensionsFromVscodeMarketplace
+          # ((import "${vscDir}/custom-extensions.nix").extensions)
+          # ++
+          with pkgs.vscode-extensions; [
+            # Editor
+            eamodio.gitlens
+            editorconfig.editorconfig
+            mhutchie.git-graph
+            vscodevim.vim
 
-          # Aesthetics
-          esbenp.prettier-vscode
-          gruntfuggly.todo-tree
-          jock.svg
-          naumovs.color-highlight
+            # Aesthetics
+            esbenp.prettier-vscode
+            gruntfuggly.todo-tree
+            jock.svg
+            naumovs.color-highlight
 
-          # Toolset
-          christian-kohler.path-intellisense
-          formulahendry.code-runner
-          github.copilot
-          wix.vscode-import-cost
-          # rose-pine
+            # Toolset
+            christian-kohler.path-intellisense
+            formulahendry.code-runner
+            github.copilot
+            wix.vscode-import-cost
+            # rose-pine
 
-          # Language specific
-          james-yu.latex-workshop
-          tamasfe.even-better-toml
-          yzhang.markdown-all-in-one
-        ];
-      userSettings = import "${vscDir}/settings.nix" {inherit config;};
-      keybindings = import "${vscDir}/keybindings.nix" {};
+            # Language specific
+            james-yu.latex-workshop
+            tamasfe.even-better-toml
+            yzhang.markdown-all-in-one
+          ];
+        userSettings = import "${vscDir}/settings.nix" {inherit config;};
+        keybindings = import "${vscDir}/keybindings.nix" {};
+      };
     };
   };
 }

@@ -36,7 +36,7 @@ in {
         ca = "cargo";
       };
 
-      hm.programs.vscode.extensions = attrValues {
+      hm.programs.vscode.profiles.default.extensions = attrValues {
         inherit (pkgs.vscode-extensions.rust-lang) rust-analyzer;
       };
     })

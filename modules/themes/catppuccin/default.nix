@@ -31,10 +31,10 @@ in {
         };
 
         fontConfig = {
-          packages = attrValues {
-            inherit (pkgs) twitter-color-emoji;
-            nerdfonts = pkgs.nerdfonts.override {fonts = ["VictorMono"];};
-          };
+          packages = [
+            pkgs.twitter-color-emoji
+            pkgs.nerdfonts.VictorMono
+          ];
           mono = ["VictorMono Nerd Font Mono"];
           sans = ["VictorMono Nerd Font"];
           emoji = ["Twitter Color Emoji"];

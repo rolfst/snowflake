@@ -75,7 +75,7 @@ in {
 
       autosuggestion.enable = true;
 
-      initExtra = ''
+      initContent = ''
         # -------===[ Uncategorized ]===------- #
         unsetopt BRACE_CCL                      # Brace character class list expansion.
         setopt COMBINING_CHARS                  # Zero-length punc chars + Base char.
