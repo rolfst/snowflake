@@ -39,6 +39,10 @@ in {
   };
 
   config = {
+    programs.nix-ld = {
+      enable = true;
+      libraries = options.programs.nix-ld.libraries.default;
+    };
     user = let
       user = builtins.getEnv "USER";
       name =
