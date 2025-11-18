@@ -1,20 +1,32 @@
-{ config, options, lib, pkgs, ... }:
-
-let
+{
+  config,
+  options,
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (lib.attrsets) attrValues;
   inherit (lib.modules) mkIf mkMerge;
 in {
-  options.modules.develop.haskell = let inherit (lib.options) mkEnableOption;
-  in { enable = mkEnableOption "Haskell development"; };
+  options.modules.develop.haskell = let
+    inherit (lib.options) mkEnableOption;
+  in {enable = mkEnableOption "Haskell development";};
 
   config = mkMerge [
     (mkIf config.modules.develop.haskell.enable {
-      user.packages = attrValues ({
-        inherit (pkgs.haskellPackages)
-          cabal-install haskell-language-server hasktags hpack stylish-haskell;
-        ghc-with-hoogle = pkgs.haskellPackages.ghcWithHoogle
-          (p: with p; [ taffybar xmonad xmonad-contrib ]);
-      });
+      user.packages = attrValues {
+        inherit
+          (pkgs.haskellPackages)
+          cabal-install
+          haskell-language-server
+          hasktags
+          hpack
+          stylish-haskell
+          ;
+        ghc-with-hoogle =
+          pkgs.haskellPackages.ghcWithHoogle
+          (p: with p; [taffybar xmonad xmonad-contrib]);
+      };
 
       home.file.ghci-conf = {
         target = ".ghci";
@@ -26,7 +38,7 @@ in {
         '';
       };
 
-      hm.programs.vscode.extensions = with pkgs.vscode-extensions; [
+      hm.programs.vscode.profiles.default.extensions = with pkgs.vscode-extensions; [
         haskell.haskell
         justusadam.language-haskell # syntax-highlighting
       ];
