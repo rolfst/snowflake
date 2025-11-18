@@ -66,7 +66,7 @@
         default = "firefox";
         google.enable = true;
         firefox.enable = true;
-        zen.enable = true;
+        zen.enable = false;
       };
       extensions = {
         keybase.enable = true; # the gui
@@ -92,7 +92,7 @@
         readers = {
           zathura.enable = true;
           sioyek.enable = false;
-          calibre.enable = true;
+          calibre.enable = false;
         };
         social = {
           base.enable = true;
