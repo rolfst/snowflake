@@ -22,7 +22,7 @@ in {
             isort
             ipython
           ]);
-        inherit (pkgs) pyright pdm;
+        inherit (pkgs) basedpyright pdm;
         inherit (pkgs.unstable.python3Packages) pynvim;
       };
 
