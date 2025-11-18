@@ -22,18 +22,17 @@ in {
             isort
             ipython
           ]);
-        inherit (pkgs) pyright rye pdm;
+        inherit (pkgs) pyright pdm;
         inherit (pkgs.unstable.python3Packages) pynvim;
       };
 
       environment.shellAliases = {
         py = "python";
-        pip = "rye";
         ipy = "ipython --no-banner";
         ipylab = "ipython --pylab=qt5 --no-banner";
       };
 
-      hm.programs.vscode.extensions = attrValues {
+      hm.programs.vscode.profiles.default.extensions = attrValues {
         inherit (pkgs.vscode-extensions.ms-python) python;
         inherit (pkgs.vscode-extensions.ms-toolsai) jupyter;
       };
