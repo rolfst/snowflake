@@ -108,7 +108,7 @@
     };
     virtualize = {
       enable = true;
-      podman.enable = false;
+      podman.enable = true;
       docker.enable = true;
     };
   };
