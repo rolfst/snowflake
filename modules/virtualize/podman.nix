@@ -29,7 +29,7 @@ in {
         dockerCompat = false; # docker = podman (alias)
         # For Nixos version > 22.11
         defaultNetwork.settings = {dns_enabled = true;};
-        extraPackages = attrValues {inherit (pkgs) conmon runc skopeo podman-compose slirp4netns fuse-overlayfs;};
+        extraPackages = attrValues {inherit (pkgs) conmon runc skopeo podman-compose slirp4netns fuse-overlayfs minikube;};
       };
       oci-containers.backend = "podman";
     };
@@ -42,6 +42,5 @@ in {
       piclean = "podman images | grep '<none>' | grep -P '[1234567890abcdef]{12}' -o | xargs -L1 podman rmi 2>/dev/null";
     };
     # is this the new key for virtualisation.podman.enableNvidia
-    virtualisation.containers.cdi.dynamic.nvidia.enable = true;
   };
 }
