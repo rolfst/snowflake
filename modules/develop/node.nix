@@ -15,7 +15,7 @@ in {
 
   config = mkMerge [
     (mkIf config.modules.develop.node.enable {
-      user.packages = attrValues {inherit (pkgs) nodejs_latest yarn bruno bruno-cli ast-grep;};
+      user.packages = attrValues {inherit (pkgs) nodejs_latest yarn ast-grep;};
       environment.systemPackages = attrValues {inherit (pkgs) mermaid-cli vscode-js-debug;};
 
       # Run locally installed bin-script, e.g. n coffee file.coffee
@@ -41,6 +41,7 @@ in {
         text = ''
           cache=$XDG_CACHE_HOME/npm
           prefix=$XDG_DATA_HOME/npm
+          store-path=$XDG_CACHE_HOME/pnpm
         '';
       };
     })
