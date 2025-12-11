@@ -20,6 +20,7 @@ in {
 
     hm.programs.kitty = {
       enable = true;
+      package = pkgs.unstable.kitty;
       settings = {
         term = "xterm-kitty";
 
