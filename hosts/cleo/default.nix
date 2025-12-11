@@ -44,6 +44,7 @@
       lua.enable = true;
       java.enable = true;
       cc.enable = true;
+      xdg.enable = true;
     };
 
     # virtualize = {
