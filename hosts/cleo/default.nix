@@ -15,6 +15,7 @@
       toolset = {
         fzf.enable = true;
         git.enable = true;
+        AI.enable = true;
       };
     };
     hardware = {

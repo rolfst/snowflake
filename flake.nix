@@ -11,6 +11,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-ai-tools = {
+      url = "github:numtide/nix-ai-tools";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # flatpak
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.4.1";
 
