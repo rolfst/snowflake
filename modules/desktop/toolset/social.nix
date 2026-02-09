@@ -48,7 +48,7 @@ in {
 
   config = mkMerge [
     (mkIf cfg.base.enable {
-      user.packages = attrValues {inherit (pkgs) signal-desktop tdesktop;};
+      user.packages = attrValues {inherit (pkgs) signal-desktop telegram-desktop;};
     })
     (mkIf cfg.slack.enable {
       user.packages = attrValues {inherit (pkgs) slack;};

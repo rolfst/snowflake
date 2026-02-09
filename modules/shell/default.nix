@@ -4,22 +4,31 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   inherit (lib.attrsets) attrValues;
   inherit (lib.modules) mkIf mkMerge;
   cfg = config.modules.shell;
-in {
-  options.modules.shell = let
-    inherit (lib.options) mkOption mkEnableOption;
-    inherit (lib.types) nullOr enum;
-  in {
-    default = mkOption {
-      type = nullOr (enum ["fish" "zsh" "xonsh" "nush"]);
-      default = null;
-      description = "Default system shell";
+in
+{
+  options.modules.shell =
+    let
+      inherit (lib.options) mkOption mkEnableOption;
+      inherit (lib.types) nullOr enum;
+    in
+    {
+      default = mkOption {
+        type = nullOr (enum [
+          "fish"
+          "zsh"
+          "xonsh"
+          "nush"
+        ]);
+        default = null;
+        description = "Default system shell";
+      };
+      corePkgs.enable = mkEnableOption "core shell packages";
     };
-    corePkgs.enable = mkEnableOption "core shell packages";
-  };
 
   config = mkMerge [
     (mkIf (cfg.default != null) {
@@ -32,15 +41,92 @@ in {
       hm.programs.direnv = {
         enable = true;
         nix-direnv.enable = true;
-        config.whitelist.prefix = ["/home"];
+        config.whitelist.prefix = [ "/home" ];
+      };
+
+      hm.programs.yazi = {
+        enable = true;
+        # enableZshItegration = true;
+        # enableBashIntegration = true;
+        # enableNushellIntegration = true;
+        plugins = {
+          inherit (pkgs.yaziPlugins)
+            mount
+            sudo
+            lazygit
+            compress
+            ;
+        };
+
+        keymap = {
+          manager.prepend_keymap = [
+            {
+              on = [
+                "c"
+                "a"
+                "a"
+              ];
+              run = "plugin compress";
+              desc = "Archive selected files";
+            }
+            {
+              on = [
+                "c"
+                "a"
+                "p"
+              ];
+              run = "plugin compress -p";
+              desc = "Archive selected files (password)";
+            }
+            {
+              on = [
+                "c"
+                "a"
+                "h"
+              ];
+              run = "plugin compress -ph";
+              desc = "Archive selected files (password+header)";
+            }
+            {
+              on = [
+                "c"
+                "a"
+                "l"
+              ];
+              run = "plugin compress -l";
+              desc = "Archive selected files (compression level)";
+            }
+            {
+              on = [
+                "c"
+                "a"
+                "u"
+              ];
+              run = "plugin compress -phl";
+              desc = "Archive selected files (password+header+level)";
+            }
+          ];
+        };
       };
 
       user.packages = attrValues {
-        inherit (pkgs) any-nix-shell pwgen yt-dlp csview ripdrag yazi;
+        yz = pkgs.yazi.override { _7zz = pkgs._7zz-rar; };
+        inherit (pkgs)
+          any-nix-shell
+          pwgen
+          yt-dlp
+          csview
+          ripdrag
+          ;
 
         # GNU Alternatives
-        inherit (pkgs) bat eza fd zoxide;
-        rgFull = pkgs.ripgrep.override {withPCRE2 = true;};
+        inherit (pkgs)
+          bat
+          eza
+          fd
+          zoxide
+          ;
+        rgFull = pkgs.ripgrep.override { withPCRE2 = true; };
       };
     })
   ];

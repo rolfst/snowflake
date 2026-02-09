@@ -49,7 +49,7 @@ in {
         ];
         extraPython3Packages = ps:
           with ps; [
-            prompt_toolkit
+            prompt-toolkit
             requests
           ];
         plugins = with pkgs.unstable.vimPlugins; [

@@ -14,7 +14,7 @@ in {
   in {enable = mkEnableOption "secure-socket shell";};
 
   config = mkIf config.modules.services.ssh.enable {
-    programs.ssh.startAgent = true;
+    # programs.ssh.startAgent = true;
 
     user.packages = attrValues {
       inherit (pkgs) openssl;

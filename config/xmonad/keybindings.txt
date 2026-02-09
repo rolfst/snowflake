@@ -13,10 +13,12 @@
 | Keybinding                                             | Action                                                      |
 | ------------------------------------------------------ | ----------------------------------------------------------- |
 | <kbd>modm</kbd> + <kbd>shift</kbd> + <kbd>/</kbd>      | XMessage -> summary of default keybindings.                 |
-| <kbd>modm</kbd> + <kbd>shift</kbd> + <kbd>return</kbd> | Launch terminal. (WezTerm)                                  |
-| <kbd>modm</kbd> + <kbd>alt</kbd> + <kbd>f</kbd>        | Launch FireFox Browser.                                     |
+| <kbd>modm</kbd> + <kbd>shift</kbd> + <kbd>return</kbd> | Launch terminal. (kitty)                                  |
 | <kbd>modm</kbd> + <kbd>alt</kbd> + <kbd>b</kbd>        | Launch btop++.                                              |
-| <kbd>modm</kbd> + <kbd>alt</kbd> + <kbd>s</kbd>        | Launch Spotify.                                             |
+| <kbd>modm</kbd> + <kbd>alt</kbd> + <kbd>e</kbd>        | Launch Fileexplorer.                                              |
+| <kbd>modm</kbd> + <kbd>alt</kbd> + <kbd>f</kbd>        | Launch FireFox Browser.                                     |
+| <kbd>modm</kbd> + <kbd>alt</kbd> + <kbd>g</kbd>        | Launch Google Chrome Browser.                                     |
+| <kbd>modm</kbd> + <kbd>alt</kbd> + <kbd>y</kbd>        | Launch Youtube music.                                             |
 | <kbd>modm</kbd> + <kbd>p</kbd>                         | (Rofi) Power-menu.                                          |
 | <kbd>modm</kbd> + <kbd>shift</kbd> + <kbd>p</kbd>      | (Rofi) Application launcher.                                |
 | <kbd>modm</kbd> + <kbd>g</kbd>                         | (Rofi) select window to shift focus towards.                |

@@ -38,11 +38,7 @@ in {
         enable = true;
         type = "fcitx5";
         fcitx5.addons = attrValues {
-          inherit
-            (pkgs)
-            fcitx5-configtool
-            fcitx5-chinese-addons
-            ;
+          inherit (pkgs.qt6Packages) fcitx5-configtool fcitx5-chinese-addons;
           inherit (pkgs.my) fcitx5-catppuccin;
         };
       };

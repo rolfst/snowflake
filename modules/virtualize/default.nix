@@ -18,7 +18,7 @@ in {
 
   config = mkIf cfg.enable {
     user.packages = attrValues {
-      inherit (pkgs) virt-manager virt-viewer win-virtio spice spice-gtk spice-protocol win-spice;
+      inherit (pkgs) virt-manager virt-viewer virtio-win spice spice-gtk spice-protocol win-spice;
     };
 
     virtualisation = {
@@ -32,10 +32,10 @@ in {
           package = pkgs.qemu_kvm;
           runAsRoot = false;
           swtpm.enable = true;
-          ovmf = {
-            enable = true;
-            packages = [pkgs.OVMFFull.fd];
-          };
+          # ovmf = {
+          #   enable = true;
+          #   packages = [pkgs.OVMFFull.fd];
+          # };
           verbatimConfig = ''
             namespaces = []
             user = "rolfst"

@@ -34,7 +34,7 @@ in {
         fontConfig = {
           packages = [
             pkgs.cascadia-code
-            pkgs.noto-fonts-emoji
+            pkgs.noto-fonts-color-emoji
             pkgs.sarasa-gothic
             pkgs.nerd-fonts.arimo
             pkgs.nerd-fonts.fira-code
