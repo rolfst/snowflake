@@ -33,7 +33,7 @@ in {
 
     hm.programs.zsh = {
       enable = true;
-      dotDir = ".config/zsh";
+      dotDir = "${config.home.homeDirectory}/.config/zsh";
       autocd = true;
       syntaxHighlighting.enable = true;
 
@@ -127,6 +127,9 @@ in {
         bindkey '^[[Z' reverse-menu-complete            # Shift-Tab -> reverse menu navigation
         bindkey '^/' autosuggest-accept                 # C-/ => accept suggestion
         bindkey -s '^t' 'tsession\n'
+        bindkey -s '^l' 'kittysession-l\n'
+        bindkey -s '^d' 'kittysession-rm\n'
+        bindkey -s '^b' 'ks-boot\n'
 
         # -------===[ Useful Functions ]===------- #
         function sysdate {
