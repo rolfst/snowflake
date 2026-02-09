@@ -53,6 +53,7 @@
     themes.active = "rose-pine";
 
     desktop = {
+      virtual.wine.enable = true;
       xmonad.enable = true;
       terminal = {
         default = "kitty";
