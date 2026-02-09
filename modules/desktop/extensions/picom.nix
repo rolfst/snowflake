@@ -21,6 +21,7 @@ in {
       description = "Picom composite manager";
       wantedBy = ["graphical-session.target"];
       partOf = ["graphical-session.target"];
+      enable = true;
 
       serviceConfig = {
         ExecStart = "${
