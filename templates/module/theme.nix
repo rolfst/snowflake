@@ -138,7 +138,7 @@ in {
 
     (mkIf config.services.xserver.enable {
       fonts.packages = attrValues {
-        inherit (pkgs) noto-fonts-emoji;
+        inherit (pkgs) noto-fonts-color-emoji;
         font = cfg.font.package;
       };
 

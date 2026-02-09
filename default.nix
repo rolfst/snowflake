@@ -4,10 +4,10 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   inherit (builtins) toString;
-  inherit
-    (lib)
+  inherit (lib)
     attrValues
     filterAttrs
     mkDefault
@@ -17,18 +17,18 @@
     mapAttrsToList
     ;
   inherit (lib.my) mapModulesRec';
-in {
-  imports =
-    [
-      inputs.home-manager.nixosModules.home-manager
-      inputs.nix-flatpak.nixosModules.nix-flatpak
-      (mkAliasOptionModule ["hm"] ["home-manager" "users" config.user.name])
-      (mkAliasOptionModule ["home"] ["hm" "home"])
-      (mkAliasOptionModule ["create" "configFile"] ["hm" "xdg" "configFile"])
-      (mkAliasOptionModule ["create" "dataFile"] ["hm" "xdg" "dataFile"])
-      (mkAliasOptionModule ["create" "homeFile"] ["hm" "home" "file"])
-    ]
-    ++ (mapModulesRec' (toString ./modules) import);
+in
+{
+  imports = [
+    inputs.home-manager.nixosModules.home-manager
+    inputs.nix-flatpak.nixosModules.nix-flatpak
+    (mkAliasOptionModule [ "hm" ] [ "home-manager" "users" config.user.name ])
+    (mkAliasOptionModule [ "home" ] [ "hm" "home" ])
+    (mkAliasOptionModule [ "create" "configFile" ] [ "hm" "xdg" "configFile" ])
+    (mkAliasOptionModule [ "create" "dataFile" ] [ "hm" "xdg" "dataFile" ])
+    (mkAliasOptionModule [ "create" "homeFile" ] [ "hm" "home" "file" ])
+  ]
+  ++ (mapModulesRec' (toString ./modules) import);
 
   # Common config for all nixos machines;
   environment.variables = {
@@ -38,44 +38,49 @@ in {
     NIXPKGS_ALLOW_INSECURE = "1";
   };
 
-  nix = let
-    filteredInputs = filterAttrs (n: _: n != "self") inputs;
-    nixPathInputs = mapAttrsToList (n: v: "${n}=${v}") filteredInputs;
-    registryInputs = mapAttrs (_: v: {flake = v;}) filteredInputs;
-  in {
-    # package = pkgs.nixVersions.git;
-    extraOptions = "experimental-features = nix-command flakes";
+  nix =
+    let
+      filteredInputs = filterAttrs (n: _: n != "self") inputs;
+      nixPathInputs = mapAttrsToList (n: v: "${n}=${v}") filteredInputs;
+      registryInputs = mapAttrs (_: v: { flake = v; }) filteredInputs;
+    in
+    {
+      # package = pkgs.nixVersions.git;
+      extraOptions = "experimental-features = nix-command flakes";
 
-    nixPath =
-      nixPathInputs
-      ++ [
+      nixPath = nixPathInputs ++ [
         "nixpkgs-overlays=${config.snowflake.dir}/overlays"
         "snowflake=${config.snowflake.dir}"
       ];
 
-    registry = registryInputs // {snowflake.flake = inputs.self;};
+      registry = registryInputs // {
+        snowflake.flake = inputs.self;
+      };
 
-    gc = {
-      automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than-2d";
+      gc = {
+        automatic = true;
+        dates = "weekly";
+        options = "--delete-older-than-2d";
+      };
+
+      settings = {
+        auto-optimise-store = true;
+        keep-derivations = false;
+        keep-outputs = false;
+
+        substituters = [
+          "https://nix-community.cachix.org"
+          "https://hyprland.cachix.org"
+        ];
+        trusted-public-keys = [
+          "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+          "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+        ];
+      };
     };
-
-    settings = {
-      auto-optimise-store = true;
-      keep-derivations = false;
-      keep-outputs = false;
-
-      substituters = ["https://nix-community.cachix.org" "https://hyprland.cachix.org"];
-      trusted-public-keys = [
-        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-        "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
-      ];
-    };
-  };
 
   system = {
-    stateVersion = "25.05";
+    stateVersion = "25.11";
     configurationRevision = with inputs; mkIf (self ? rev) self.rev;
     autoUpgrade = {
       enable = true;
@@ -95,7 +100,7 @@ in {
 
   boot = {
     kernelPackages = mkDefault pkgs.linuxPackages_latest;
-    kernelParams = ["pcie_aspm.policy=performance"];
+    kernelParams = [ "pcie_aspm.policy=performance" ];
     loader = {
       systemd-boot.enable = true;
       efi.efiSysMountPoint = "/boot";
@@ -129,8 +134,23 @@ in {
   };
 
   # WARNING: prevent installing pre-defined packages
-  environment.defaultPackages = [];
+  environment.defaultPackages = [ ];
 
-  environment.systemPackages =
-    attrValues {inherit (pkgs) cached-nix-shell gnumake unrar xz unzip corefonts udisks udiskie usbutils e2fsprogs dosfstools;};
+  environment.systemPackages = attrValues {
+    inherit (pkgs)
+      cached-nix-shell
+      gnumake
+      unrar
+      xz
+      unzip
+      zip
+      p7zip-rar
+      corefonts
+      udisks
+      udiskie
+      usbutils
+      e2fsprogs
+      dosfstools
+      ;
+  };
 }
