@@ -4,14 +4,20 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   inherit (builtins) toString;
   inherit (lib.modules) mkIf mkMerge;
   inherit (pkgs) python3 writeScriptBin;
-in {
-  options.modules.desktop.terminal.kitty = let
-    inherit (lib.options) mkEnableOption;
-  in {enable = mkEnableOption "GPU-accelerated terminal emulator";};
+in
+{
+  options.modules.desktop.terminal.kitty =
+    let
+      inherit (lib.options) mkEnableOption;
+    in
+    {
+      enable = mkEnableOption "GPU-accelerated terminal emulator";
+    };
 
   config = mkIf config.modules.desktop.terminal.kitty.enable {
     user.packages = [
@@ -252,12 +258,18 @@ in {
         "middle release ungrabbed" = "paste_from_selection";
 
         "ctrl+shift+t" = "new_tab_with_cwd";
-        "ctrl+shift+j" = "next_tab";
-        "ctrl+shift+page_up" = "next_tab";
-        "ctrl+shift+k" = "previous_tab";
-        "ctrl+shift+page_down" = "previous_tab";
+        "ctrl+shift+/" = "new_window";
 
-        "ctrl+shift+f5" = "save_as_session --use-foreground-process --base-dir=~/.local/share/kitty/sessions/";
+        "ctrl+shift+p" = "nth_window -1";
+        "ctrl+shift+o" = "nth_window +1";
+        "ctrl+left" = "neighboring_window left";
+        "shift+left" = "move_window right";
+        "ctrl+down" = "neighboring_window down";
+        "shift+down" = "move_window up";
+        "shift+alt+t" = "select_tab";
+
+        "ctrl+shift+f5" =
+          "save_as_session --use-foreground-process --base-dir=~/.local/share/kitty/sessions/";
         "ctrl+shift+f7" = "goto_session";
         "ctrl+shift+f8" = "close_session";
         "ctrl+shift+f10" = "close_os_window";
@@ -268,77 +280,82 @@ in {
         # "ctrl+shift+f7>-" = "goto_session -1";
       };
 
-      extraConfig = let
-        inherit (config.modules.themes) active;
-      in
+      extraConfig =
+        let
+          inherit (config.modules.themes) active;
+        in
         mkIf (active != null) ''
           include ~/.config/kitty/config/${active}.conf
         '';
     };
 
-    create.configFile = let
-      inherit (config.modules.themes) active;
-    in (mkMerge [
-      {
-        tab-bar = {
-          target = "kitty/tab_bar.py";
-          source = "${config.snowflake.configDir}/kitty/${active}-bar.py";
-        };
-      }
+    create.configFile =
+      let
+        inherit (config.modules.themes) active;
+      in
+      (mkMerge [
+        {
+          tab-bar = {
+            target = "kitty/tab_bar.py";
+            source = "${config.snowflake.configDir}/kitty/${active}-bar.py";
+          };
+        }
 
-      (mkIf (active != null) {
-        # TODO: Find ONE general nix-automation entry for VictorMono
-        kitty-theme = {
-          target = "kitty/config/${active}.conf";
-          text = let
-            inherit (config.modules.themes.colors.main) bright normal types;
-            inherit (config.modules.themes.font.mono) size;
-          in ''
-            font_family               FiraCode Bold Nerd Font Complete
-            italic_font               FiraCode Bold Italic Nerd Font Complete
-            bold_font                 FiraCode SemiBold Nerd Font Complete
-            bold_italic_font          FiraCode SemiBold Italic Nerd Font Complete
-            font_size                 ${toString size}
+        (mkIf (active != null) {
+          # TODO: Find ONE general nix-automation entry for VictorMono
+          kitty-theme = {
+            target = "kitty/config/${active}.conf";
+            text =
+              let
+                inherit (config.modules.themes.colors.main) bright normal types;
+                inherit (config.modules.themes.font.mono) size;
+              in
+              ''
+                font_family               FiraCode Bold Nerd Font Complete
+                italic_font               FiraCode Bold Italic Nerd Font Complete
+                bold_font                 FiraCode SemiBold Nerd Font Complete
+                bold_italic_font          FiraCode SemiBold Italic Nerd Font Complete
+                font_size                 ${toString size}
 
-            foreground                ${types.fg}
-            background                ${types.bg}
+                foreground                ${types.fg}
+                background                ${types.bg}
 
-            cursor                    ${normal.yellow}
-            cursor_text_color         ${types.fg}
+                cursor                    ${normal.yellow}
+                cursor_text_color         ${types.fg}
 
-            tab_bar_background        ${types.bg}
-            tab_title_template        "{fmt.fg._7976ab}{fmt.bg.default} ○ {index}:{f'{title[:6]}…{title[-6:]}' if title.rindex(title[-1]) + 1 > 25 else title}{' []' if layout_name == 'stack' else '''} "
-            active_tab_title_template "{fmt.fg._f2cdcd}{fmt.bg.default}   綠{session_name}-{index}:{f'{title[:6]}…{title[-6:]}' if title.rindex(title[-1]) + 1 > 25 else title}{' []' if layout_name == 'stack' else '''} "
+                tab_bar_background        ${types.bg}
+                tab_title_template        "{fmt.fg._7976ab}{fmt.bg.default} ○ {index}:{f'{title[:6]}…{title[-6:]}' if title.rindex(title[-1]) + 1 > 25 else title}{' []' if layout_name == 'stack' else '''} "
+                active_tab_title_template "{fmt.fg._f2cdcd}{fmt.bg.default}   綠{session_name}-{index}:{f'{title[:6]}…{title[-6:]}' if title.rindex(title[-1]) + 1 > 25 else title}{' []' if layout_name == 'stack' else '''} "
 
-            selection_foreground      ${types.bg}
-            selection_background      ${types.highlight}
+                selection_foreground      ${types.bg}
+                selection_background      ${types.highlight}
 
-            color0                    ${bright.black}
-            color8                    ${bright.black}
+                color0                    ${bright.black}
+                color8                    ${bright.black}
 
-            color1                    ${normal.red}
-            color9                    ${bright.red}
+                color1                    ${normal.red}
+                color9                    ${bright.red}
 
-            color2                    ${normal.green}
-            color10                   ${bright.green}
+                color2                    ${normal.green}
+                color10                   ${bright.green}
 
-            color3                    ${normal.yellow}
-            color11                   ${bright.yellow}
+                color3                    ${normal.yellow}
+                color11                   ${bright.yellow}
 
-            color4                    ${normal.blue}
-            color12                   ${bright.blue}
+                color4                    ${normal.blue}
+                color12                   ${bright.blue}
 
-            color5                    ${normal.magenta}
-            color13                   ${bright.magenta}
+                color5                    ${normal.magenta}
+                color13                   ${bright.magenta}
 
-            color6                    ${normal.cyan}
-            color14                   ${bright.cyan}
+                color6                    ${normal.cyan}
+                color14                   ${bright.cyan}
 
-            color7                    ${normal.white}
-            color15                   ${normal.white}
-          '';
-        };
-      })
-    ]);
+                color7                    ${normal.white}
+                color15                   ${normal.white}
+              '';
+          };
+        })
+      ]);
   };
 }
