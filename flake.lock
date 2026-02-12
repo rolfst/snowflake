@@ -459,6 +459,26 @@
         "type": "indirect"
       }
     },
+    "noctalia": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1770914704,
+        "narHash": "sha256-VmT2nMIkvBqto2nAHPHW7FUSvaODBl+ttkwEuafcsC0=",
+        "owner": "noctalia-dev",
+        "repo": "noctalia-shell",
+        "rev": "73daf1c25c89ee8aa4f00698c7afb668f7ce60f9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "noctalia-dev",
+        "repo": "noctalia-shell",
+        "type": "github"
+      }
+    },
     "nvim-dir": {
       "flake": false,
       "locked": {
@@ -531,6 +551,7 @@
         "nix-flatpak": "nix-flatpak",
         "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",
+        "noctalia": "noctalia",
         "nvim-dir": "nvim-dir",
         "picom": "picom",
         "ragenix": "ragenix",

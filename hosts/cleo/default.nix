@@ -3,8 +3,9 @@
   config,
   lib,
   ...
-}: {
-  imports = [./hardware.nix];
+}:
+{
+  imports = [ ./hardware.nix ];
 
   modules = {
     shell = {
@@ -54,7 +55,8 @@
 
     desktop = {
       virtual.wine.enable = true;
-      xmonad.enable = true;
+      xmonad.enable = false;
+      niri.enable = true;
       terminal = {
         default = "kitty";
         kitty.enable = true;

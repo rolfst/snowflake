@@ -4,7 +4,8 @@
   pkgs,
   modulesPath,
   ...
-}: let
+}:
+let
   inherit (lib) mkDefault;
   nvidia-offload = pkgs.writeShellScriptBin "nvidia-offload" ''
     export __NV_PRIME_RENDER_OFFLOAD=1
@@ -13,8 +14,9 @@
     export __VK_LAYER_NV_optimus=NVIDIA_only
     exec -a "$0" "$@"
   '';
-in {
-  imports = [(modulesPath + "/installer/scan/not-detected.nix")];
+in
+{
+  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/238f6eb4-b155-499e-b75a-2f1d233797ed";
@@ -31,7 +33,7 @@ in {
     fsType = "ext4";
   };
 
-  swapDevices = [{device = "/dev/disk/by-uuid/e02f5046-315f-4f6e-a748-a843336fabf2";}];
+  swapDevices = [ { device = "/dev/disk/by-uuid/e02f5046-315f-4f6e-a748-a843336fabf2"; } ];
 
   boot = {
     kernelPackages = pkgs.linuxPackages;
@@ -44,11 +46,14 @@ in {
         "usbhid"
         "xhci_pci"
       ];
-      kernelModules = [];
+      kernelModules = [ ];
     };
-    extraModulePackages = [config.boot.kernelPackages.acpi_call];
-    kernelModules = ["acpi_call" "kvm_intel"];
-    kernelParams = ["pcie_aspm.policy=performance"];
+    extraModulePackages = [ config.boot.kernelPackages.acpi_call ];
+    kernelModules = [
+      "acpi_call"
+      "kvm_intel"
+    ];
+    kernelParams = [ "pcie_aspm.policy=performance" ];
     kernel.sysctl = {
       "net.ipv4.icmp_echo_ignore_broadcasts" = 1; # Refuse ICMP echo requests
     };
@@ -106,12 +111,13 @@ in {
   };
 
   powerManagement.cpuFreqGovernor = mkDefault "schedutil";
-  environment.systemPackages = [nvidia-offload];
+  environment.systemPackages = [ nvidia-offload ];
 
   # Manage device power-control:
   services = {
     upower.enable = true;
     # power-profiles-daemon.enable = true;
+    # tuned.enable = true;
     thermald.enable = true;
     tlp = {
       enable = true;
@@ -133,7 +139,7 @@ in {
       };
     };
     xserver = {
-      videoDrivers = ["nvidia"];
+      videoDrivers = [ "nvidia" ];
       deviceSection = ''
         Option "TearFree" "true"
       '';

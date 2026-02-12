@@ -45,6 +45,10 @@
       url = "github:yshui/picom";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # Toolset ++ Application(s)
     rust.url = "github:oxalica/rust-overlay";
 
@@ -62,89 +66,98 @@
     # };
   };
 
-  outputs = inputs @ {
-    self,
-    nixpkgs,
-    nixpkgs-unstable,
-    ...
-  }: let
-    inherit (lib.my) mapModules mapModulesRec mapHosts;
-    system = "x86_64-linux";
+  outputs =
+    inputs@{
+      self,
+      nixpkgs,
+      nixpkgs-unstable,
+      ...
+    }:
+    let
+      inherit (lib.my) mapModules mapModulesRec mapHosts;
+      system = "x86_64-linux";
 
-    mkPkgs = pkgs: extraOverlays:
-      import pkgs {
-        inherit system;
-        config.allowUnfree = true;
-        config.allowUnsupportedSystem = true;
-        config.allowUnfreePredicate = pkg:
-          builtins.elem (lib.getName pkg) [
-            "calibre"
-            "unrar"
+      mkPkgs =
+        pkgs: extraOverlays:
+        import pkgs {
+          inherit system;
+          config.allowUnfree = true;
+          config.allowUnsupportedSystem = true;
+          config.allowUnfreePredicate =
+            pkg:
+            builtins.elem (lib.getName pkg) [
+              "calibre"
+              "unrar"
+            ];
+
+          config.permittedInsecurePackages = [
+            "electron-25.9.0"
           ];
+          overlays = extraOverlays ++ (lib.attrValues self.overlays);
+        };
+      pkgs = mkPkgs nixpkgs [ self.overlays.default ];
+      pkgs-unstable = mkPkgs nixpkgs-unstable [ ];
 
-        config.permittedInsecurePackages = [
-          "electron-25.9.0"
-        ];
-        overlays = extraOverlays ++ (lib.attrValues self.overlays);
-      };
-    pkgs = mkPkgs nixpkgs [self.overlays.default];
-    pkgs-unstable = mkPkgs nixpkgs-unstable [];
+      lib = nixpkgs.lib.extend (
+        final: prev: {
+          my = import ./lib {
+            inherit pkgs inputs;
+            lib = final;
+          };
+        }
+      );
+    in
+    rec {
+      lib = lib.my;
 
-    lib = nixpkgs.lib.extend (final: prev: {
-      my = import ./lib {
-        inherit pkgs inputs;
-        lib = final;
-      };
-    });
-  in rec {
-    lib = lib.my;
-
-    overlays =
-      (mapModules ./overlays import)
-      // {
+      overlays = (mapModules ./overlays import) // {
         default = final: prev: {
           unstable = pkgs-unstable;
           my = self.packages.${system};
         };
 
         nvfetcher = final: prev: {
-          sources =
-            builtins.mapAttrs (_: p: p.src)
-            ((import ./packages/_sources/generated.nix) {
-              inherit (final) fetchurl fetchgit fetchFromGitHub dockerTools;
-            });
+          sources = builtins.mapAttrs (_: p: p.src) (
+            (import ./packages/_sources/generated.nix) {
+              inherit (final)
+                fetchurl
+                fetchgit
+                fetchFromGitHub
+                dockerTools
+                ;
+            }
+          );
         };
       };
 
-    packages."${system}" = mapModules ./packages (p: pkgs.callPackage p {});
+      packages."${system}" = mapModules ./packages (p: pkgs.callPackage p { });
 
-    nixosModules =
-      {
+      nixosModules = {
         snowflake = import ./.;
       }
       # // mapModulesRec ./modules import;
       ;
 
-    nixosConfigurations = mapHosts ./hosts {};
-    homeConfigurations = {
-      cleo = nixosConfigurations.cleo.config.home-manager.users.${nixosConfigurations.cleo.config.user.name}.home;
-    };
+      nixosConfigurations = mapHosts ./hosts { };
+      homeConfigurations = {
+        cleo =
+          nixosConfigurations.cleo.config.home-manager.users.${nixosConfigurations.cleo.config.user.name}.home;
+      };
 
-    devShells."${system}".default = import ./shell.nix {inherit lib pkgs;};
+      devShells."${system}".default = import ./shell.nix { inherit lib pkgs; };
 
-    templates.full =
-      {
+      templates.full = {
         path = ./.;
         description = "λ well-tailored and configureable NixOS system!";
       }
       // import ./templates;
 
-    templates.default = self.templates.full;
+      templates.default = self.templates.full;
 
-    # TODO: deployment + template tool.
-    # apps."${system}" = {
-    #   type = "app";
-    #   program = ./bin/hagel;
-    # };
-  };
+      # TODO: deployment + template tool.
+      # apps."${system}" = {
+      #   type = "app";
+      #   program = ./bin/hagel;
+      # };
+    };
 }
