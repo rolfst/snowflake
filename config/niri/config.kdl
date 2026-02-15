@@ -614,6 +614,7 @@ binds {
     Mod+Space hotkey-overlay-title="launcher" { spawn-sh "noctalia-shell ipc call launcher toggle"; }
     Mod+P hotkey-overlay-title="controlCenter" { spawn-sh "noctalia-shell ipc call controlCenter toggle"; }
     Mod+Shift+Q hotkey-overlay-title="Session Menu" { spawn-sh "noctalia-shell ipc call sessionMenu toggle"; }
+    Mod+Ctrl+P hotkey-overlay-title="Session Menu" { spawn-sh "noctalia-shell ipc call sessionMenu toggle"; }
     Mod+Shift+Comma hotkey-overlay-title="Settings" { spawn-sh "noctalia-shell ipc call settings toggle"; }
     Mod+Alt+N hotkey-overlay-title="scratchpad" { spawn-sh "noctalia-shell ipc call plugin togglePanel notes-scratchpad"; }
 
