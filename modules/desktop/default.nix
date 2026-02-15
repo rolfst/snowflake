@@ -4,43 +4,52 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   inherit (builtins) isAttrs;
-  inherit (lib) attrValues mkIf mkMerge mkOption;
+  inherit (lib)
+    attrValues
+    mkIf
+    mkMerge
+    mkOption
+    ;
   inherit (lib.types) nullOr enum;
   inherit (lib.my) anyAttrs countAttrs value;
 
   cfg = config.modules.desktop;
-in {
-  options.modules.desktop = let
-    inherit (lib.types) either str;
-    inherit (lib.my) mkOpt;
-  in {
-    type = mkOpt (either str null) null;
-  };
+in
+{
+  options.modules.desktop =
+    let
+      inherit (lib.types) either str;
+      inherit (lib.my) mkOpt;
+    in
+    {
+      type = mkOpt (either str null) null;
+    };
 
   config = mkMerge [
     {
-      assertions = let
-        isEnabled = _: v: v.enable or false;
-        hasDesktopEnabled = cfg:
-          (anyAttrs isEnabled cfg)
-          || !(anyAttrs (_: v: isAttrs v && anyAttrs isEnabled v) cfg);
-      in [
-        {
-          assertion =
-            (countAttrs (_: v: v.enable or false) cfg) < 2;
-          message = "Can't have more than one desktop environment enabled at a time";
-        }
-        {
-          assertion = hasDesktopEnabled cfg;
-          message = "Can't enable a desktop sub-module without a desktop environment";
-        }
-        {
-          assertion = !(hasDesktopEnabled cfg) || cfg.type != null;
-          message = "Downstream desktop module did not set modules.desktop.type!";
-        }
-      ];
+      assertions =
+        let
+          isEnabled = _: v: v.enable or false;
+          hasDesktopEnabled =
+            cfg: (anyAttrs isEnabled cfg) || !(anyAttrs (_: v: isAttrs v && anyAttrs isEnabled v) cfg);
+        in
+        [
+          {
+            assertion = (countAttrs (_: v: v.enable or false) cfg) < 2;
+            message = "Can't have more than one desktop environment enabled at a time";
+          }
+          {
+            assertion = hasDesktopEnabled cfg;
+            message = "Can't enable a desktop sub-module without a desktop environment";
+          }
+          {
+            assertion = !(hasDesktopEnabled cfg) || cfg.type != null;
+            message = "Downstream desktop module did not set modules.desktop.type!";
+          }
+        ];
     }
 
     (mkIf (cfg.type != null) {
@@ -54,8 +63,7 @@ in {
       '';
 
       user.packages = attrValues {
-        inherit
-          (pkgs)
+        inherit (pkgs)
           nvfetcher
           clipboard-jh
           hyperfine
@@ -70,14 +78,18 @@ in {
           desktopName = "Kalker";
           icon = "calc";
           exec = "${config.modules.desktop.terminal.default} start kalker";
-          categories = ["Education" "Science" "Math"];
+          categories = [
+            "Education"
+            "Science"
+            "Math"
+          ];
         };
       };
 
       fonts = {
         fontDir.enable = true;
         enableGhostscriptFonts = true;
-        packages = attrValues {inherit (pkgs) sarasa-gothic scheherazade-new;};
+        packages = attrValues { inherit (pkgs) sarasa-gothic scheherazade-new; };
       };
 
       hm.qt = {
@@ -94,8 +106,13 @@ in {
       services.xserver.enable = true;
       xdg.portal = {
         enable = true;
-        extraPortals = [pkgs.xdg-desktop-portal-gtk];
+        extraPortals = with pkgs; [
+          xdg-desktop-portal-gtk
+          xdg-desktop-portal
+          xdg-desktop-portal-wlr
+        ];
         config.common.default = "*";
+        wlr.enable = true;
       };
 
       # Retain secrets inside Gnome Keyring
