@@ -53,7 +53,10 @@ in
       "acpi_call"
       "kvm_intel"
     ];
-    kernelParams = [ "pcie_aspm.policy=performance" ];
+    kernelParams = [
+      "pcie_aspm.policy=performance"
+      "nvidia.NVreg_PreserveVideoMemoryAllocations=1"
+    ];
     kernel.sysctl = {
       "net.ipv4.icmp_echo_ignore_broadcasts" = 1; # Refuse ICMP echo requests
     };
@@ -71,7 +74,7 @@ in
     nvidia = {
       modesetting.enable = true;
       # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
-      powerManagement.enable = false;
+      powerManagement.enable = true;
       # Fine-grained power management. Turns off GPU when not in use.
       # Experimental and only works on modern Nvidia GPUs (Turing or newer).
       powerManagement.finegrained = false;
