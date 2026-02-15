@@ -1,3 +1,4 @@
+workspace "Google"
 input {
     keyboard {
         xkb {
@@ -47,7 +48,7 @@ input {
 
     // Focus windows and outputs automatically when moving the mouse into them.
     // Setting max-scroll-amount="0%" makes it work only on windows already fully on screen.
-    // focus-follows-mouse max-scroll-amount="0%"
+    focus-follows-mouse max-scroll-amount="0%"
 }
 
 // You can configure outputs by their name, which you can find
@@ -282,14 +283,31 @@ animations {
 // Find more information on the wiki:
 // https://yalter.github.io/niri/Configuration:-Window-Rules
 
-// Work around WezTerm's initial configure bug
-// by setting an empty default-column-width.
 window-rule {
     // This regular expression is intentionally made as specific as possible,
     // since this is the default config, and we want no false positives.
-    // You can get away with just app-id="wezterm" if you want.
-    match app-id=r#"^org\.wezfurlong\.wezterm$"#
-    default-column-width {}
+    match app-id="kitty"
+    open-maximized true
+}
+window-rule {
+    // This regular expression is intentionally made as specific as possible,
+    // since this is the default config, and we want no false positives.
+    match app-id=r#"chrome"#
+    open-on-workspace "Google"
+    open-maximized true
+}
+window-rule {
+    // This regular expression is intentionally made as specific as possible,
+    // since this is the default config, and we want no false positives.
+    match app-id=r#"firefox"#
+    open-maximized true
+}
+
+window-rule {
+    // This regular expression is intentionally made as specific as possible,
+    // since this is the default config, and we want no false positives.
+    match app-id=r#"steam"#
+    open-maximized-to-edges true
 }
 
 // Open the Firefox picture-in-picture player as floating by default.
@@ -335,10 +353,11 @@ binds {
     // Mod-Shift-/, which is usually the same as Mod-?,
     // shows a list of important hotkeys.
     // Mod key
-    Mod+Shift+Slash { show-hotkey-overlay; }
+    // Mod+Shift+Slash { show-hotkey-overlay; }
+    Mod+Shift+Slash hotkey-overlay-title="key bindings" { spawn-sh "noctalia-shell ipc call plugin:keybind-cheatsheet toggle";}
 
     // Terminal
-    Mod+Return hotkey-overlay-title="Open a Terminal: Kitty" repeat=false { spawn "kitty"; }
+    Mod+Shift+Return hotkey-overlay-title="Open a Terminal: Kitty" repeat=false { spawn "kitty"; }
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     Mod+T hotkey-overlay-title="Open a Terminal: Kitty" { spawn "kitty"; }
     Mod+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
@@ -346,8 +365,8 @@ binds {
     // App Launchers
     Mod+Alt+P { spawn "rofi" "-show" "drun"; }
     Mod+Shift+P hotkey-overlay-title="Run an Application: rofi" { spawn "rofi" "-show" "run"; }
-    Mod+P { spawn "rofi" "-show" "power-menu"; }
-    Ctrl+Mod+Alt+P { spawn "rofi-systemd"; }
+    Mod+Ctrl+Alt+P { spawn "rofi-systemd"; }
+    Mod+Ctrl+Alt+S hotkey-overlay-title="steam" { spawn "sh" "-c" "env DISPLAY=:0 steam"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument. It's passed verbatim to `sh -c`.
@@ -355,18 +374,17 @@ binds {
     // Super+Alt+S allow-when-locked=true hotkey-overlay-title=null { spawn-sh "pkill orca || exec orca"; }
 
     // Applications
-    Mod+Alt+G { spawn "google-chrome-stable"; }
-    Mod+Alt+F { spawn "firefox"; }
-    Mod+Alt+E { spawn "thunar"; }
-    Mod+Alt+Slash { spawn "zenity" "--text-info" "--filename=keybindings.txt" "--title" "Xmonad keybindings"; }
+    Mod+Alt+G hotkey-overlay-title="Browser: Google chrome"  { spawn "google-chrome-stable"; }
+    Mod+Alt+F hotkey-overlay-title="Browser: Firefox"  { spawn "firefox"; }
+    Mod+Alt+E hotkey-overlay-title="Filemanager: Thunar" { spawn "thunar"; }
 
     // Scratchpads (mapped to spawns)
-    Mod+Alt+B { spawn "kitty" "-e" "btop"; }
-    Mod+Alt+D { spawn "discord"; }
-    Mod+Alt+Y { spawn "youtube-music"; }
-    Mod+Alt+S { spawn "slack"; }
-    Mod+Alt+K { spawn "element-desktop"; }
-    Mod+Alt+H { spawn "telegram-desktop"; } // Replaced custom emacs/telega binding with standard client
+    Mod+Alt+B hotkey-overlay-title="btop" { spawn "kitty" "-e" "btop"; }
+    Mod+Alt+D hotkey-overlay-title="Discord"   { spawn "discord"; }
+    Mod+Alt+Y hotkey-overlay-title="Youtube Music"   { spawn "youtube-music"; }
+    Mod+Alt+S hotkey-overlay-title="Slack"   { spawn "slack"; }
+    Mod+Alt+K hotkey-overlay-title="element"   { spawn "element-desktop"; }
+    Mod+Alt+H hotkey-overlay-title="Telegram"   { spawn "telegram-desktop"; } // Replaced custom emacs/telega binding with standard client
 
     // Media Keys
     // Example volume keys mappings for PipeWire & WirePlumber.
@@ -398,7 +416,7 @@ binds {
 
     // Window Management
     Mod+Q repeat=false { close-window; }
-    Mod+Shift+C repeat=false { close-window; } // XMonad default compatibility
+    Mod+Ctrl+C repeat=false { close-window; } // XMonad default compatibility
 
     // Navigation (Vim keys)
     Mod+H { focus-column-left; }
@@ -457,16 +475,16 @@ binds {
     Mod+Ctrl+J     { focus-monitor-down; }
     Mod+Ctrl+K     { focus-monitor-up; }
     Mod+Ctrl+L     { focus-monitor-right; }
-    Mod+Shift+Ctrl+H     { move-column-to-monitor-left; }
-    Mod+Shift+Ctrl+J     { move-column-to-monitor-down; }
-    Mod+Shift+Ctrl+K     { move-column-to-monitor-up; }
-    Mod+Shift+Ctrl+L     { move-column-to-monitor-right; }
+    Mod+Shift+Ctrl+H  { move-window-to-monitor-left; }
+    Mod+Shift+Ctrl+L  { move-window-to-monitor-right; }
+    Mod+Shift+Ctrl+K  { move-window-to-monitor-up; }
+    Mod+Shift+Ctrl+J  { move-window-to-monitor-down; }
 
     // Alternatively, there are commands to move just a single window:
-    Mod+Shift+Ctrl+Left  { move-window-to-monitor-left; }
-    Mod+Shift+Ctrl+Right  { move-window-to-monitor-right; }
-    Mod+Shift+Ctrl+Up  { move-window-to-monitor-up; }
-    Mod+Shift+Ctrl+Down  { move-window-to-monitor-down; }
+    Mod+Shift+Ctrl+Left     { move-column-to-monitor-left; }
+    Mod+Shift+Ctrl+Down     { move-column-to-monitor-down; }
+    Mod+Shift+Ctrl+Up     { move-column-to-monitor-up; }
+    Mod+Shift+Ctrl+Right     { move-column-to-monitor-right; }
     // ...
 
     // These conflict with binds above
@@ -537,7 +555,7 @@ binds {
     Mod+C { center-column; }
 
     // Center all fully visible columns on screen.
-    Mod+Ctrl+C { center-visible-columns; }
+    Mod+Alt+C { center-visible-columns; }
 
     // Finer width adjustments.
     // This command can also:
@@ -572,9 +590,9 @@ binds {
     // Mod+Shift+Space { switch-layout "prev"; }
 
     // Screenshots
-    Print { screenshot show-pointer=false; }
-    Ctrl+Print { screenshot-screen show-pointer=false; }
-    Alt+Print { screenshot-window show-pointer=false; }
+    Print { screenshot; }
+    Ctrl+Print { screenshot-screen; }
+    Alt+Print { screenshot-window; }
     // Print { spawn "captScr" "system" "--workspace"; }
     // Ctrl+Print { spawn "captScr" "clipboard" "--workspace"; }
     // Alt+Print { spawn "captScr" "system" "--active-window"; }
@@ -589,8 +607,15 @@ binds {
     // so a buggy application can't hold your session hostage.
     //
     // The allow-inhibiting=false property can be applied to other binds as well,
-    // which ensures niri always processes them, even when an inhibitor is active.
+    // which ensures niri always processes them, even when an inhibitor is active
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+
+   // noctalia shell
+    Mod+Space hotkey-overlay-title="launcher" { spawn-sh "noctalia-shell ipc call launcher toggle"; }
+    Mod+P hotkey-overlay-title="controlCenter" { spawn-sh "noctalia-shell ipc call controlCenter toggle"; }
+    Mod+Shift+Q hotkey-overlay-title="Session Menu" { spawn-sh "noctalia-shell ipc call sessionMenu toggle"; }
+    Mod+Shift+Comma hotkey-overlay-title="Settings" { spawn-sh "noctalia-shell ipc call settings toggle"; }
+    Mod+Alt+N hotkey-overlay-title="scratchpad" { spawn-sh "noctalia-shell ipc call plugin togglePanel notes-scratchpad"; }
 
     // Quit Niri
     Mod+Shift+E { quit; }

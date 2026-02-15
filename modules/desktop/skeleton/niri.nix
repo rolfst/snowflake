@@ -38,7 +38,7 @@ in
           };
           mimeApps.enable = true; # mimeApps -> default launch application
           dunst.enable = true;
-          waybar.enable = true;
+          waybar.enable = false;
           elkowar.enable = true;
           rofi.enable = true;
         };
@@ -48,8 +48,13 @@ in
       #   screenshot.enable = true; # TODO
       # };
 
+      programs.xwayland.enable = false;
       programs.niri.enable = true;
+
       modules.hardware.kmonad.enable = false;
+      user.packages = with pkgs; [
+        xwayland-satellite
+      ];
       hm = {
         imports = [
           inputs.noctalia.homeModules.default
@@ -58,6 +63,7 @@ in
           noctalia-shell = {
             enable = true;
             systemd.enable = true;
+            settings = builtins.fromJSON (readFile "${niriDir}/noctalia.json");
             plugins = {
               sources = [
                 {
@@ -68,23 +74,31 @@ in
               ];
               states = {
                 screen-recorder = {
-                  enable = true;
+                  enabled = true;
                   sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
                 };
                 keybind-cheatsheet = {
-                  enable = true;
+                  enabled = true;
                   sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
                 };
                 clipper = {
-                  enable = true;
+                  enabled = true;
                   sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
                 };
                 notes-scratchpad = {
-                  enable = true;
+                  enabled = true;
                   sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
                 };
                 screenshot = {
-                  enable = true;
+                  enabled = true;
+                  sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
+                };
+                assistant-panel = {
+                  enabled = true;
+                  sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
+                };
+                todo = {
+                  enabled = true;
                   sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
                 };
               };
@@ -92,12 +106,43 @@ in
           };
         };
       };
+      environment.etc."nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-wayland-compositors.json".text =
+        lib.mkForce ''
+            {
+              "rules": [
+                  {
+                      "pattern": {
+                          "feature": "procname",
+                          "matches": "niri"
+                      },
+                      "profile": "Limit Free Buffer Pool On Wayland Compositors"
+                  }
+              ],
+              "profiles": [
+                  {
+                      "name": "Limit Free Buffer Pool On Wayland Compositors",
+                      "settings": [
+                          {
+                              "key": "GLVidHeapReuseRatio",
+                              "value": 0
+                          }
+                      ]
+                  }
+              ]
+          }
+        '';
 
       create.configFile = {
         niri_conf = {
           target = "niri/config.kdl";
           source = "${niriDir}/config.kdl";
         };
+      };
+      hardware.graphics.enable32Bit = true;
+
+      environment.sessionVariables = {
+        WLR_NO_HARDWARE_CURSORS = "1";
+        NIXOS_OZONE_WL = "1";
       };
 
       environment.systemPackages = attrValues {
