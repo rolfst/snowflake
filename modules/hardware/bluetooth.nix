@@ -23,6 +23,7 @@ in {
         environment.systemPackages = [
           pkgs.dnsmasq
           pkgs.iptables
+          pkgs.iproute2
         ];
 
         hardware.bluetooth = {

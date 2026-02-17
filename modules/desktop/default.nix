@@ -106,6 +106,7 @@ in
       # Enabling usb connection for devices
       services.udisks2.enable = true;
       services.gvfs.enable = true;
+      programs.dconf.enable = true;
 
       # Enabling xserver + x-related settings:
       services.xserver.enable = true;
