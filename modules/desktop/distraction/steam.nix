@@ -70,7 +70,16 @@ in
       programs = {
         steam.enable = true;
         steam.gamescopeSession.enable = true;
-        gamemode.enable = true;
+        gamemode = {
+          enable = true;
+          settings = {
+            gpu = {
+              apply_gpu_optimisations = "accept-responsibility";
+              gpu_vendor = "nvidia";
+              nv_powertarget = 100;
+            };
+          };
+        };
       };
       environment.systemPackages = with pkgs; [
         mangohud
