@@ -26,6 +26,11 @@ in
     in
     {
       type = mkOpt (either str null) null;
+      greeter = mkOpt (enum [
+        "lightdm"
+        "greetd"
+        "none"
+      ]) "greetd";
     };
 
   config = mkMerge [
@@ -132,6 +137,27 @@ in
       # };
     })
 
+    (mkIf (cfg.greeter == "greetd") {
+      services.greetd = {
+        enable = true;
+        settings = {
+          default_session = {
+            command = "${pkgs.tuigreet}/bin/tuigreet --time --asterisks --user-menu --remember --remember-user-session --cmd ${
+              if config.modules.desktop.niri.enable or false then
+                "niri-session"
+              else if config.modules.desktop.hyprland.enable or false then
+                "Hyprland"
+              else if cfg.type == "x11" then
+                "startx"
+              else
+                "bash"
+            }";
+            user = "greeter";
+          };
+        };
+      };
+    })
+
     (mkIf (cfg.type == "x11") {
       security.pam.services.login.enableGnomeKeyring = true;
       services.displayManager = {
@@ -141,7 +167,7 @@ in
       services.xserver = {
         enable = true;
         displayManager.lightdm = {
-          enable = true;
+          enable = cfg.greeter == "lightdm";
           # greeters.mini = {
           #   enable = true;
           #   user = config.user.name;

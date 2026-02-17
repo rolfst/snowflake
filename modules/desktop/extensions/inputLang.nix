@@ -26,7 +26,11 @@ in {
     {
       home.sessionVariables = {
         GLFW_IM_MODULE = "ibus"; # https://github.com/kovidgoyal/kitty/issues/403
-        GTK_IM_MODULE = "${cfg.framework}";
+        GTK_IM_MODULE = "${
+          if config.modules.desktop.type == "wayland"
+          then "wayland"
+          else cfg.framework
+        }";
         QT_IM_MODULE = "${cfg.framework}";
         SDL_IM_MODULE = "${cfg.framework}";
         XMODIFIERS = "@im=${cfg.framework}";
