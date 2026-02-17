@@ -138,7 +138,7 @@ in
         PCIE_ASPM_ON_BAT = "powersave";
 
         # Prevents bluez from hanging:
-        USB_EXCLUDE_BTUSB = 1;
+        USB_DENYLIST = "8087:0029";
       };
     };
     xserver = {

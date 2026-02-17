@@ -20,6 +20,11 @@ in {
       mkIf cfg.enable {
         services.blueman.enable = true;
 
+        environment.systemPackages = [
+          pkgs.dnsmasq
+          pkgs.iptables
+        ];
+
         hardware.bluetooth = {
           enable = true;
           # supportA2dp = true;
@@ -27,9 +32,9 @@ in {
           # supportHsp = true;
           powerOnBoot = true;
           settings.General = {
-            ControllerMode = "bredr";
+            ControllerMode = "dual";
             Experimental = true;
-            Enable = "Source,Sink,Media,Socket";
+            Enable = "Source,Sink,Media,Socket,Headset,Gateway";
           };
         };
       }
