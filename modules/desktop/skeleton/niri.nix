@@ -26,7 +26,7 @@ in
     in
     mkIf config.modules.desktop.niri.enable {
       modules.desktop = {
-        type = "wayland";
+        type = ["wayland"];
         toolset.fileManager = {
           enable = true;
           program = "thunar";
@@ -140,10 +140,12 @@ in
       };
       hardware.graphics.enable32Bit = true;
 
-      environment.sessionVariables = {
-        WLR_NO_HARDWARE_CURSORS = "1";
-        NIXOS_OZONE_WL = "1";
-      };
+      environment.extraInit = ''
+        if [ "$XDG_SESSION_DESKTOP" = "niri" ]; then
+          export WLR_NO_HARDWARE_CURSORS=1
+          export NIXOS_OZONE_WL=1
+        fi
+      '';
 
       environment.systemPackages = attrValues {
         inherit (pkgs)

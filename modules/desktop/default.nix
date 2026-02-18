@@ -21,11 +21,11 @@ in
 {
   options.modules.desktop =
     let
-      inherit (lib.types) either str;
+      inherit (lib.types) either str listOf nullOr coercedTo;
       inherit (lib.my) mkOpt;
     in
     {
-      type = mkOpt (either str null) null;
+      type = mkOpt (nullOr (coercedTo str (x: [ x ]) (listOf str))) null;
       greeter = mkOpt (enum [
         "lightdm"
         "greetd"
@@ -42,10 +42,10 @@ in
             cfg: (anyAttrs isEnabled cfg) || !(anyAttrs (_: v: isAttrs v && anyAttrs isEnabled v) cfg);
         in
         [
-          {
-            assertion = (countAttrs (_: v: v.enable or false) cfg) < 2;
-            message = "Can't have more than one desktop environment enabled at a time";
-          }
+          # {
+          #   assertion = (countAttrs (_: v: v.enable or false) cfg) < 2;
+          #   message = "Can't have more than one desktop environment enabled at a time";
+          # }
           {
             assertion = hasDesktopEnabled cfg;
             message = "Can't enable a desktop sub-module without a desktop environment";
@@ -109,16 +109,14 @@ in
       programs.dconf.enable = true;
 
       # Enabling xserver + x-related settings:
-      services.xserver.enable = true;
+      # services.xserver.enable = true; # Moved to mkIf x11 check
       xdg.portal = {
         enable = true;
         extraPortals = with pkgs; [
           xdg-desktop-portal-gtk
           xdg-desktop-portal
-          xdg-desktop-portal-wlr
         ];
         config.common.default = "*";
-        wlr.enable = true;
       };
 
       # Retain secrets inside Gnome Keyring
@@ -143,23 +141,21 @@ in
         enable = true;
         settings = {
           default_session = {
-            command = "${pkgs.tuigreet}/bin/tuigreet --time --asterisks --user-menu --remember --remember-user-session --cmd ${
-              if config.modules.desktop.niri.enable or false then
-                "niri-session"
-              else if config.modules.desktop.hyprland.enable or false then
-                "Hyprland"
-              else if cfg.type == "x11" then
-                "startx"
-              else
-                "bash"
-            }";
+            command = "${pkgs.tuigreet}/bin/tuigreet --time --asterisks --user-menu --remember --remember-user-session --sessions ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions:${config.services.displayManager.sessionData.desktops}/share/xsessions";
             user = "greeter";
           };
         };
       };
     })
 
-    (mkIf (cfg.type == "x11") {
+    (mkIf (cfg.type != null && builtins.elem "wayland" cfg.type) {
+      xdg.portal = {
+        extraPortals = [ pkgs.xdg-desktop-portal-wlr ];
+        wlr.enable = true;
+      };
+    })
+
+    (mkIf (cfg.type != null && builtins.elem "x11" cfg.type) {
       security.pam.services.login.enableGnomeKeyring = true;
       services.displayManager = {
         autoLogin.enable = true;
