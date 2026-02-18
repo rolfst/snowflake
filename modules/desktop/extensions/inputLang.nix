@@ -27,7 +27,7 @@ in {
       home.sessionVariables = {
         GLFW_IM_MODULE = "ibus"; # https://github.com/kovidgoyal/kitty/issues/403
         GTK_IM_MODULE = "${
-          if config.modules.desktop.type == "wayland"
+          if (config.modules.desktop.type != null && builtins.elem "wayland" config.modules.desktop.type)
           then "wayland"
           else cfg.framework
         }";
