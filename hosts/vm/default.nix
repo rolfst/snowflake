@@ -9,10 +9,12 @@
   modules = {
     shell = {
       default = "zsh";
-      git.enable = true;
-      gnupg.enable = true;
       android.enable = false;
       tmux.enable = true;
+      gnupg.enable = true;
+      toolset = {
+        git.enable = true;
+      };
     };
     hardware.xkbLayout = {hyperCtrl.enable = true;};
     networking = {
@@ -65,7 +67,7 @@
         };
         social = {
           base.enable = false;
-          element.withClient.enable = false;
+          matrix.withClient.enable = false;
         };
         keybase.enable = true;
       };
