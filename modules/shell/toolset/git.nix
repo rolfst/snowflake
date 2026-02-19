@@ -18,7 +18,7 @@ in {
         inherit (pkgs) gh git-open;
       }
       // optionalAttrs config.modules.shell.gnupg.enable {
-        inherit (pkgs.gitAndTools) git-crypt;
+        inherit (pkgs) git-crypt;
       });
 
     # Prevent x11 askPass prompt on git push:
