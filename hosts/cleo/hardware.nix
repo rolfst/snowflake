@@ -73,7 +73,7 @@ in
 
     nvidia = {
       modesetting.enable = true;
-      # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
+      # Nvidia power management. Required for suspend/resume to work reliably with PreserveVideoMemoryAllocations.
       powerManagement.enable = true;
       # Fine-grained power management. Turns off GPU when not in use.
       # Experimental and only works on modern Nvidia GPUs (Turing or newer).

@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+echo "=== Suspend Debug Report ==="
+echo ""
+
+echo "--- Active Inhibitors (systemd-inhibit) ---"
+systemd-inhibit --list --mode=block
+echo ""
+
+echo "--- Lid State ---"
+if ls /proc/acpi/button/lid/*/state >/dev/null 2>&1; then
+    cat /proc/acpi/button/lid/*/state
+else
+    echo "Lid switch state not found in /proc/acpi/button/lid/"
+fi
+echo ""
+
+echo "--- Logind Configuration (HandleLidSwitch) ---"
+grep "HandleLidSwitch" /etc/systemd/logind.conf 2>/dev/null || echo "Not explicitly set in /etc/systemd/logind.conf (using default?)"
+echo ""
+
+echo "--- Recent Suspend Attempts (Journal) ---"
+# Check both systemd-suspend and systemd-logind for relevant events
+journalctl -n 20 -u systemd-suspend -u systemd-logind --no-pager
