@@ -106,9 +106,11 @@
           };
         }
       );
+
+      mylib = lib;
     in
     rec {
-      lib = lib.my;
+      lib = mylib.my;
 
       overlays = (mapModules ./overlays import) // {
         default = final: prev: {

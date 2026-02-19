@@ -48,10 +48,8 @@ in
       #   screenshot.enable = true; # TODO
       # };
 
-      programs.xwayland.enable = false;
       programs.niri.enable = true;
 
-      modules.hardware.kmonad.enable = false;
       user.packages = with pkgs; [
         xwayland-satellite
       ];
@@ -158,6 +156,13 @@ in
           gpu-screen-recorder
           swaylock
           ;
+      };
+
+      xdg.portal = {
+        extraPortals = [ pkgs.xdg-desktop-portal-gnome ];
+        config.niri = {
+          default = [ "gnome" "gtk" ];
+        };
       };
     };
 }

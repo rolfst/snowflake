@@ -33,6 +33,8 @@ in {
       enable = true;
       package = let
         chromeFlags = toString [
+          "--ozone-platform-hint=auto"
+          "--enable-wayland-ime"
           "--force-dark-mode"
           # "--disable-search-engine-collection"
           "--extension-mime-request-handling=always-prompt-for-install"

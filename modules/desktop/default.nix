@@ -148,13 +148,6 @@ in
       };
     })
 
-    (mkIf (cfg.type != null && builtins.elem "wayland" cfg.type) {
-      xdg.portal = {
-        extraPortals = [ pkgs.xdg-desktop-portal-wlr ];
-        wlr.enable = true;
-      };
-    })
-
     (mkIf (cfg.type != null && builtins.elem "x11" cfg.type) {
       security.pam.services.login.enableGnomeKeyring = true;
       services.displayManager = {
