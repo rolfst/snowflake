@@ -5,7 +5,6 @@
   pkgs,
   ...
 }:
-
 let
   inherit (lib.modules) mkIf;
   inherit (lib.options) mkEnableOption;
@@ -23,10 +22,42 @@ in
       autoStart = true;
       capSysAdmin = true;
       openFirewall = true;
+      applications = {
+        apps = [
+          {
+            name = "kitty Terminal";
+            auto-detach = true;
+            detached = [ "kitty" ];
+            working-dir = "/home/rolfst";
+          }
+          {
+            name = "Steam";
+            detached = [ "setsid steam steam://open/bigpicture" ];
+            # cmd = "${pkgs.steam}/bin/steam steam://open/bigpicture";
+          }
+          {
+            name = "Desktop";
+          }
+        ];
+      };
     };
 
     services.tailscale = mkIf config.modules.services.streaming.tailscale.enable {
       enable = true;
+      # This flag tells Tailscale to tell the network "I can be an exit node"
+      extraUpFlags = [ "--advertise-exit-node" ];
+    };
+    # Required for exit node functionality to work properly with the firewall
+    networking.firewall.checkReversePath = "loose";
+    user.extraGroups = [
+      "input"
+      "video"
+    ];
+
+    services.udev = {
+      extraRules = ''
+        KERNEL=="uinput",MODE="0660", GROUP="input", OPTIONS+="static_node=uinput"
+      '';
     };
   };
 }
