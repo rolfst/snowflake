@@ -32,8 +32,8 @@ in {
     #   readmeFileName = "nl";
     # };
     user.packages = attrValues {
-      inherit (pkgs) libreoffice hunspell; # hyphenDicts.nl_NL;
-      inherit (pkgs.hunspellDicts) en_US; #nl_NL
+      inherit (pkgs) libreoffice hunspell;
+      inherit (pkgs.hunspellDicts) en_US nl_NL;
     };
   };
   # };
