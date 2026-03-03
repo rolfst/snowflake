@@ -19,32 +19,71 @@ in
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/238f6eb4-b155-499e-b75a-2f1d233797ed";
-    fsType = "ext4";
-  };
-
-  fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/0F59-178A";
-    fsType = "vfat";
+    device = "/dev/mapper/cryptroot";
+    fsType = "btrfs";
+    options = [
+      "subvol=@root"
+      "compress=zstd"
+      "noatime"
+    ];
   };
 
   fileSystems."/home" = {
-    device = "/dev/disk/by-uuid/3c6e053d-68ca-423e-8ff8-184dab3eab02";
-    fsType = "ext4";
+    device = "/dev/mapper/cryptroot";
+    fsType = "btrfs";
+    options = [
+      "subvol=@home"
+      "compress=zstd"
+      "noatime"
+    ];
   };
 
-  swapDevices = [ { device = "/dev/disk/by-uuid/e02f5046-315f-4f6e-a748-a843336fabf2"; } ];
+  fileSystems."/nix" = {
+    device = "/dev/mapper/cryptroot";
+    fsType = "btrfs";
+    options = [
+      "subvol=@nix"
+      "compress=zstd"
+      "noatime"
+    ];
+  };
+
+  fileSystems."/var/log" = {
+    device = "/dev/mapper/cryptroot";
+    fsType = "btrfs";
+    options = [
+      "subvol=@log"
+      "compress=zstd"
+      "noatime"
+    ];
+  };
+
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-label/BOOT";
+    fsType = "vfat";
+  };
+
+  boot.initrd.luks.devices."cryptroot" = {
+    device = "/dev/nvme0n1p2";
+    preLVM = true; # Not strictly needed for Btrfs but good practice
+    allowDiscards = true; # Better for SSD performance
+  };
+
+  swapDevices = [ { device = "/swap/swapfile"; } ];
 
   boot = {
     kernelPackages = pkgs.linuxPackages;
     initrd = {
       availableKernelModules = [
+        "nvme"
+        "vmd"
         "ahci"
         "rtsx_pci_sdmmc"
         "sd_mod"
         "usb_storage"
         "usbhid"
         "xhci_pci"
+        "btrfs"
       ];
       kernelModules = [ ];
     };
@@ -53,9 +92,15 @@ in
       "acpi_call"
       "kvm_intel"
     ];
+    resumeDevice = "/dev/mapper/cryptroot";
+    # NOTE: You must update the resume_offset after creating the swapfile.
+    # Run: btrfs inspect-internal map-swapfile -r /mnt/swap/swapfile
+    # Then add "resume_offset=XXXXX" to kernelParams below.
     kernelParams = [
       "pcie_aspm.policy=performance"
       "nvidia.NVreg_PreserveVideoMemoryAllocations=1"
+      "i915.enable_guc=3"
+      # "resume_offset=533760" # REPLACE with output from 'btrfs inspect-internal map-swapfile'
     ];
     kernel.sysctl = {
       "net.ipv4.icmp_echo_ignore_broadcasts" = 1; # Refuse ICMP echo requests
@@ -65,10 +110,16 @@ in
   nix.settings.max-jobs = mkDefault 4;
   hardware = {
     cpu.intel.updateMicrocode = true;
+    enableRedistributableFirmware = true;
 
     graphics = {
       enable = true;
       enable32Bit = true;
+      extraPackages = with pkgs; [
+        intel-media-driver # For TigerLake+
+        vpl-gpu-rt # Successor of oneVPL-intel-gpu
+        libva-utils
+      ];
     };
 
     nvidia = {
@@ -114,10 +165,14 @@ in
   };
 
   powerManagement.cpuFreqGovernor = mkDefault "schedutil";
+  environment.variables = {
+    LIBVA_DRIVER_NAME = "iHD";
+  };
   environment.systemPackages = [ nvidia-offload ];
 
   # Manage device power-control:
   services = {
+    fwupd.enable = true;
     upower.enable = true;
     # power-profiles-daemon.enable = true;
     # tuned.enable = true;
