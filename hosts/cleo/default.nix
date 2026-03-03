@@ -35,6 +35,11 @@
     services = {
       ssh.enable = true;
       flatpak.enable = true;
+      streaming = {
+        enable = true;
+        sunshine.enable = true;
+        tailscale.enable = true;
+      };
     };
 
     develop = {
@@ -120,4 +125,14 @@
   security.pki.certificateFiles = [
     ./rootCA.pem
   ];
+
+  specialisation = {
+    "X11-XMonad" = {
+      configuration = {
+        system.nixos.tags = [ "xmonad" ];
+        modules.desktop.niri.enable = lib.mkForce false;
+        modules.desktop.xmonad.enable = lib.mkForce true;
+      };
+    };
+  };
 }
