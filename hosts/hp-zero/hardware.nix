@@ -100,7 +100,7 @@ in
       "pcie_aspm.policy=performance"
       "nvidia.NVreg_PreserveVideoMemoryAllocations=1"
       "i915.enable_guc=3"
-      # "resume_offset=533760" # REPLACE with output from 'btrfs inspect-internal map-swapfile'
+      "resume_offset=533760" # REPLACE with output from 'btrfs inspect-internal map-swapfile'
     ];
     kernel.sysctl = {
       "net.ipv4.icmp_echo_ignore_broadcasts" = 1; # Refuse ICMP echo requests
