@@ -175,6 +175,9 @@
         },
         {
           "id": "plugin:todo"
+        },
+        {
+          "id": "plugin:network-manager-vpn"
         }
       ]
     },

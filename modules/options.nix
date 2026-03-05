@@ -4,10 +4,10 @@
   lib,
   home-manager,
   ...
-}: let
+}:
+let
   inherit (builtins) elem pathExists toString;
-  inherit
-    (lib)
+  inherit (lib)
     findFirst
     isList
     mapAttrs
@@ -16,21 +16,30 @@
     mkOption
     ;
   inherit (lib.strings) concatMapStringsSep concatStringsSep;
-  inherit (lib.types) attrs attrsOf either listOf oneOf path str;
+  inherit (lib.types)
+    attrs
+    attrsOf
+    either
+    listOf
+    oneOf
+    path
+    str
+    ;
   inherit (lib.my) mkOpt mkOpt';
-in {
+in
+{
   options = {
-    user = mkOpt attrs {};
+    user = mkOpt attrs { };
 
     snowflake = {
-      dir = mkOpt path (findFirst pathExists (toString ../.) [
-        "${config.user.home}/snowflake"
-        "/etc/snowflake"
-        "/etc/nixos/snowflake"
-      ]);
-      hostDir =
-        mkOpt path
-        "${config.snowflake.dir}/hosts/${config.networking.hostName}";
+      dir = mkOpt path (
+        findFirst pathExists (toString ../.) [
+          "${config.user.home}/snowflake"
+          "/etc/snowflake"
+          "/etc/nixos/snowflake"
+        ]
+      );
+      hostDir = mkOpt path "${config.snowflake.dir}/hosts/${config.networking.hostName}";
       binDir = mkOpt path "${config.snowflake.dir}/bin";
       configDir = mkOpt path "${config.snowflake.dir}/config";
       modulesDir = mkOpt path "${config.snowflake.dir}/modules";
@@ -43,21 +52,40 @@ in {
       enable = true;
       libraries = options.programs.nix-ld.libraries.default;
     };
-    user = let
-      user = builtins.getEnv "USER";
-      name =
-        if elem user ["" "root"]
-        then "rolfst"
-        else user;
-    in {
-      inherit name;
-      description = "Primary user account";
-      extraGroups = ["wheel" "dialout" "input" "audio" "video" "storage" "scanner" "lp" "disk"];
-      isNormalUser = true;
-      home = "/home/${name}";
-      group = "users";
-      uid = 1000;
-    };
+    user =
+      let
+        user = builtins.getEnv "USER";
+        name =
+          if
+            elem user [
+              ""
+              "root"
+            ]
+          then
+            "rolfst"
+          else
+            user;
+      in
+      {
+        inherit name;
+        description = "Primary user account";
+        extraGroups = [
+          "wheel"
+          "networkmanager"
+          "dialout"
+          "input"
+          "audio"
+          "video"
+          "storage"
+          "scanner"
+          "lp"
+          "disk"
+        ];
+        isNormalUser = true;
+        home = "/home/${name}";
+        group = "users";
+        uid = 1000;
+      };
 
     # Necessary for nixos-rebuild build-vm to work.
     home-manager.useUserPackages = true;
@@ -66,7 +94,11 @@ in {
 
     home = {
       stateVersion = config.system.stateVersion;
-      sessionPath = ["$SNOWFLAKE_BIN" "$XDG_BIN_HOME" "$PATH"];
+      sessionPath = [
+        "$SNOWFLAKE_BIN"
+        "$XDG_BIN_HOME"
+        "$PATH"
+      ];
     };
 
     # hm.xdg = {
@@ -76,12 +108,17 @@ in {
 
     users.users.${config.user.name} = mkAliasDefinitions options.user;
 
-    nix.settings = let
-      users = ["root" config.user.name];
-    in {
-      trusted-users = users;
-      allowed-users = users;
-    };
+    nix.settings =
+      let
+        users = [
+          "root"
+          config.user.name
+        ];
+      in
+      {
+        trusted-users = users;
+        allowed-users = users;
+      };
 
     # environment.extraInit =
     #   concatStringsSep "\n"

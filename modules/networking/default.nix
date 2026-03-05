@@ -1,17 +1,26 @@
-{ config, options, lib, pkgs, ... }:
-
+{
+  config,
+  options,
+  lib,
+  pkgs,
+  ...
+}:
 let
   inherit (lib) getExe mkDefault;
   inherit (lib.modules) mkIf mkMerge;
 
   cfg = config.modules.networking;
-in {
-  options.modules.networking = let inherit (lib.options) mkEnableOption;
-  in {
-    iwd.enable = mkEnableOption "wpa_supplicant alt.";
-    networkd.enable = mkEnableOption "systemd network manager";
-    networkManager.enable = mkEnableOption "powerful network manager";
-  };
+in
+{
+  options.modules.networking =
+    let
+      inherit (lib.options) mkEnableOption;
+    in
+    {
+      iwd.enable = mkEnableOption "wpa_supplicant alt.";
+      networkd.enable = mkEnableOption "systemd network manager";
+      networkManager.enable = mkEnableOption "powerful network manager";
+    };
 
   config = mkMerge [
     (mkIf cfg.iwd.enable {
@@ -52,9 +61,20 @@ in {
     (mkIf cfg.networkManager.enable {
       systemd.services.NetworkManager-wait-online.enable = false;
 
+      # networking.wireless.iwd.enable = true;
+      # user.packages = [ pkgs.iwgtk ];
       networking.networkmanager = {
         enable = mkDefault true;
         wifi.backend = "wpa_supplicant";
+        # wifi.backend = "iwd";
+        settings = {
+          connection = {
+            "wifi.powersave" = 2;
+          };
+          # main = {
+          #   auth-polkit = true; # Ensures Gui prompts work properly
+          # };
+        };
       };
 
       # Display a network-manager applet:

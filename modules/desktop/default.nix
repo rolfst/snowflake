@@ -62,7 +62,7 @@ in
 
       system.userActivationScripts.cleanupHome = ''
         pushd "${config.user.home}"
-        rm -rf .compose-cache .nv .pki .dbus .fehbg
+        rm -rf .compose-cache .nv .dbus .fehbg
         [ -s .xsession-errors ] || rm -f .xsession-errors*
         popd
       '';
@@ -125,6 +125,13 @@ in
 
       # GUI for our gnome-keyring:
       programs.seahorse.enable = true;
+
+      # PKCS#11 support for certificate/key import in Seahorse:
+      # Override upstream restriction that limits gnome-keyring PKCS#11 to only geary/midori
+      environment.systemPackages = [ pkgs.p11-kit pkgs.gcr_4 ];
+      environment.etc."pkcs11/modules/gnome-keyring.module".text = ''
+        module: ${pkgs.gnome-keyring}/lib/pkcs11/gnome-keyring-pkcs11.so
+      '';
 
       # Functional `pkgs.light` for `/bin/brightctl`
       programs.light.enable = true;

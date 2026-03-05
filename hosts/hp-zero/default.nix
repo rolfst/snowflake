@@ -30,6 +30,11 @@
     };
     networking = {
       networkManager.enable = true;
+      openvpn = {
+        enable = true;
+        name = "company";
+        configFile = /home/rolfst/.config/openvpn/company.ovpn;
+      };
     };
 
     services = {

@@ -5,29 +5,37 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   inherit (lib.attrsets) attrValues;
   inherit (lib.modules) mkIf mkMerge;
   inherit (lib.meta) getExe;
-in {
-  options.modules.develop.rust = let
-    inherit (lib.options) mkEnableOption;
-  in {enable = mkEnableOption "Rust development";};
+in
+{
+  options.modules.develop.rust =
+    let
+      inherit (lib.options) mkEnableOption;
+    in
+    {
+      enable = mkEnableOption "Rust development";
+    };
 
   config = mkMerge [
     (mkIf config.modules.develop.rust.enable {
-      nixpkgs.overlays = [inputs.rust.overlays.default];
+      nixpkgs.overlays = [ inputs.rust.overlays.default ];
 
       user.packages = attrValues {
         # rust-package = pkgs.rust-bin.stable.latest.default;
-        rust-package = pkgs.rust-bin.selectLatestNightlyWith (toolchain:
+        rust-package = pkgs.rust-bin.selectLatestNightlyWith (
+          toolchain:
           toolchain.default.override {
             extensions = [
               "rust-analyzer"
               "rust-src"
             ];
-          });
-        inherit (pkgs.unstable) rust-analyzer rust-script;
+          }
+        );
+        inherit (pkgs.unstable) rustup rust-analyzer rust-script;
         inherit (pkgs.unstable.vscode-extensions.vadimcn) vscode-lldb;
       };
 
@@ -44,7 +52,7 @@ in {
     (mkIf config.modules.develop.xdg.enable {
       home = {
         sessionVariables.CARGO_HOME = "$XDG_DATA_HOME/cargo";
-        sessionPath = ["$CARGO_HOME/bin"];
+        sessionPath = [ "$CARGO_HOME/bin" ];
       };
     })
   ];

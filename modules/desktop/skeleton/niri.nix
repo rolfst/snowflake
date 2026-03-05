@@ -26,7 +26,7 @@ in
     in
     mkIf config.modules.desktop.niri.enable {
       modules.desktop = {
-        type = ["wayland"];
+        type = [ "wayland" ];
         toolset.fileManager = {
           enable = true;
           program = "thunar";
@@ -99,6 +99,14 @@ in
                   enabled = true;
                   sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
                 };
+                network-manager-vpn = {
+                  enabled = true;
+                  sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
+                };
+                tailscale = {
+                  enabled = true;
+                  sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
+                };
               };
             };
           };
@@ -161,7 +169,10 @@ in
       xdg.portal = {
         extraPortals = [ pkgs.xdg-desktop-portal-gnome ];
         config.niri = {
-          default = [ "gnome" "gtk" ];
+          default = [
+            "gnome"
+            "gtk"
+          ];
         };
       };
     };
