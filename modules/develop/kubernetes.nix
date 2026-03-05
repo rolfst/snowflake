@@ -20,7 +20,7 @@ in
 
   config = mkIf config.modules.develop.kubernetes.enable {
     user.packages = attrValues {
-      inherit (pkgs) kubectl;
+      inherit (pkgs) kubectl k9s;
     };
   };
 }
