@@ -83,7 +83,7 @@
         vscodium.enable = true;
       };
       browsers = {
-        default = "firefox";
+        default = "google";
         google.enable = true;
         firefox.enable = true;
         zen.enable = false;
@@ -132,6 +132,8 @@
       docker.enable = true;
     };
   };
+  fonts.packages = [ pkgs.my."delivery-font" ];
+
   security.pki.certificateFiles = [
     ./rootCA.pem
   ];
