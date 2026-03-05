@@ -117,6 +117,8 @@ in
           yt-dlp
           csview
           ripdrag
+          lsof
+          file
           ;
 
         # GNU Alternatives

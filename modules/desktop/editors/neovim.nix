@@ -5,27 +5,32 @@
   pkgs,
   inputs,
   ...
-}: let
+}:
+let
   inherit (lib.attrsets) attrValues optionalAttrs;
   inherit (lib.modules) mkIf mkMerge;
 
   cfg = config.modules.desktop.editors.neovim;
-in {
-  options.modules.desktop.editors.neovim = let
-    inherit (lib.options) mkEnableOption;
-    inherit (lib.types) package;
-    inherit (lib.my) mkOpt;
-  in {
-    package = mkOpt package pkgs.unstable.neovim-unwrapped;
-    agasaya.enable = mkEnableOption "nvim (lua) config";
-    ereshkigal.enable = mkEnableOption "nvim (lisp) config";
-    rolfst.enable = mkEnableOption "nvim personal config";
-  };
+in
+{
+  options.modules.desktop.editors.neovim =
+    let
+      inherit (lib.options) mkEnableOption;
+      inherit (lib.types) package;
+      inherit (lib.my) mkOpt;
+    in
+    {
+      package = mkOpt package pkgs.unstable.neovim-unwrapped;
+      agasaya.enable = mkEnableOption "nvim (lua) config";
+      ereshkigal.enable = mkEnableOption "nvim (lisp) config";
+      rolfst.enable = mkEnableOption "nvim personal config";
+    };
 
   config = mkMerge [
     {
-      user.packages = attrValues ({
-          inherit (pkgs.unstable) vectorcode uv;
+      user.packages = attrValues (
+        {
+          inherit (pkgs.unstable) tree-sitter vectorcode uv;
 
           # inherit (pkgs) neovide;
           # inherit (pkgs.vimPlugins) markdown-preview-nvim;
@@ -35,7 +40,8 @@ in {
         }
         // optionalAttrs (config.modules.develop.cc.enable == false) {
           inherit (pkgs) gcc; # Treesitter
-        });
+        }
+      );
 
       hm.programs.neovim = {
         enable = true;
@@ -47,8 +53,8 @@ in {
           python3Packages.prompt-toolkit
           python3Packages.requests
         ];
-        extraPython3Packages = ps:
-          with ps; [
+        extraPython3Packages =
+          ps: with ps; [
             prompt-toolkit
             requests
           ];
