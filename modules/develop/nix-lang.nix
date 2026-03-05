@@ -4,20 +4,28 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   inherit (lib.attrsets) attrValues;
   inherit (lib.modules) mkIf mkMerge;
-in {
-  options.modules.develop.nix = let
-    inherit (lib.options) mkEnableOption;
-  in {enable = mkEnableOption "Nix development" // {default = true;};};
+in
+{
+  options.modules.develop.nix =
+    let
+      inherit (lib.options) mkEnableOption;
+    in
+    {
+      enable = mkEnableOption "Nix development" // {
+        default = true;
+      };
+    };
 
   config = mkMerge [
     (mkIf config.modules.develop.nix.enable {
       user.packages = attrValues {
-        inherit
-          (pkgs)
+        inherit (pkgs)
           nil # Nix Expression Language
+          nixd # Nix Expression Language
           manix
           nix-index
           nix-init
