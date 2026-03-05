@@ -51,6 +51,11 @@
       java.enable = true;
       cc.enable = true;
       xdg.enable = true;
+      kubernetes.enable = true;
+      cloud = {
+        aws.enable = false;
+        azure.enable = true;
+      };
     };
 
     # virtualize = {
