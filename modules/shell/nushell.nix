@@ -4,7 +4,8 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   inherit (lib) mkIf mkForce getExe;
   inherit (lib.strings) concatStrings;
   inherit (lib.attrsets) mapAttrsToList;
@@ -13,39 +14,49 @@
 
   # Aliases that are safe as nushell aliases (simple command mappings)
   # Aliases whose commands conflict with nushell builtins (e.g. `watch`)
-  nushellConflicts = ["usbStat"];
+  nushellConflicts = [ "usbStat" ];
 
-  simpleAbbrevs = let
-    # Keys containing '!' are not valid nushell alias names — skip them
-    isSimple = name: _:
-      !(lib.strings.hasInfix "!" name)
-      && !(lib.strings.hasInfix ";" (abbrevs.${name}))
-      && !(lib.strings.hasInfix "|" (abbrevs.${name}))
-      && !(lib.strings.hasInfix "$(" (abbrevs.${name}))
-      && !(builtins.elem name nushellConflicts);
-  in
+  simpleAbbrevs =
+    let
+      # Keys containing '!' are not valid nushell alias names — skip them
+      isSimple =
+        name: _:
+        !(lib.strings.hasInfix "!" name)
+        && !(lib.strings.hasInfix ";" (abbrevs.${name}))
+        && !(lib.strings.hasInfix "|" (abbrevs.${name}))
+        && !(lib.strings.hasInfix "$(" (abbrevs.${name}))
+        && !(builtins.elem name nushellConflicts);
+    in
     lib.filterAttrs isSimple abbrevs;
 
   # Aliases that need special handling (contain !, pipes, subshells, or semicolons)
-  complexAbbrevs = let
-    isComplex = name: _:
-      (lib.strings.hasInfix "!" name)
-      || (lib.strings.hasInfix ";" (abbrevs.${name}))
-      || (lib.strings.hasInfix "|" (abbrevs.${name}))
-      || (lib.strings.hasInfix "$(" (abbrevs.${name}));
-  in
+  complexAbbrevs =
+    let
+      isComplex =
+        name: _:
+        (lib.strings.hasInfix "!" name)
+        || (lib.strings.hasInfix ";" (abbrevs.${name}))
+        || (lib.strings.hasInfix "|" (abbrevs.${name}))
+        || (lib.strings.hasInfix "$(" (abbrevs.${name}));
+    in
     lib.filterAttrs isComplex abbrevs;
 
   # Generate nushell def commands for complex aliases
-  complexDefs = concatStrings (mapAttrsToList (name: cmd: let
-    # Sanitize name: replace '!' with '_' for valid nushell identifiers
-    safeName = builtins.replaceStrings ["!"] ["_"] name;
-  in ''
-    # Abbreviation: ${name}
-    def "${safeName}" [] { ^bash -c ${lib.strings.escapeNixString cmd} }
-  '')
-  complexAbbrevs);
-in {
+  complexDefs = concatStrings (
+    mapAttrsToList (
+      name: cmd:
+      let
+        # Sanitize name: replace '!' with '_' for valid nushell identifiers
+        safeName = builtins.replaceStrings [ "!" ] [ "_" ] name;
+      in
+      ''
+        # Abbreviation: ${name}
+        def "${safeName}" [] { ^bash -c ${lib.strings.escapeNixString cmd} }
+      ''
+    ) complexAbbrevs
+  );
+in
+{
   config = mkIf (config.modules.shell.default == "nushell") {
     modules.shell.corePkgs.enable = true;
 
@@ -54,11 +65,14 @@ in {
     # We keep zsh as the login shell so NixOS environment setup runs correctly,
     # then exec nushell for interactive use.
     users.defaultUserShell = mkForce pkgs.zsh;
-    environment.shells = [pkgs.zsh pkgs.nushell];
+    environment.shells = [
+      pkgs.zsh
+      pkgs.nushell
+    ];
 
     # Enable zsh as login shell (minimal config — just enough to exec nu)
     programs.zsh.enable = true;
-    environment.pathsToLink = ["/share/zsh"];
+    environment.pathsToLink = [ "/share/zsh" ];
 
     hm.programs.zsh = {
       enable = true;
@@ -121,24 +135,36 @@ in {
       };
 
       shellAliases =
-        {
-          # -------===[ Core ]===------- #
-          eza = "eza --group-directories-first";
-          less = "less -R";
+        let
+          # Aliases inherited from bash.nix via home-manager's shellAliases merging
+          # that must be excluded so nushell builtins are preserved.
+          bashLeaks = [
+            "ls"
+            "lsa"
+            "wup"
+            "wud"
+          ];
 
-          # -------===[ Develop: Python ]===------- #
-          py = "python";
-          ipy = "ipython --no-banner";
-          ipylab = "ipython --pylab=qt5 --no-banner";
+          merged = {
+            # -------===[ Core ]===------- #
+            eza = "eza --group-directories-first";
+            less = "less -R";
 
-          # -------===[ Develop: Rust ]===------- #
-          rs = "rustc";
-          ca = "cargo";
+            # -------===[ Develop: Python ]===------- #
+            py = "python";
+            ipy = "ipython --no-banner";
+            ipylab = "ipython --pylab=qt5 --no-banner";
 
-          # -------===[ Develop: Node ]===------- #
-          ya = "yarn";
-        }
-        // simpleAbbrevs;
+            # -------===[ Develop: Rust ]===------- #
+            rs = "rustc";
+            ca = "cargo";
+
+            # -------===[ Develop: Node ]===------- #
+            ya = "yarn";
+          }
+          // simpleAbbrevs;
+        in
+        lib.mkForce (builtins.removeAttrs merged bashLeaks);
 
       extraConfig = ''
         # -------===[ Man-page Colors ]===------- #
@@ -163,7 +189,7 @@ in {
         # -------===[ Useful Functions ]===------- #
         def la [path?: string] {
           let target = if ($path | is-empty) { "." } else { $path }
-          ls -al $target | select name type mode user group size
+          ls -al $target | select name type modified mode user group size
             | each {|row| $row | merge { sort_key: (if $row.type == "dir" { "0" } else { "1" }) }}
             | sort-by sort_key name
             | reject sort_key
