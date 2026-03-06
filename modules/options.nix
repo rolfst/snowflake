@@ -80,6 +80,7 @@ in
           "scanner"
           "lp"
           "disk"
+          "render"
         ];
         isNormalUser = true;
         home = "/home/${name}";

@@ -52,6 +52,7 @@ in
     user.extraGroups = [
       "input"
       "video"
+      "render"
     ];
 
     services.udev = {
