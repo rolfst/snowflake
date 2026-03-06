@@ -15,7 +15,7 @@ in {
   in {enable = mkEnableOption "modern audio support";};
 
   config = mkIf cfg.enable {
-    user.packages = attrValues {inherit (pkgs) easyeffects pipewire pavucontrol;};
+    user.packages = attrValues {inherit (pkgs) easyeffects pavucontrol;};
 
     security.rtkit.enable = true;
 
