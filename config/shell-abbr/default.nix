@@ -1,6 +1,5 @@
 let
   main = {
-    ls = "eza -Slhg --icons";
     lsa = "eza -Slhga --icons";
     tree = "eza -SlhgT --icons";
     usbStat = "watch rg -e Dirty: -e Writeback: /proc/meminfo";

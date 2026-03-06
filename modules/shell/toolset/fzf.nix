@@ -20,6 +20,8 @@ in {
       enableBashIntegration = true;
       enableZshIntegration = defShell == "zsh";
       enableFishIntegration = defShell == "fish";
+      # Note: home-manager fzf has no nushell integration yet.
+      # When nushell is used via exec, zsh is only a bootstrap — no interactive integration needed.
 
       tmux.enableShellIntegration = true;
       tmux.shellIntegrationOptions = ["-d 40%"];

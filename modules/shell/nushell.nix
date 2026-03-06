@@ -12,13 +12,17 @@
   abbrevs = import "${config.snowflake.configDir}/shell-abbr";
 
   # Aliases that are safe as nushell aliases (simple command mappings)
+  # Aliases whose commands conflict with nushell builtins (e.g. `watch`)
+  nushellConflicts = ["usbStat"];
+
   simpleAbbrevs = let
     # Keys containing '!' are not valid nushell alias names — skip them
     isSimple = name: _:
       !(lib.strings.hasInfix "!" name)
       && !(lib.strings.hasInfix ";" (abbrevs.${name}))
       && !(lib.strings.hasInfix "|" (abbrevs.${name}))
-      && !(lib.strings.hasInfix "$(" (abbrevs.${name}));
+      && !(lib.strings.hasInfix "$(" (abbrevs.${name}))
+      && !(builtins.elem name nushellConflicts);
   in
     lib.filterAttrs isSimple abbrevs;
 
@@ -77,6 +81,15 @@ in {
     modules.shell.starship.enable = true;
     hm.programs.starship.enableNushellIntegration = true;
 
+    # -------===[ Zoxide ]===------- #
+    hm.programs.zoxide = {
+      enable = true;
+      enableNushellIntegration = true;
+    };
+
+    # -------===[ Direnv ]===------- #
+    hm.programs.direnv.enableNushellIntegration = true;
+
     # -------===[ Nushell (home-manager) ]===------- #
     hm.programs.nushell = {
       enable = true;
@@ -94,7 +107,6 @@ in {
             max_results = 100;
           };
         };
-        filesize.metric = false;
         cursor_shape = {
           vi_insert = "line";
           vi_normal = "block";
@@ -129,19 +141,16 @@ in {
         // simpleAbbrevs;
 
       extraConfig = ''
-        # -------===[ External Plugins ]===------- #
-        ${getExe pkgs.zoxide} init nushell | save -f ~/.cache/zoxide-init.nu
-        source ~/.cache/zoxide-init.nu
-
-        ${getExe pkgs.direnv} hook nushell | save -f ~/.cache/direnv-hook.nu
-        source ~/.cache/direnv-hook.nu
-
         # -------===[ Man-page Colors ]===------- #
         $env.MANPAGER = "sh -c 'col -bx | bat -l man -p'"
         $env.MANROFFOPT = "-c"
 
         # -------===[ Complex Aliases (need bash for POSIX syntax) ]===------- #
         ${complexDefs}
+
+        # -------===[ Nushell Builtin Overrides ]===------- #
+        # `watch` is a nushell builtin; use `^watch` to call the external binary
+        alias usbStat = ^watch rg -e Dirty: -e Writeback: /proc/meminfo
 
         # -------===[ Develop: Node (POSIX PATH manipulation) ]===------- #
         def n [] { ^bash -c "PATH=\"$(npm bin):$PATH\" $@" }
@@ -152,6 +161,13 @@ in {
         def piclean [] { ^bash -c "podman images | grep '<none>' | grep -P '[1234567890abcdef]{12}' -o | xargs -L1 podman rmi 2>/dev/null" }
 
         # -------===[ Useful Functions ]===------- #
+        def la [path?: string] {
+          let target = if ($path | is-empty) { "." } else { $path }
+          ls -al $target | select name type mode user group size
+            | each {|row| $row | merge { sort_key: (if $row.type == "dir" { "0" } else { "1" }) }}
+            | sort-by sort_key name
+            | reject sort_key
+        }
         def sysdate [] {
           nixos-rebuild switch --use-remote-sudo --flake $".#(hostname)" --impure
         }

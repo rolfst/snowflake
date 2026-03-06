@@ -22,7 +22,7 @@ in
           "fish"
           "zsh"
           "xonsh"
-          "nush"
+          "nushell"
         ]);
         default = null;
         description = "Default system shell";
@@ -126,7 +126,6 @@ in
           bat
           eza
           fd
-          zoxide
           ;
         rgFull = pkgs.ripgrep.override { withPCRE2 = true; };
       };
