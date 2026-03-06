@@ -47,8 +47,12 @@ in
       # This flag tells Tailscale to tell the network "I can be an exit node"
       extraUpFlags = [ "--advertise-exit-node" ];
     };
-    # Required for exit node functionality to work properly with the firewall
-    networking.firewall.checkReversePath = "loose";
+    networking.firewall = {
+      enable = true;
+      allowedTCPPorts = [ 47984 47989 48010 ];
+      allowedUDPPorts = [ 47998 47999 48000 48002 48010 ];
+      checkReversePath = "loose";
+    };
     user.extraGroups = [
       "input"
       "video"
