@@ -8,14 +8,15 @@
   inherit (lib.attrsets) attrValues optionalAttrs;
   inherit (lib.modules) mkIf;
 in {
-  options.modules.shell.toolset.git = let
+  options.modules.shell.toolset.scm = let
     inherit (lib.options) mkEnableOption;
-  in {enable = mkEnableOption "version-control system";};
+  in {enable = mkEnableOption "version-control systems";};
 
-  config = mkIf config.modules.shell.toolset.git.enable {
+  config = mkIf config.modules.shell.toolset.scm.enable {
     user.packages = attrValues ({
         inherit (pkgs) act dura gitui lazygit sad;
         inherit (pkgs) gh git-open;
+        inherit (pkgs) lazyjj mergiraf diffnav;
       }
       // optionalAttrs config.modules.shell.gnupg.enable {
         inherit (pkgs) git-crypt;
@@ -77,7 +78,42 @@ in {
         '';
       };
 
-      attributes = ["*.lisp diff=lisp" "*.el diff=lisp" "*.org diff=org"];
+      attributes = [
+        "*.lisp diff=lisp"
+        "*.el diff=lisp"
+        "*.org diff=org"
+
+        # mergiraf: syntax-aware merge driver
+        "*.java merge=mergiraf"
+        "*.rs merge=mergiraf"
+        "*.go merge=mergiraf"
+        "*.js merge=mergiraf"
+        "*.jsx merge=mergiraf"
+        "*.json merge=mergiraf"
+        "*.yml merge=mergiraf"
+        "*.yaml merge=mergiraf"
+        "*.toml merge=mergiraf"
+        "*.html merge=mergiraf"
+        "*.htm merge=mergiraf"
+        "*.xhtml merge=mergiraf"
+        "*.xml merge=mergiraf"
+        "*.c merge=mergiraf"
+        "*.h merge=mergiraf"
+        "*.cc merge=mergiraf"
+        "*.cpp merge=mergiraf"
+        "*.hpp merge=mergiraf"
+        "*.cs merge=mergiraf"
+        "*.dart merge=mergiraf"
+        "*.py merge=mergiraf"
+        "*.ts merge=mergiraf"
+        "*.tsx merge=mergiraf"
+        "*.nix merge=mergiraf"
+        "*.hs merge=mergiraf"
+        "*.scala merge=mergiraf"
+        "*.lua merge=mergiraf"
+        "*.rb merge=mergiraf"
+        "*.sh merge=mergiraf"
+      ];
 
       # for my git and flakes
       # "*.envrc"
@@ -133,6 +169,9 @@ in {
           editor = "nvim";
           whitespace = "trailing-space,space-before-tab";
         };
+        pager = {
+          diff = "diffnav";
+        };
         branch = {sort = "-committerdate";};
         maintenance = {
           auto = false;
@@ -179,6 +218,10 @@ in {
         };
         merge = {
           tool = "nvim";
+          mergiraf = {
+            name = "mergiraf";
+            driver = "mergiraf merge --git %O %A %B -s %S -x %X -y %Y -p %P";
+          };
         };
         mergetool = {
           nvim = {
@@ -190,6 +233,36 @@ in {
         diff = {
           "lisp".xfuncname = "^(((;;;+ )|\\(|([ 	]+\\(((cl-|el-patch-)?def(un|var|macro|method|custom)|gb/))).*)$";
           "org".xfuncname = "^(\\*+ +.*)$";
+        };
+      };
+    };
+
+    hm.programs.jujutsu = {
+      enable = true;
+      settings = {
+        user = {
+          name = "rolfst";
+          email = "rolfst@gmail.com";
+        };
+        ui = {
+          default-command = "log";
+          diff-editor = ":builtin";
+          merge-editor = "nvim";
+          pager = "diffnav";
+        };
+        merge-tools.mergiraf = {
+          program = "mergiraf";
+          merge-args = [
+            "jj"
+            "$left"
+            "$base"
+            "$right"
+            "-o"
+            "$output"
+          ];
+        };
+        git = {
+          auto-local-bookmark = true;
         };
       };
     };

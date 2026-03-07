@@ -231,6 +231,10 @@ in
 
   # Finally, our beloved hardware module(s):
   modules.hardware = {
+    nvidia = {
+      enable = true;
+      cuda.enable = true;
+    };
     pipewire = {
       enable = true;
       # lowLatency.enable = true;
