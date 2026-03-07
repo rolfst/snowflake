@@ -13,7 +13,7 @@
       tmux.enable = true;
       gnupg.enable = true;
       toolset = {
-        git.enable = true;
+        scm.enable = true;
       };
     };
     hardware.xkbLayout = {hyperCtrl.enable = true;};

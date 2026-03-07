@@ -9,7 +9,7 @@
   modules = {
     shell = {
       default = "zsh";
-      git.enable = true;
+      toolset.scm.enable = true;
       gnupg.enable = true;
     };
 

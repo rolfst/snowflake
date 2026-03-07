@@ -33,7 +33,7 @@
 
     shell = {
       default = "fish";
-      git.enable = true;
+      toolset.scm.enable = true;
       gnupg.enable = true;
     };
   };
