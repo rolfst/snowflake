@@ -68,8 +68,18 @@ in
 
       # for running steam under wayland do this:
       programs = {
-        steam.enable = true;
-        steam.gamescopeSession.enable = true;
+        steam = {
+          enable = true;
+          gamescopeSession = {
+            enable = true;
+            args = [
+              "--prefer-vk-device 10de"  # Prefer NVIDIA Vulkan device (vendor ID 0x10de)
+            ];
+          };
+          extraPackages = with pkgs; [
+            gamescope
+          ];
+        };
         gamemode = {
           enable = true;
           settings = {
@@ -77,10 +87,23 @@ in
               apply_gpu_optimisations = "accept-responsibility";
               gpu_vendor = "nvidia";
               nv_powertarget = 100;
+              nv_core_clock_mhz_offset = 0;
+              nv_mem_clock_mhz_offset = 0;
             };
           };
         };
       };
+
+      # Force Steam and all Proton games to use the NVIDIA dGPU
+      environment.sessionVariables = {
+        # PRIME Render Offload for Steam
+        __NV_PRIME_RENDER_OFFLOAD = "1";
+        __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+        __VK_LAYER_NV_optimus = "NVIDIA_only";
+        # Proton/DXVK should target NVIDIA Vulkan
+        DXVK_FILTER_DEVICE_NAME = "NVIDIA";
+      };
+
       environment.systemPackages = with pkgs; [
         mangohud
         protonup-qt
