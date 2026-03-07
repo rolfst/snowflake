@@ -16,7 +16,7 @@ in {
 
   config = mkIf config.modules.desktop.xmonad.enable {
     modules.desktop = {
-      type = "x11";
+      type = ["x11"];
       terminal.default = "kitty";
       toolset.fileManager = {
         enable = true;
@@ -48,31 +48,36 @@ in {
 
     environment.systemPackages = attrValues {
       inherit (pkgs) libnotify playerctl gxmessage xdotool feh arandr zenity;
-      inherit (pkgs.xorg) xwininfo;
+      inherit (pkgs.xorg) xwininfo xinit;
     };
-    hm.xsession.windowManager.xmonad = {
+    hm.xsession = {
       enable = true;
-      extraPackages = haskellPackages: [
-        haskellPackages.aeson
-        haskellPackages.bytestring
-        haskellPackages.hostname
-        haskellPackages.multimap
-        haskellPackages.tuple
-        haskellPackages.safe
-        haskellPackages.split
-        haskellPackages.utf8-string
-        haskellPackages.xdg-desktop-entry
-        haskellPackages.xmonad-contrib
-      ];
+      windowManager.xmonad = {
+        enable = true;
+        extraPackages = haskellPackages: [
+          haskellPackages.aeson
+          haskellPackages.bytestring
+          haskellPackages.hostname
+          haskellPackages.multimap
+          haskellPackages.tuple
+          haskellPackages.safe
+          haskellPackages.split
+          haskellPackages.utf8-string
+          haskellPackages.xdg-desktop-entry
+          haskellPackages.xmonad-contrib
+          haskellPackages.X11
+          haskellPackages.transformers
+        ];
+      };
     };
     create.configFile.xmonad-conf = {
       target = "${config.user.home}/.xmonad/xmonad.hs";
       source = "${config.snowflake.configDir}/xmonad/xmonad.hs";
     };
 
-    services.greetd = {
-      settings.initial_session = {command = "none+xmonad";};
-    };
+    # services.greetd = {
+    #   settings.initial_session = {command = "none+xmonad";};
+    # };
 
     # services.displayManager = {
     #   defaultSession = "none+xmonad";
@@ -81,12 +86,18 @@ in {
       session = [
         {
           manage = "window";
-          name = "none_xmonad";
+          name = "BistroWM";
           bgsupport = true;
-          start = ''
-            systemd-cat -t xmonad -- ${pkgs.runtimeShell} $HOME/.xsession > /dev/null 2>&1 &
-            waitPID=$!
-          '';
+          start =
+            if config.modules.desktop.greeter == "greetd"
+            then ''
+              ${pkgs.xorg.xinit}/bin/startx $HOME/.xsession -- -configdir /etc/X11/xorg.conf.d
+            ''
+            else ''
+              systemd-cat -t xmonad -- ${pkgs.runtimeShell} $HOME/.xsession > /dev/null 2>&1 &
+              waitPID=$!
+              wait $waitPID
+            '';
         }
       ];
       # windowManager.xmonad = {
