@@ -373,7 +373,7 @@ in {
         };
       })
 
-      # Auto-set wallpaper to prevent $HOME pollution!
+      # Auto-set X11 wallpaper via feh
       (mkIf (cfg.wallpaper != null) (let
         wCfg = config.services.xserver.desktopManager.wallpaper;
         command = ''
@@ -387,36 +387,43 @@ in {
       in {
         services.xserver.displayManager.sessionCommands = command;
         modules.themes.onReload.wallpaper = command;
-
-        create.dataFile =
-          mkIf (cfg.wallpaper != null) {"wallpaper".source = cfg.wallpaper;};
-      }))
-
-      (mkIf (cfg.loginWallpaper != null) {
-        programs.regreet.settings.background = {
-          path = cfg.loginWallpaper;
-          fit = "Fill";
-        };
-      })
-
-      (mkIf (cfg.onReload != {}) (let
-        reloadTheme = let
-          inherit (pkgs) stdenv writeScriptBin;
-        in (writeScriptBin "reloadTheme" ''
-          #!${stdenv.shell}
-          echo "Reloading current theme: ${cfg.active}"
-          ${concatStringsSep "\n" (mapAttrsToList (name: script: ''
-              echo "[${name}]"
-              ${script}
-            '')
-            cfg.onReload)}
-        '');
-      in {
-        user.packages = [reloadTheme];
-        system.userActivationScripts.reloadTheme = ''
-          [ -z "$NORELOAD" ] && ${reloadTheme}/bin/reloadTheme
-        '';
       }))
     ]))
+
+    # Wallpaper data file — shared by X11 (feh) and Wayland (noctalia-shell)
+    (mkIf (cfg.wallpaper != null) {
+      create.dataFile = {
+        "wallpaper".source = cfg.wallpaper;
+        # Symlink into backgrounds/ for noctalia-shell's wallpaper engine
+        "backgrounds/wallpaper".source = cfg.wallpaper;
+      };
+    })
+
+    # Login wallpaper for regreet (works on both X11 and Wayland)
+    (mkIf (cfg.loginWallpaper != null) {
+      programs.regreet.settings.background = {
+        path = cfg.loginWallpaper;
+        fit = "Fill";
+      };
+    })
+
+    (mkIf (cfg.onReload != {}) (let
+      reloadTheme = let
+        inherit (pkgs) stdenv writeScriptBin;
+      in (writeScriptBin "reloadTheme" ''
+        #!${stdenv.shell}
+        echo "Reloading current theme: ${cfg.active}"
+        ${concatStringsSep "\n" (mapAttrsToList (name: script: ''
+            echo "[${name}]"
+            ${script}
+          '')
+          cfg.onReload)}
+      '');
+    in {
+      user.packages = [reloadTheme];
+      system.userActivationScripts.reloadTheme = ''
+        [ -z "$NORELOAD" ] && ${reloadTheme}/bin/reloadTheme
+      '';
+    }))
   ]);
 }

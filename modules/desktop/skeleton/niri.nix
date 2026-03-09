@@ -39,7 +39,7 @@ in
           mimeApps.enable = true; # mimeApps -> default launch application
           dunst.enable = false;
           waybar.enable = false;
-          elkowar.enable = true;
+          elkowar.enable = false; # noctalia-shell uses quickshell, not eww
           rofi.enable = true;
         };
       };
@@ -60,7 +60,7 @@ in
         programs = {
           noctalia-shell = {
             enable = true;
-            systemd.enable = true;
+            systemd.enable = false; # Deprecated in v4.6.1 — launch from niri spawn-at-startup instead
             settings = builtins.fromJSON (readFile "${niriDir}/noctalia.json");
             plugins = {
               sources = [
