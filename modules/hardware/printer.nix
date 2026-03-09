@@ -14,14 +14,14 @@ in {
   config = mkIf config.modules.hardware.printer.enable {
     services.printing = {
       enable = true;
+      startWhenNeeded = true; # Socket activation — avoids port 631 conflict with ipp-usb
       drivers = [pkgs.hplipWithPlugin pkgs.xsane];
       browsing = true;
       defaultShared = true;
       allowFrom = ["all"];
       openFirewall = true;
-      listenAddresses = [
-        "*:631"
-      ];
+      # listenAddresses removed — socket activation handles port binding,
+      # preventing conflict with ipp-usb on port 631
     };
     services.printing.browsedConf = ''
       BrowseDNSSDSubTypes _cups,_print

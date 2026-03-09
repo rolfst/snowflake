@@ -74,7 +74,9 @@
     enable = true;
     extraConfig = ''
       polkit.addRule(function(action, subject) {
-        if (action.id == "org.freedesktop.udisks2.filesystem-*;org.freedesktop.udisks2.encrypted-*;org.freedesktop.udisks2.loop-*" &&
+        if ((action.id.indexOf("org.freedesktop.udisks2.filesystem-") == 0 ||
+             action.id.indexOf("org.freedesktop.udisks2.encrypted-") == 0 ||
+             action.id.indexOf("org.freedesktop.udisks2.loop-") == 0) &&
             subject.user == "${config.user.name}") {
           return polkit.Result.YES;
         }

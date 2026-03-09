@@ -21,9 +21,11 @@ in {
       hardware.graphics = {
         extraPackages = with pkgs; [
           libva-vdpau-driver    # VA-API ↔ VDPAU bridge (NVIDIA VDPAU backend)
+          nvidia-vaapi-driver   # VA-API via NVIDIA
         ];
         extraPackages32 = with pkgs.pkgsi686Linux; [
           libva-vdpau-driver
+          nvidia-vaapi-driver
         ];
       };
 
@@ -33,15 +35,6 @@ in {
     })
 
     (mkIf (cfg.enable && cfg.cuda.enable) {
-      hardware.graphics = {
-        extraPackages = with pkgs; [
-          nvidia-vaapi-driver   # VA-API via NVIDIA (requires CUDA)
-        ];
-        extraPackages32 = with pkgs.pkgsi686Linux; [
-          nvidia-vaapi-driver
-        ];
-      };
-
       environment.systemPackages = with pkgs; [
         cudatoolkit
         nvitop                 # CUDA-aware GPU monitor

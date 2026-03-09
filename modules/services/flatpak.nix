@@ -27,5 +27,11 @@ in
         "com.freerdp.FreeRDP"
       ];
     };
+
+    # Ensure network is available before flatpak tries to fetch remotes
+    systemd.services."flatpak-managed-install" = {
+      after = [ "network-online.target" ];
+      wants = [ "network-online.target" ];
+    };
   };
 }

@@ -76,12 +76,6 @@ in
     ];
   };
 
-  boot.initrd.luks.devices."cryptroot" = {
-    device = "/dev/nvme0n1p2";
-    preLVM = true; # Not strictly needed for Btrfs but good practice
-    allowDiscards = true; # Better for SSD performance
-  };
-
   swapDevices = [ { device = "/swap/swapfile"; } ];
 
   boot = {
@@ -99,6 +93,11 @@ in
         "btrfs"
       ];
       kernelModules = [ ];
+      luks.devices."cryptroot" = {
+        device = "/dev/nvme0n1p2";
+        preLVM = true; # Not strictly needed for Btrfs but good practice
+        allowDiscards = true; # Better for SSD performance
+      };
     };
     extraModulePackages = [ config.boot.kernelPackages.acpi_call ];
     kernelModules = [
@@ -110,7 +109,7 @@ in
     # Run: btrfs inspect-internal map-swapfile -r /mnt/swap/swapfile
     # Then add "resume_offset=XXXXX" to kernelParams below.
     kernelParams = [
-      "pcie_aspm.policy=performance"
+      # pcie_aspm.policy=performance is already set in default.nix for all hosts
       "nvidia.NVreg_PreserveVideoMemoryAllocations=1"
       "i915.enable_guc=3"
       "resume_offset=533760" # REPLACE with output from 'btrfs inspect-internal map-swapfile'
@@ -177,7 +176,9 @@ in
     };
   };
 
-  powerManagement.cpuFreqGovernor = mkDefault "schedutil";
+  # cpuFreqGovernor removed — TLP manages governors via CPU_SCALING_GOVERNOR_ON_AC/BAT.
+  # Setting "schedutil" here caused a 2.6s boot delay (nixpkgs#204619: schedutil is built
+  # into the kernel as CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y, not a loadable module).
   environment.variables = {
     LIBVA_DRIVER_NAME = "iHD";
   };
@@ -233,7 +234,7 @@ in
   modules.hardware = {
     nvidia = {
       enable = true;
-      cuda.enable = true;
+      cuda.enable = false;
     };
     pipewire = {
       enable = true;
