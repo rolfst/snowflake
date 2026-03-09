@@ -81,6 +81,7 @@ in
           "lp"
           "disk"
           "render"
+          "fuse"
         ];
         isNormalUser = true;
         home = "/home/${name}";
