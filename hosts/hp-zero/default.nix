@@ -78,7 +78,7 @@
     # virtualize = {
     #   enable = true;
     # };
-    themes.active = "rose-pine";
+    themes.active = "dark-pastel";
 
     desktop = {
       virtual = {

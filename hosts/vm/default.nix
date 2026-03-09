@@ -31,7 +31,7 @@
       lua.enable = true;
     };
 
-    themes.active = "rose-pine";
+    themes.active = "dark-pastel";
 
     desktop = {
       xmonad.enable = true;

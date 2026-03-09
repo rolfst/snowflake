@@ -26,7 +26,7 @@
       rust.enable = true;
     };
 
-    themes.active = "tokyonight";
+    themes.active = "dark-pastel";
 
     desktop = {
       xmonad.enable = true;

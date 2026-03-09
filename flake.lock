@@ -350,11 +350,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1772633058,
-        "narHash": "sha256-SO7JapRy2HPhgmqiLbfnW1kMx5rakPMKZ9z3wtRLQjI=",
+        "lastModified": 1772985280,
+        "narHash": "sha256-FdrNykOoY9VStevU4zjSUdvsL9SzJTcXt4omdEDZDLk=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "080657a04188aca25f8a6c70a0fb2ea7e37f1865",
+        "rev": "8f736f007139d7f70752657dff6a401a585d6cbc",
         "type": "github"
       },
       "original": {
@@ -435,11 +435,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1772864581,
-        "narHash": "sha256-+AiWgqbKkjU1W/S/U7ktSoScMa4+z9APtJx+3gEDcCQ=",
+        "lastModified": 1773048396,
+        "narHash": "sha256-qtGG8mtoCXriW2ccxvQxWifjwSwTFWaAnhZagq0a/l4=",
         "owner": "numtide",
         "repo": "nix-ai-tools",
-        "rev": "856b24f862d0a19b7764f35ee9a7546309e605a0",
+        "rev": "f17d31cd025cdd10c8a72e1813e567cf0d06fcbd",
         "type": "github"
       },
       "original": {
@@ -570,11 +570,11 @@
     },
     "nixpkgs_6": {
       "locked": {
-        "lastModified": 1772736753,
-        "narHash": "sha256-au/m3+EuBLoSzWUCb64a/MZq6QUtOV8oC0D9tY2scPQ=",
+        "lastModified": 1772927210,
+        "narHash": "sha256-FdRDRoV0jRTiPK5ID22BaUX5P0wdsclpxtIOjaEy9Lo=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "917fec990948658ef1ccd07cef2a1ef060786846",
+        "rev": "0e6cdd5be64608ef630c2e41f8d51d484468492f",
         "type": "github"
       },
       "original": {
@@ -590,11 +590,11 @@
         "noctalia-qs": "noctalia-qs"
       },
       "locked": {
-        "lastModified": 1772891557,
-        "narHash": "sha256-7XgFaY3d80YMia/aan2tMItiFqFDZfQUnkva3rA1vJs=",
+        "lastModified": 1773058465,
+        "narHash": "sha256-i4fKQGI3z86KzYbx1ZThAAMhJsmYT40yJC5xvhmKyQA=",
         "owner": "noctalia-dev",
         "repo": "noctalia-shell",
-        "rev": "1f8d1bb3755144afbc4cf32098af24e43d28f8ef",
+        "rev": "9536553dc5a6df38470b2a178d88f2c44a69cd2a",
         "type": "github"
       },
       "original": {
@@ -627,11 +627,11 @@
     "nvim-dir": {
       "flake": false,
       "locked": {
-        "lastModified": 1772887739,
-        "narHash": "sha256-YLU9SnopyuzhNEovISDOPaXA4HghoxOhIOssxrozF9E=",
+        "lastModified": 1772991601,
+        "narHash": "sha256-/5LM2HwSK7N3ckgPy3Rlr6ySxT1h6QKEO35AgDhGSAU=",
         "ref": "refs/heads/master",
-        "rev": "b920fa01e85b23d4ce4b2be7a2bdde958a23da5a",
-        "revCount": 193,
+        "rev": "71f4e14d4f87600fdfdfdb6e72c8aa0545cb8607",
+        "revCount": 196,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/rolfst/nvim.git"
@@ -711,11 +711,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1772852295,
-        "narHash": "sha256-3FB/WzLZSiU2Mc50C9q9VXU1LRUZbsU6UHKmZG1C+hU=",
+        "lastModified": 1773025773,
+        "narHash": "sha256-Wik8+xApNfldpUFjPmJkPdg0RrvUPSWGIZis+A/0N1w=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "c10801f59c68e14c308aea8fa6b0b3d81d43c61e",
+        "rev": "3c06fdbbd36ff60386a1e590ee0cd52dcd1892bf",
         "type": "github"
       },
       "original": {
@@ -951,11 +951,11 @@
         "unstable": "unstable"
       },
       "locked": {
-        "lastModified": 1772493632,
-        "narHash": "sha256-tpYnT7nVrpAg9bbI9nSBKe9h8eJfWS/kyEzCLJPZijw=",
+        "lastModified": 1772910999,
+        "narHash": "sha256-8q5sXnyqx9Dz3NTt9rDjZUEHJUJgCcX7EzBN8GaIcs8=",
         "owner": "xmonad",
         "repo": "xmonad",
-        "rev": "0898137a0e0abd12f5e002186ab2e57e57fad4df",
+        "rev": "15a6978f5a325409dbdca25421d9e72adadf4e98",
         "type": "github"
       },
       "original": {
@@ -995,11 +995,11 @@
         "unstable": "unstable_2"
       },
       "locked": {
-        "lastModified": 1772493632,
-        "narHash": "sha256-tpYnT7nVrpAg9bbI9nSBKe9h8eJfWS/kyEzCLJPZijw=",
+        "lastModified": 1772910999,
+        "narHash": "sha256-8q5sXnyqx9Dz3NTt9rDjZUEHJUJgCcX7EzBN8GaIcs8=",
         "owner": "xmonad",
         "repo": "xmonad",
-        "rev": "0898137a0e0abd12f5e002186ab2e57e57fad4df",
+        "rev": "15a6978f5a325409dbdca25421d9e72adadf4e98",
         "type": "github"
       },
       "original": {

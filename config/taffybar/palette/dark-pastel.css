@@ -1,0 +1,19 @@
+@define-color pastel-blue rgba(85, 85, 255, 1);
+@define-color pastel-green rgba(85, 255, 85, 1);
+@define-color pastel-cyan rgba(85, 255, 255, 1);
+@define-color pastel-magenta rgba(255, 85, 255, 1);
+@define-color pastel-white rgba(255, 255, 255, 1);
+
+@define-color pastel-black rgba(0, 0, 0, 1);
+@define-color pastel-dim rgba(0, 0, 0, 0.4);
+@define-color pastel-dim-acc rgba(0, 0, 0, 0.6);
+@define-color transparent rgba(0, 0, 0, 0.0);
+
+@define-color bar-background @pastel-dim-acc;
+@define-color bar-foreground @pastel-white;
+@define-color button-background @transparent;
+@define-color hl-active-pad-bg @pastel-blue;
+@define-color hl-active-pad-fg @transparent;
+@define-color menu-background @pastel-black;
+@define-color menu-foreground @pastel-white;
+@define-color widget-background @pastel-dim;

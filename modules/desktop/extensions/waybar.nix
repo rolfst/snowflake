@@ -9,6 +9,7 @@ let
   inherit (lib) mkIf mkEnableOption;
 
   cfg = config.modules.desktop.extensions.waybar;
+  inherit (config.modules.themes.colors.main) bright normal types;
 in
 {
   options.modules.desktop.extensions.waybar = {
@@ -152,9 +153,9 @@ in
           };
           "mpd" = {
             "max-length" = 25;
-            "format" = "<span foreground='#bb9af7'></span> {title}";
+            "format" = "<span foreground='${normal.magenta}'></span> {title}";
             "format-paused" = " {title}";
-            "format-stopped" = "<span foreground='#bb9af7'></span>";
+            "format-stopped" = "<span foreground='${normal.magenta}'></span>";
             "format-disconnected" = "";
             "on-click" = "mpc --quiet toggle";
             "on-click-right" = "mpc ls | mpc add";
@@ -200,8 +201,8 @@ in
               }
               @keyframes blink_red {
                 to {
-                  background-color: rgb(242, 143, 173);
-                  color: rgb(26, 24, 38);
+                  background-color: ${normal.red};
+                  color: ${types.bg};
                 }
               }
               .warning, .critical, .urgent {
@@ -218,7 +219,7 @@ in
                 margin-left: 5px;
                 margin-right: 5px;
                 margin-top: 5px;
-                background-color: rgb(30, 30, 46);
+                background-color: ${types.bg};
               }
         #workspaces {
                 padding-left: 0px;
@@ -231,27 +232,27 @@ in
                 padding-right: 6px;
               }
         #workspaces button.active {
-                background-color: rgb(181, 232, 224);
-                color: rgb(26, 24, 38);
+                background-color: ${normal.cyan};
+                color: ${types.bg};
               }
         #workspaces button.urgent {
-                color: rgb(26, 24, 38);
+                color: ${types.bg};
               }
         #workspaces button:hover {
-                background-color: rgb(248, 189, 150);
-                color: rgb(26, 24, 38);
+                background-color: ${normal.yellow};
+                color: ${types.bg};
               }
               tooltip {
-                background: rgb(48, 45, 65);
+                background: ${types.bg};
               }
               tooltip label {
-                color: rgb(217, 224, 238);
+                color: ${types.fg};
               }
         #custom-launcher {
                 font-size: 20px;
                 padding-left: 8px;
                 padding-right: 6px;
-                color: #7ebae4;
+                color: ${normal.cyan};
               }
         #mode, #clock, #memory, #temperature,#cpu,#mpd, #idle_inhibitor, #temperature, #backlight, #pulseaudio, #network, #battery, #custom-powermenu, #custom-cava-internal {
                 padding-left: 10px;
@@ -263,54 +264,54 @@ in
               /*     color: rgb(26, 24, 38); */
               /* } */
         #memory {
-                color: rgb(181, 232, 224);
+                color: ${normal.cyan};
               }
         #cpu {
-                color: rgb(245, 194, 231);
+                color: ${normal.magenta};
               }
         #clock {
-                color: rgb(217, 224, 238);
+                color: ${types.fg};
               }
         #idle_inhibitor {
-                color: rgb(221, 182, 242);
+                color: ${normal.magenta};
               }
         #temperature {
-                color: rgb(150, 205, 251);
+                color: ${normal.blue};
               }
         #backlight {
-                color: rgb(248, 189, 150);
+                color: ${normal.yellow};
               }
         #pulseaudio {
-                color: rgb(245, 224, 220);
+                color: ${normal.white};
               }
         #network {
-                color: #ABE9B3;
+                color: ${normal.green};
               }
         #network.disconnected {
-                color: rgb(255, 255, 255);
+                color: ${bright.white};
               }
         #battery.charging, #battery.full, #battery.discharging {
-                color: rgb(250, 227, 176);
+                color: ${normal.yellow};
               }
         #battery.critical:not(.charging) {
-                color: rgb(242, 143, 173);
+                color: ${normal.red};
               }
         #custom-powermenu {
-                color: rgb(242, 143, 173);
+                color: ${normal.red};
               }
         #tray {
                 padding-right: 8px;
                 padding-left: 10px;
               }
         #mpd.paused {
-                color: #414868;
+                color: ${bright.black};
                 font-style: italic;
               }
         #mpd.stopped {
                 background: transparent;
               }
         #mpd {
-                color: #c0caf5;
+                color: ${bright.white};
               }
         #custom-cava-internal{
                 font-family: "Hack Nerd Font" ;

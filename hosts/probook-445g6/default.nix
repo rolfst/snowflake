@@ -9,7 +9,7 @@
   modules = {
     networking = {networkManager.enable = true;};
 
-    themes.active = "catppuccin";
+    themes.active = "dark-pastel";
 
     desktop = {
       gnome.enable = true;
