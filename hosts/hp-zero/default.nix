@@ -2,6 +2,7 @@
   pkgs,
   config,
   lib,
+  inputs,
   ...
 }:
 {
@@ -44,7 +45,7 @@
       openvpn = {
         enable = true;
         name = "company";
-        configFile = /home/rolfst/.config/openvpn/company.ovpn;
+        configFile = config.age.secrets."company-vpn".path;
       };
     };
 
@@ -118,7 +119,7 @@
       };
 
       toolset = {
-        citrix.enable = false;
+        citrix.enable = true;
         player = {
           music.enable = false;
           video.enable = false;
@@ -148,6 +149,13 @@
     };
   };
   fonts.packages = [ pkgs.my."delivery-font" ];
+
+  age.secrets."company-vpn" = {
+    file = "${inputs.self}/secrets/company-vpn.ovpn.age";
+    owner = "root";
+    group = "root";
+    mode = "0400";
+  };
 
   security.pki.certificateFiles = [
     ./rootCA.pem

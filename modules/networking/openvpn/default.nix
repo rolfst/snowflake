@@ -3,7 +3,7 @@
 let
   inherit (lib.modules) mkIf;
   inherit (lib.options) mkEnableOption mkOption;
-  inherit (lib.types) str path nullOr;
+  inherit (lib.types) str path nullOr either;
 
   cfg = config.modules.networking.openvpn;
 in {
@@ -11,9 +11,9 @@ in {
     enable = mkEnableOption "OpenVPN client";
 
     configFile = mkOption {
-      type = nullOr path;
+      type = nullOr (either path str);
       default = null;
-      description = "Path to the OpenVPN client configuration file (.ovpn).";
+      description = "Path to the OpenVPN client configuration file (.ovpn). Accepts a Nix path (read at eval time) or a string path (referenced at runtime, e.g. from age.secrets).";
     };
 
     name = mkOption {
@@ -32,7 +32,10 @@ in {
     ];
 
     services.openvpn.servers.${cfg.name} = {
-      config = builtins.readFile cfg.configFile;
+      config =
+        if builtins.isPath cfg.configFile
+        then builtins.readFile cfg.configFile
+        else "config ${cfg.configFile}";
       autoStart = false;
     };
 
