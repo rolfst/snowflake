@@ -37,7 +37,7 @@ in
             framework = "fcitx";
           };
           mimeApps.enable = true; # mimeApps -> default launch application
-          dunst.enable = true;
+          dunst.enable = false;
           waybar.enable = false;
           elkowar.enable = true;
           rofi.enable = true;
@@ -148,8 +148,19 @@ in
 
       environment.extraInit = ''
         if [ "$XDG_SESSION_DESKTOP" = "niri" ]; then
-          export WLR_NO_HARDWARE_CURSORS=1
           export NIXOS_OZONE_WL=1
+
+          # NVIDIA VA-API: hardware video decode in browsers & video players
+          export LIBVA_DRIVER_NAME=nvidia
+          export NVD_BACKEND=direct
+          export MOZ_DISABLE_RDD_SANDBOX=1
+
+          # Ensure Vulkan uses NVIDIA ICD
+          export VK_DRIVER_FILES=/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json
+
+          # GBM backend for Wayland EGL (NVIDIA)
+          export GBM_BACKEND=nvidia-drm
+          export __GLX_VENDOR_LIBRARY_NAME=nvidia
         fi
       '';
 

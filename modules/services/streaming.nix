@@ -17,6 +17,13 @@ let
   externalOutput = "HDMI-A-2";
   externalMode = "1920x1080@60Hz";
 
+  # NVIDIA PRIME offload env vars for launched apps
+  nvOffload = ''
+    export __NV_PRIME_RENDER_OFFLOAD=1
+    export __GLX_VENDOR_LIBRARY_NAME=nvidia
+    export __VK_LAYER_NV_optimus=NVIDIA_only
+  '';
+
   # Switch to external monitor if connected, otherwise keep laptop screen
   switchToExternal = pkgs.writeShellScript "sunshine-switch-external" ''
     if ${wlr-randr} | ${grep} -q '${externalOutput}'; then
@@ -80,8 +87,10 @@ in
       openFirewall = true;
       settings = {
         capture = "kms";
-        adapter_name = "/dev/dri/renderD128";
+        encoder = "nvenc";                # Use NVIDIA NVENC for HW encoding
+        adapter_name = "/dev/dri/renderD129";  # NVIDIA render node (Intel = renderD128)
         output_name = "0";
+        min_fps_factor = 1;               # Don't drop below target FPS
       };
       applications = {
         apps = [
@@ -99,7 +108,12 @@ in
           }
           {
             name = "Steam (Laptop)";
-            detached = [ "setsid steam steam://open/bigpicture" ];
+            detached = [
+              ''
+                ${nvOffload}
+                setsid steam steam://open/bigpicture
+              ''
+            ];
             prep-cmd = laptopMonitorPrepCmd;
           }
           # ── External monitor variants ──
@@ -116,7 +130,12 @@ in
           }
           {
             name = "Steam (External)";
-            detached = [ "setsid steam steam://open/bigpicture" ];
+            detached = [
+              ''
+                ${nvOffload}
+                setsid steam steam://open/bigpicture
+              ''
+            ];
             prep-cmd = externalMonitorPrepCmd;
           }
         ];

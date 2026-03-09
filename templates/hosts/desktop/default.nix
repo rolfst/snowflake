@@ -34,7 +34,7 @@
   };
 
   modules.shell = {
-    git.enable = true;
+    toolset.scm.enable = true;
     zsh.enable = true;
     gnupg.enable = true;
   };

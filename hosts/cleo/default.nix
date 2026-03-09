@@ -15,7 +15,7 @@
       mise.enable = true;
       toolset = {
         fzf.enable = true;
-        git.enable = true;
+        scm.enable = true;
         AI.enable = true;
       };
     };
@@ -102,7 +102,7 @@
         citrix.enable = false;
         player = {
           music.enable = false;
-          video.enable = false;
+          video.enable = true;
         };
         readers = {
           zathura.enable = true;
@@ -131,13 +131,13 @@
     ./rootCA.pem
   ];
 
-  specialisation = {
-    "X11-XMonad" = {
-      configuration = {
-        system.nixos.tags = [ "xmonad" ];
-        modules.desktop.niri.enable = lib.mkForce false;
-        modules.desktop.xmonad.enable = lib.mkForce true;
-      };
-    };
-  };
+  # specialisation = {
+  #   "X11-XMonad" = {
+  #     configuration = {
+  #       system.nixos.tags = [ "xmonad" ];
+  #       modules.desktop.niri.enable = lib.mkForce false;
+  #       modules.desktop.xmonad.enable = lib.mkForce true;
+  #     };
+  #   };
+  # };
 }

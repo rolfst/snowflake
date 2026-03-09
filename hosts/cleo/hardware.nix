@@ -7,13 +7,6 @@
 }:
 let
   inherit (lib) mkDefault;
-  nvidia-offload = pkgs.writeShellScriptBin "nvidia-offload" ''
-    export __NV_PRIME_RENDER_OFFLOAD=1
-    export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-GO
-    export __GLX_VENDOR_LIBRARY_NAME=nvidia
-    export __VK_LAYER_NV_optimus=NVIDIA_only
-    exec -a "$0" "$@"
-  '';
 in
 {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
@@ -46,7 +39,12 @@ in
         "usbhid"
         "xhci_pci"
       ];
-      kernelModules = [ ];
+      kernelModules = [
+        "nvidia"
+        "nvidia_modeset"
+        "nvidia_uvm"
+        "nvidia_drm"
+      ];
     };
     extraModulePackages = [ config.boot.kernelPackages.acpi_call ];
     kernelModules = [
@@ -54,7 +52,7 @@ in
       "kvm_intel"
     ];
     kernelParams = [
-      "pcie_aspm.policy=performance"
+      "nvidia-drm.fbdev=1"
       "nvidia.NVreg_PreserveVideoMemoryAllocations=1"
     ];
     kernel.sysctl = {
@@ -69,6 +67,9 @@ in
     graphics = {
       enable = true;
       enable32Bit = true;
+      extraPackages = with pkgs; [
+        intel-media-driver    # Intel iGPU VA-API (for offloaded video decode)
+      ];
     };
 
     nvidia = {
@@ -77,7 +78,10 @@ in
       powerManagement.enable = true;
       # Fine-grained power management. Turns off GPU when not in use.
       # Experimental and only works on modern Nvidia GPUs (Turing or newer).
-      powerManagement.finegrained = false;
+      powerManagement.finegrained = true;
+
+      # Keep NVIDIA kernel module state loaded for faster GPU wake from power-off.
+      nvidiaPersistenced = true;
 
       # Use the NVidia open source kernel module (not to be confused with the
       # independent third-party "nouveau" open source driver).
@@ -114,7 +118,6 @@ in
   };
 
   powerManagement.cpuFreqGovernor = mkDefault "schedutil";
-  environment.systemPackages = [ nvidia-offload ];
 
   # Manage device power-control:
   services = {
@@ -144,9 +147,6 @@ in
     };
     xserver = {
       videoDrivers = [ "nvidia" ];
-      deviceSection = ''
-        Option "TearFree" "true"
-      '';
     };
     libinput = {
       enable = true;
@@ -163,6 +163,10 @@ in
 
   # Finally, our beloved hardware module(s):
   modules.hardware = {
+    nvidia = {
+      enable = true;
+      cuda.enable = false;
+    };
     pipewire = {
       enable = true;
       # lowLatency.enable = true;

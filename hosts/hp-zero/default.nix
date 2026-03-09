@@ -27,7 +27,7 @@
       mise.enable = true;
       toolset = {
         fzf.enable = true;
-        git.enable = true;
+        scm.enable = true;
         AI.enable = true;
       };
     };
