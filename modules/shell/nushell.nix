@@ -188,7 +188,7 @@ in
 
         # -------===[ Useful Functions ]===------- #
         def la [path?: string] {
-          let target = if ($path | is-empty) { "." } else { $path }
+          let target = if ($path | is-empty) { "." } else { $path | path expand }
           ls -al $target | select name type modified mode user group size
             | each {|row| $row | merge { sort_key: (if $row.type == "dir" { "0" } else { "1" }) }}
             | sort-by sort_key name
