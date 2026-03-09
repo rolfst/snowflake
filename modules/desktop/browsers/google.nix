@@ -7,14 +7,18 @@
 }: let
   inherit (builtins) toString;
   inherit (lib.meta) getExe;
-  inherit (lib.modules) mkIf;
+  inherit (lib.modules) mkIf mkMerge;
   inherit (lib.strings) concatStringsSep;
+
+  cfg = config.modules.desktop.browsers;
+  isDefault = cfg.default == "google";
 in {
   options.modules.desktop.browsers.google = let
     inherit (lib.options) mkEnableOption;
   in {enable = mkEnableOption "Google chrome";};
 
-  config = mkIf config.modules.desktop.browsers.google.enable {
+  config = mkIf cfg.google.enable (mkMerge [
+    {
     user.packages = let
       inherit (pkgs) makeDesktopItem google-chrome;
     in [
@@ -88,5 +92,12 @@ in {
       #     ])
       #   ];
     };
-  };
+    }
+
+    # :NOTE| Notify system about our default browser
+    (mkIf isDefault {
+      home.sessionVariables.BROWSER = "google-chrome-stable";
+      modules.desktop.extensions.mimeApps.defApps.webBrowser = "google-chrome.desktop";
+    })
+  ]);
 }

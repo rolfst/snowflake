@@ -4,10 +4,7 @@
   lib,
   pkgs,
   ...
-}: let
-  inherit (lib.modules) mkIf;
-  cfg = config.modules.desktop.browsers;
-in {
+}: {
   options.modules.desktop.browsers = let
     inherit (lib.options) mkOption;
     inherit (lib.types) nullOr str;
@@ -16,9 +13,7 @@ in {
       type = nullOr str;
       default = null;
       description = "Default system browser";
-      example = "brave";
+      example = "google";
     };
   };
-
-  config = mkIf (cfg.default != null) {home.sessionVariables.BROWSER = cfg.default;};
 }

@@ -7,14 +7,25 @@
   ...
 }: let
   inherit (lib.attrsets) attrValues;
-  inherit (lib.modules) mkIf;
+  inherit (lib.modules) mkIf mkMerge;
   inherit (lib.strings) concatStringsSep;
+
+  cfg = config.modules.desktop.browsers;
+  isDefault = cfg.default == "zen";
 in {
   options.modules.desktop.browsers.zen = let
     inherit (lib.options) mkEnableOption;
   in {enable = mkEnableOption "Zen browser a modern firefox based browser";};
 
-  config = mkIf config.modules.desktop.browsers.zen.enable {
-    user.packages = [inputs.zen-browser.packages."${pkgs.system}".default];
-  };
+  config = mkIf cfg.zen.enable (mkMerge [
+    {
+      user.packages = [inputs.zen-browser.packages."${pkgs.system}".default];
+    }
+
+    # :NOTE| Notify system about our default browser
+    (mkIf isDefault {
+      home.sessionVariables.BROWSER = "zen";
+      modules.desktop.extensions.mimeApps.defApps.webBrowser = "zen.desktop";
+    })
+  ]);
 }

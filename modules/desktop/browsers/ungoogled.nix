@@ -8,8 +8,11 @@
 let
   inherit (builtins) toString;
   inherit (lib.meta) getExe;
-  inherit (lib.modules) mkIf;
+  inherit (lib.modules) mkIf mkMerge;
   inherit (lib.strings) concatStringsSep;
+
+  cfg = config.modules.desktop.browsers;
+  isDefault = cfg.default == "ungoogled";
 in
 {
   options.modules.desktop.browsers.ungoogled =
@@ -20,7 +23,8 @@ in
       enable = mkEnableOption "Google-free chromium";
     };
 
-  config = mkIf config.modules.desktop.browsers.ungoogled.enable {
+  config = mkIf cfg.ungoogled.enable (mkMerge [
+    {
     # user.packages = let inherit (pkgs) makeDesktopItem ungoogled-chromium;
     user.packages =
       let
@@ -75,5 +79,12 @@ in
           commandLineArgs = [ ungoogledFlags ];
         };
     };
-  };
+    }
+
+    # :NOTE| Notify system about our default browser
+    (mkIf isDefault {
+      home.sessionVariables.BROWSER = "chromium";
+      modules.desktop.extensions.mimeApps.defApps.webBrowser = "chromium-browser.desktop";
+    })
+  ]);
 }

@@ -12,6 +12,7 @@
   inherit (lib.strings) concatStrings;
 
   cfg = config.modules.desktop.browsers.firefox;
+  isDefault = config.modules.desktop.browsers.default == "firefox";
 in {
   options.modules.desktop.browsers.firefox = let
     inherit (lib.options) mkEnableOption;
@@ -226,6 +227,12 @@ in {
 
     (mkIf (config.modules.desktop.type == "wayland") {
       environment.variables = {MOZ_ENABLE_WAYLAND = "1";};
+    })
+
+    # :NOTE| Notify system about our default browser
+    (mkIf isDefault {
+      home.sessionVariables.BROWSER = "firefox";
+      modules.desktop.extensions.mimeApps.defApps.webBrowser = "firefox.desktop";
     })
   ]);
 }
