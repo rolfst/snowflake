@@ -1,4 +1,5 @@
-{config, ...}: {
+{ config, ... }:
+{
   hm.xdg.enable = true;
 
   environment = {
@@ -11,6 +12,7 @@
 
     variables = {
       GEMINI_API_KEY = "$(cat $HOME/gemini_api_key)";
+      # GITHUB_TOKEN = "$(cat $HOME/github_pat)";
       __GL_SHADER_DISK_CACHE_PATH = "$XDG_CACHE_HOME/nv";
       ASPELL_CONF = ''
         per-conf $XDG_CONFIG_HOME/aspell/aspell.conf;
