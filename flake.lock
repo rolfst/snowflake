@@ -627,11 +627,11 @@
     "nvim-dir": {
       "flake": false,
       "locked": {
-        "lastModified": 1772991601,
-        "narHash": "sha256-/5LM2HwSK7N3ckgPy3Rlr6ySxT1h6QKEO35AgDhGSAU=",
+        "lastModified": 1773063147,
+        "narHash": "sha256-iMydUNgjJlfETyuO4ReyIcEV6DH1HJf25yJmVcGyK9g=",
         "ref": "refs/heads/master",
-        "rev": "71f4e14d4f87600fdfdfdb6e72c8aa0545cb8607",
-        "revCount": 196,
+        "rev": "e454b920129061dcb8bbe7dd6d7c5a050ab162aa",
+        "revCount": 198,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/rolfst/nvim.git"

@@ -150,9 +150,11 @@ in
         if [ "$XDG_SESSION_DESKTOP" = "niri" ]; then
           export NIXOS_OZONE_WL=1
 
-          # NVIDIA VA-API: hardware video decode in browsers & video players
-          export LIBVA_DRIVER_NAME=nvidia
-          export NVD_BACKEND=direct
+          # VA-API video decode: let the system-wide LIBVA_DRIVER_NAME (set per-host
+          # in hardware.nix) decide which GPU handles decode.  On PRIME-offload
+          # laptops the Intel iGPU (iHD) is the correct VA-API provider — forcing
+          # "nvidia" here caused scrambled video because the dGPU is powered off in
+          # offload mode.
           export MOZ_DISABLE_RDD_SANDBOX=1
 
           # Ensure Vulkan uses NVIDIA ICD
