@@ -184,6 +184,19 @@ in
   };
   environment.systemPackages = [ nvidia-offload ];
 
+  # Restore networking after suspend/hibernate resume:
+  systemd.services.networkmanager-resume = {
+    description = "Restart NetworkManager on resume";
+    wantedBy = [ "post-resume.target" ];
+    after = [ "post-resume.target" ];
+    serviceConfig.Type = "oneshot";
+    script = ''
+      ${pkgs.util-linux}/bin/rfkill unblock all
+      sleep 2
+      ${pkgs.systemd}/bin/systemctl try-restart NetworkManager
+    '';
+  };
+
   # Manage device power-control:
   services = {
     fwupd.enable = true;
