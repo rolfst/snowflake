@@ -213,6 +213,7 @@ in
         cursor_shape = "block";
         cursor_blink_interval = "0.5";
         cursor_stop_blinking_after = "15.0";
+        cursor_trail = 3;
 
         input_delay = 3;
         pointer_shape_when_dragging = "beam";
@@ -324,7 +325,7 @@ in
                 cursor_text_color         ${types.fg}
 
                 tab_bar_background        ${types.bg}
-                tab_title_template        "{fmt.fg._7976ab}{fmt.bg.default} ○ {index}:{f'{title[:6]}…{title[-6:]}' if title.rindex(title[-1]) + 1 > 25 else title}{' []' if layout_name == 'stack' else '''} "
+                tab_title_template        "{fmt.fg._7976ab}{fmt.fg.default} ○ {index}:{f'{title[:6]}…{title[-6:]}' if title.rindex(title[-1]) + 1 > 25 else title}{' []' if layout_name == 'stack' else '''} "
                 active_tab_title_template "{fmt.fg._f2cdcd}{fmt.bg.default}   綠{session_name}-{index}:{f'{title[:6]}…{title[-6:]}' if title.rindex(title[-1]) + 1 > 25 else title}{' []' if layout_name == 'stack' else '''} "
 
                 selection_foreground      ${types.bg}
