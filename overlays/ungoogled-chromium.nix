@@ -17,9 +17,14 @@ final: prev: {
           "CopyLinkToText"
           "OverlayScrollbar"
           "TabHoverCardImages"
-          "VaapiVideoDecoder"
+          "AcceleratedVideoDecodeLinuxGL"
+          "AcceleratedVideoDecodeLinuxZeroCopyGL"
+          "AcceleratedVideoEncoder"
         ]
       }"
+
+      # Workaround for cross-GPU DMA-BUF compositing on hybrid Intel+NVIDIA
+      "--disable-gpu-compositing"
 
       # Aesthetics
       "--force-dark-mode"

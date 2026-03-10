@@ -69,9 +69,14 @@ in
                 "CopyLinkToText"
                 "OverlayScrollbar"
                 "TabHoverCardImages"
-                "VaapiVideoDecoder"
+                "AcceleratedVideoDecodeLinuxGL"
+                "AcceleratedVideoDecodeLinuxZeroCopyGL"
+                "AcceleratedVideoEncoder"
               ]
             }"
+
+            # Workaround for cross-GPU DMA-BUF compositing on hybrid Intel+NVIDIA
+            "--disable-gpu-compositing"
           ];
           # in pkgs.ungoogled-chromium.override {
         in
