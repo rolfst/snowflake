@@ -11,8 +11,9 @@
     };
 
     variables = {
-      GEMINI_API_KEY = "$(cat $HOME/gemini_api_key)";
-      # GITHUB_TOKEN = "$(cat $HOME/github_pat)";
+      GEMINI_API_KEY = "$(grep -oP '^gemini=\\K[^#]*' ${config.age.secrets."private-tokens".path} | head -1 | xargs)";
+      CONFLUENCE_API_TOKEN = "$(grep -oP '^atlassian=\\K[^#]*' ${config.age.secrets."private-tokens".path} | head -1 | xargs)";
+      # GITHUB_TOKEN = "$(grep -oP '^github_token=\\K[^#]*' ${config.age.secrets."private-tokens".path} | head -1 | xargs)";
       __GL_SHADER_DISK_CACHE_PATH = "$XDG_CACHE_HOME/nv";
       ASPELL_CONF = ''
         per-conf $XDG_CONFIG_HOME/aspell/aspell.conf;

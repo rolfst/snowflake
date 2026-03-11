@@ -157,6 +157,13 @@
     mode = "0400";
   };
 
+  age.secrets."private-tokens" = {
+    file = "${inputs.self}/secrets/private-tokens.age";
+    owner = config.user.name;
+    group = config.user.group;
+    mode = "0400";
+  };
+
   security.pki.certificateFiles = [
     ./rootCA.pem
   ];

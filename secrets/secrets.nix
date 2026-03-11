@@ -8,4 +8,5 @@ let
   allKeys = [ rolfst hp-zero ];
 in {
   "company-vpn.ovpn.age".publicKeys = allKeys;
+  "private-tokens.age".publicKeys = allKeys;
 }

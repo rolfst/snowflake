@@ -152,5 +152,7 @@ in
       e2fsprogs
       dosfstools
       ;
-  };
+  } ++ [
+    inputs.ragenix.packages.${pkgs.system}.default
+  ];
 }
