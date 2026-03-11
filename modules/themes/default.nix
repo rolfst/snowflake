@@ -219,15 +219,32 @@ in {
           name = name;
           package = package;
         };
-        gtk3.bookmarks = map (dir: "file://${config.user.home}/" + dir) [
-          "snowflake"
-          "notes"
-        ];
         gtk4.extraConfig = {
           gtk-cursor-blink = false;
           # gtk-recent-files-limit = 20;
         };
       };
+
+      # :NOTE| Seed GTK bookmarks as a mutable file so Thunar can add/remove
+      # bookmarks freely. Only writes defaults if no real bookmarks file exists.
+      system.userActivationScripts.seedGtkBookmarks = let
+        bookmarksFile = "${config.user.home}/.config/gtk-3.0/bookmarks";
+        defaultBookmarks = concatStringsSep "\n" (map (dir: "file://${config.user.home}/" + dir) [
+          "workspaces/snowflake"
+          "notes"
+        ]);
+      in ''
+        bookmarks="${bookmarksFile}"
+        # Remove stale symlink (from previous nix-store-managed bookmarks)
+        if [ -L "$bookmarks" ]; then
+          rm "$bookmarks"
+        fi
+        # Seed default bookmarks only if file doesn't exist
+        if [ ! -f "$bookmarks" ]; then
+          mkdir -p "$(dirname "$bookmarks")"
+          echo '${defaultBookmarks}' > "$bookmarks"
+        fi
+      '';
 
       home.pointerCursor = let
         inherit (cfg.pointer) name package size;
