@@ -60,7 +60,7 @@ in
         programs = {
           noctalia-shell = {
             enable = true;
-            systemd.enable = false; # Deprecated in v4.6.1 — launch from niri spawn-at-startup instead
+            systemd.enable = true;
             settings = builtins.fromJSON (readFile "${niriDir}/noctalia.json");
             plugins = {
               sources = [

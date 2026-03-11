@@ -242,8 +242,8 @@ layout {
 // which may be more convenient to use.
 // See the binds section below for more spawn examples.
 
-// Launch noctalia-shell (systemd startup deprecated in v4.6.1)
-spawn-at-startup "noctalia-shell"
+// noctalia-shell is launched via systemd (see niri.nix)
+// spawn-at-startup "noctalia-shell"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
