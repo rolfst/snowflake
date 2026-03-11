@@ -23,11 +23,14 @@ in
     (mkIf cfg.enable {
       services.logind = {
         settings.Login = {
-          HandleLidSwitch = "suspend";
-          HandleLidSwitchExternalPower = "suspend";
-          HandleLidSwitchDocked = "suspend";
+          HandleLidSwitch = "suspend-then-hibernate";
+          HandleLidSwitchExternalPower = "suspend-then-hibernate";
+          HandleLidSwitchDocked = "suspend-then-hibernate";
         };
       };
+      systemd.sleep.extraConfig = ''
+        HibernateDelaySec=15min
+      '';
       services.auto-cpufreq.enable = true;
       services.auto-cpufreq.settings = {
         battery = {
