@@ -29,6 +29,7 @@
         fzf.enable = true;
         scm.enable = true;
         AI.enable = true;
+        fastfetch.enable = true;
       };
     };
     hardware = {
