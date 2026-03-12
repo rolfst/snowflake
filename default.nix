@@ -153,6 +153,6 @@ in
       dosfstools
       ;
   } ++ [
-    inputs.ragenix.packages.${pkgs.system}.default
+    inputs.ragenix.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 }

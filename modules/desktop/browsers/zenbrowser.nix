@@ -19,7 +19,7 @@ in {
 
   config = mkIf cfg.zen.enable (mkMerge [
     {
-      user.packages = [inputs.zen-browser.packages."${pkgs.system}".default];
+      user.packages = [inputs.zen-browser.packages."${pkgs.stdenv.hostPlatform.system}".default];
     }
 
     # :NOTE| Notify system about our default browser
