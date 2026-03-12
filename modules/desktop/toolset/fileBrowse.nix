@@ -83,6 +83,7 @@ in
 
       hm.xfconf.settings."thunar" = {
         "last-view" = "ThunarDetailsView";
+        "last-side-pane" = "ThunarShortcutsPane";
       };
     })
   ];
