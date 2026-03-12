@@ -33,7 +33,8 @@ in
   config = mkMerge [
     {
       # :NOTE| Notify system about our file-browser
-      modules.desktop.extensions.mimeApps.defApps.fileBrowser = cfg.program;
+      modules.desktop.extensions.mimeApps.defApps.fileBrowser = "${cfg.program}.desktop";
+      modules.desktop.extensions.mimeApps.defApps.archiveManager = "engrampa.desktop";
       services.gvfs.enable = true;
 
       environment.systemPackages = attrValues (

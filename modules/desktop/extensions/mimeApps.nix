@@ -19,6 +19,7 @@ in {
   in {
     enable = mkEnableOption "default applications";
     defApps = {
+      archiveManager = mkOpt str "engrampa.desktop";
       docViewer = mkOpt str "org.pwmt.zathura.desktop";
       editor = mkOpt str "emacsclient.desktop";
       fileBrowser = mkOpt str "org.gnome.Nautilus.desktop";
@@ -35,11 +36,11 @@ in {
       enable = true;
       defaultApplications = let
         defaultApps = let
-          inherit (cfg.defApps) docViewer editor fileBrowser imageViewer mediaPlayer webBrowser;
+          inherit (cfg.defApps) archiveManager docViewer editor fileBrowser imageViewer mediaPlayer webBrowser;
         in {
           audio = [mediaPlayer];
           browser = [webBrowser];
-          compression = [fileBrowser];
+          compression = [archiveManager];
           directory = [fileBrowser];
           image = [imageViewer];
           mail = [editor];
