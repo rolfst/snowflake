@@ -21,6 +21,7 @@ in {
     defApps = {
       archiveManager = mkOpt str "engrampa.desktop";
       docViewer = mkOpt str "org.pwmt.zathura.desktop";
+      ebookViewer = mkOpt str "calibre-ebook-viewer.desktop";
       editor = mkOpt str "emacsclient.desktop";
       fileBrowser = mkOpt str "org.gnome.Nautilus.desktop";
       imageViewer = mkOpt str "feh.desktop";
@@ -36,12 +37,13 @@ in {
       enable = true;
       defaultApplications = let
         defaultApps = let
-          inherit (cfg.defApps) archiveManager docViewer editor fileBrowser imageViewer mediaPlayer webBrowser;
+          inherit (cfg.defApps) archiveManager docViewer ebookViewer editor fileBrowser imageViewer mediaPlayer webBrowser;
         in {
           audio = [mediaPlayer];
           browser = [webBrowser];
           compression = [archiveManager];
           directory = [fileBrowser];
+          ebook = [ebookViewer];
           image = [imageViewer];
           mail = [editor];
           pdf = [docViewer];
@@ -91,6 +93,20 @@ in {
             "application/zip"
           ];
           directory = ["inode/directory"];
+          ebook = [
+            "application/epub+zip"
+            "application/x-mobipocket-ebook"
+            "application/x-mobi8-ebook"
+            "application/x-cbz"
+            "application/x-cbr"
+            "application/x-cb7"
+            "application/x-cbc"
+            "application/x-sony-bbeb"
+            "application/x-mobipocket-subscription"
+            "application/ereader"
+            "image/vnd.djvu"
+            "text/fb2+xml"
+          ];
           image = [
             "image/bmp"
             "image/gif"

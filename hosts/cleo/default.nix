@@ -108,7 +108,7 @@
         readers = {
           zathura.enable = true;
           sioyek.enable = false;
-          calibre.enable = false;
+          calibre.enable = true;
         };
         social = {
           base.enable = true;

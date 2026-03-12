@@ -144,6 +144,8 @@ in {
     })
 
     (mkIf cfg.calibre.enable {
+      modules.desktop.extensions.mimeApps.defApps.ebookViewer = "calibre-ebook-viewer.desktop";
+
       environment.systemPackages = with pkgs; [
         libwebp
         (calibre.override {
