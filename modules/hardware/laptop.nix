@@ -21,6 +21,10 @@ in
 
   config = mkMerge [
     (mkIf cfg.enable {
+      # Disable protectKernelImage on laptops: it adds "nohibernate" to kernel
+      # params, which prevents suspend-then-hibernate from working.
+      security.protectKernelImage = lib.mkForce false;
+
       services.logind = {
         settings.Login = {
           HandleLidSwitch = "suspend-then-hibernate";
