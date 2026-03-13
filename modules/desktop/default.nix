@@ -153,6 +153,7 @@ in
           };
         };
       };
+      security.pam.services.greetd.enableGnomeKeyring = true;
     })
 
     (mkIf (cfg.type != null && builtins.elem "x11" cfg.type) {
