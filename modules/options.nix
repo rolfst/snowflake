@@ -2,6 +2,7 @@
   config,
   options,
   lib,
+  pkgs,
   home-manager,
   ...
 }:
@@ -50,7 +51,10 @@ in
   config = {
     programs.nix-ld = {
       enable = true;
-      libraries = options.programs.nix-ld.libraries.default;
+      libraries = options.programs.nix-ld.libraries.default ++ (with pkgs; [
+        libsecret
+        glib
+      ]);
     };
     user =
       let

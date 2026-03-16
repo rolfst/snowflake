@@ -24,27 +24,33 @@ in
 
   config = mkMerge [
     (mkIf cfg.iwd.enable {
-      networking.wireless.iwd = {
-        enable = true;
-        settings = {
-          General = {
-            AddressRandomization = "network";
-            AddressRandomizationRange = "full";
-            EnableNetworkConfiguration = true;
-            RoamRetryInterval = 15;
-          };
-          Network = {
-            EnableIPv6 = true;
-            RoutePriorityOffset = 300;
-            # NameResolvingService = "resolvconf";
-          };
-          Settings = {
-            AutoConnect = true;
-            # AlwaysRandomizeAddress = false;
-          };
-          Rank.BandModifier5Ghz = 2.0;
-          Scan.DisablePeriodicScan = true;
+      networking = {
+        networkmanager = {
         };
+
+        wireless.extraConfig = "country=NL";
+        # wireless.iwd = {
+        #   enable = false;
+        #   settings = {
+        #     General = {
+        #       AddressRandomization = "network";
+        #       AddressRandomizationRange = "full";
+        #       EnableNetworkConfiguration = true;
+        #       RoamRetryInterval = 15;
+        #     };
+        #     Network = {
+        #       EnableIPv6 = true;
+        #       RoutePriorityOffset = 300;
+        #       # NameResolvingService = "resolvconf";
+        #     };
+        #     Settings = {
+        #       AutoConnect = true;
+        #       # AlwaysRandomizeAddress = false;
+        #     };
+        #     Rank.BandModifier5Ghz = 2.0;
+        #     Scan.DisablePeriodicScan = true;
+        #   };
+        # };
       };
 
       # A GUI for easier network management:
