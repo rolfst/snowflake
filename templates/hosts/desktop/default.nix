@@ -1,8 +1,19 @@
-{ pkgs, config, lib, ... }: {
-  imports = [ ../home.nix ./hardware-configuration.nix ];
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
+{
+  imports = [
+    ../home.nix
+    ./hardware-configuration.nix
+  ];
 
   ## Modules
-  modules.themes = { active = "catppuccin"; };
+  modules.themes = {
+    active = "catppuccin";
+  };
 
   modules.desktop = {
     xmonad.enable = true;
@@ -25,7 +36,9 @@
       music.enable = true;
       video.enable = true;
     };
-    toolset.docView = { sioyek.enable = true; };
+    toolset.docView = {
+      sioyek.enable = true;
+    };
   };
 
   modules.develop = {
@@ -44,7 +57,7 @@
   services.openssh.startWhenNeeded = true;
 
   networking = {
-    networkmanager.enable = true;
+    networkmanager.enable = false;
     useDHCP = false;
   };
 }

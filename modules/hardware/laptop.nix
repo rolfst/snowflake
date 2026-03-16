@@ -29,7 +29,7 @@ in
         settings.Login = {
           HandleLidSwitch = "suspend-then-hibernate";
           HandleLidSwitchExternalPower = "suspend-then-hibernate";
-          HandleLidSwitchDocked = "suspend-then-hibernate";
+          HandleLidSwitchDocked = "ignore"; # Act as docked: no suspend when external monitor attached
         };
       };
       systemd.sleep.extraConfig = ''

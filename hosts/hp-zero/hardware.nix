@@ -108,11 +108,16 @@ in
     # NOTE: You must update the resume_offset after creating the swapfile.
     # Run: btrfs inspect-internal map-swapfile -r /mnt/swap/swapfile
     # Then add "resume_offset=XXXXX" to kernelParams below.
-    kernelParams = [
+    kernelParams = lib.mkAfter [
       # pcie_aspm.policy=performance is already set in default.nix for all hosts
-      "nvidia.NVreg_PreserveVideoMemoryAllocations=1"
       "i915.enable_guc=3"
       "resume_offset=533760" # REPLACE with output from 'btrfs inspect-internal map-swapfile'
+      "mem_sleep_default=s2idle" # Use s2idle for S0ix support with NVIDIA open driver
+      "nvidia.NVreg_EnableS0ixPowerManagement=1" # Enable S0ix power management (NVIDIA 570+)
+      # Override NixOS nvidia module's PreserveVideoMemoryAllocations=1:
+      # powerManagement.enable injects =1, but S0ix self-refresh handles VRAM natively;
+      # the preserve path triggers open-driver bug #472. Kernel uses LAST cmdline value.
+      "nvidia.NVreg_PreserveVideoMemoryAllocations=0"
     ];
     kernel.sysctl = {
       "net.ipv4.icmp_echo_ignore_broadcasts" = 1; # Refuse ICMP echo requests
@@ -136,7 +141,9 @@ in
 
     nvidia = {
       modesetting.enable = true;
-      # Nvidia power management. Required for suspend/resume to work reliably with PreserveVideoMemoryAllocations.
+      # Nvidia power management. Creates nvidia-suspend/hibernate/resume systemd services.
+      # Note: this also injects NVreg_PreserveVideoMemoryAllocations=1, which we override
+      # to =0 in kernelParams (S0ix self-refresh handles VRAM instead).
       powerManagement.enable = true;
       # Fine-grained power management. Turns off GPU when not in use.
       # Experimental and only works on modern Nvidia GPUs (Turing or newer).
@@ -183,6 +190,45 @@ in
     LIBVA_DRIVER_NAME = "iHD";
   };
   environment.systemPackages = [ nvidia-offload ];
+
+  # NVIDIA suspend-then-hibernate support:
+  #
+  # NixOS wires nvidia-suspend/hibernate/resume to systemd-suspend.service and
+  # systemd-hibernate.service, but NOT to systemd-suspend-then-hibernate.service.
+  #
+  # Strategy (S0ix + NVIDIA's own system-sleep hook):
+  # - nvidia-suspend.service: Before= wiring handles the initial suspend prep
+  # - NVIDIA's system-sleep/nvidia hook: handles mid-cycle transitions (hibernate
+  #   phase, suspend-after-failed-hibernate) via lightweight procfs writes
+  # - nvidia-resume.service: After= wiring handles the final VT switch/restore
+  #   when the entire suspend-then-hibernate cycle completes
+  #
+  # The hook intentionally does NOT do VT switch on mid-cycle resume (post:*),
+  # only writes "resume" to /proc/driver/nvidia/suspend. This avoids switching
+  # back to Xorg between the suspend→hibernate transition. The full nvidia-sleep.sh
+  # resume (with VT switch) runs via nvidia-resume.service at cycle end.
+  systemd.services.nvidia-suspend.requiredBy = [ "systemd-suspend-then-hibernate.service" ];
+  systemd.services.nvidia-suspend.before = [ "systemd-suspend-then-hibernate.service" ];
+  systemd.services.nvidia-resume.requiredBy = [ "systemd-suspend-then-hibernate.service" ];
+  systemd.services.nvidia-resume.after = [ "systemd-suspend-then-hibernate.service" ];
+
+  # Deploy NVIDIA's own system-sleep hook from the driver package.
+  # NixOS's systemd.packages only picks up .service/.timer units, not system-sleep hooks.
+  # This hook handles suspend-then-hibernate mid-cycle transitions (hibernate prep,
+  # suspend-after-failed-hibernate, lightweight procfs resume) without VT switching.
+  # For plain suspend/hibernate, it calls the full nvidia-sleep.sh resume.
+  environment.etc."systemd/system-sleep/nvidia" = {
+    source = "${config.hardware.nvidia.package}/lib/systemd/system-sleep/nvidia";
+    mode = "0755";
+  };
+
+  # systemd 256+ freezes user sessions BEFORE nvidia-sleep.sh can write to
+  # /proc/driver/nvidia/suspend, breaking NVIDIA's suspend preparation.
+  # All major distros (Arch, Debian, Gentoo, openSUSE) ship this workaround.
+  # See: https://github.com/NVIDIA/open-gpu-kernel-modules/issues/834
+  systemd.services.systemd-suspend.serviceConfig.Environment = "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false";
+  systemd.services.systemd-hibernate.serviceConfig.Environment = "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false";
+  systemd.services.systemd-suspend-then-hibernate.serviceConfig.Environment = "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false";
 
   # Restore networking after suspend/hibernate resume:
   systemd.services.networkmanager-resume = {
