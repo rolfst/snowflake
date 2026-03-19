@@ -17,6 +17,9 @@
       CONFLUENCE_API_TOKEN = "$(grep -oP '^atlassian=\\K[^#]*' ${
         config.age.secrets."private-tokens".path
       } | head -1 | xargs)";
+      ATLASSIAN_API_TOKEN = "$(grep -oP 'rovo=\\K[^#]*' ${
+        config.age.secrets."private-tokens".path
+      } | head -1 | xargs )";
       GITHUB_TOKEN = "$(grep -oP '^github_token=\\K[^#]*' ${
         config.age.secrets."private-tokens".path
       } | head -1 | xargs)";

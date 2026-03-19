@@ -231,15 +231,20 @@ in
   systemd.services.systemd-suspend-then-hibernate.serviceConfig.Environment = "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false";
 
   # Restore networking after suspend/hibernate resume:
+  # Don't restart NetworkManager — that kills the daemon and causes a race
+  # condition where the old/new NM instances fight over wlan0, soft-blocking
+  # rfkill. Instead, just unblock rfkill and tell NM to reconnect.
   systemd.services.networkmanager-resume = {
-    description = "Restart NetworkManager on resume";
+    description = "Reconnect NetworkManager on resume";
     wantedBy = [ "post-resume.target" ];
     after = [ "post-resume.target" ];
     serviceConfig.Type = "oneshot";
+    path = [ pkgs.util-linux pkgs.networkmanager ];
     script = ''
-      ${pkgs.util-linux}/bin/rfkill unblock all
-      sleep 2
-      ${pkgs.systemd}/bin/systemctl try-restart NetworkManager
+      rfkill unblock wifi
+      sleep 1
+      nmcli networking on
+      nmcli radio wifi on
     '';
   };
 

@@ -71,6 +71,7 @@
       cc.enable = true;
       xdg.enable = true;
       kubernetes.enable = true;
+      documentation.enable = true;
       cloud = {
         aws.enable = false;
         azure.enable = true;
