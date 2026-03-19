@@ -71,8 +71,7 @@ in
       # user.packages = [ pkgs.iwgtk ];
       networking.networkmanager = {
         enable = mkDefault true;
-        # wifi.backend = "wpa_supplicant";
-        wifi.backend = "iwd";
+        wifi.backend = "wpa_supplicant";
         settings = {
           connection = {
             "wifi.powersave" = 2;
