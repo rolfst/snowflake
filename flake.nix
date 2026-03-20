@@ -150,6 +150,8 @@
       homeConfigurations = {
         cleo =
           nixosConfigurations.cleo.config.home-manager.users.${nixosConfigurations.cleo.config.user.name}.home;
+        cleo2 =
+          nixosConfigurations.cleo2.config.home-manager.users.${nixosConfigurations.cleo2.config.user.name}.home;
       };
 
       devShells."${system}".default = import ./shell.nix { inherit lib pkgs; };
