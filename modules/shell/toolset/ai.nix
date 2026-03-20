@@ -1,14 +1,28 @@
 {
   config,
-  options,
   lib,
-  pkgs,
-  inputs,
   ...
 }:
 let
-  inherit (lib.attrsets) attrValues optionalAttrs;
   inherit (lib.modules) mkIf;
+
+  cfg = config.modules.shell.toolset.AI;
+  configDir = config.snowflake.configDir;
+  skillsDir = "${configDir}/opencode/skills";
+
+  # Auto-discover all skill directories under config/opencode/skills/
+  skillNames = builtins.attrNames (
+    lib.filterAttrs (_: type: type == "directory") (builtins.readDir skillsDir)
+  );
+
+  # Generate xdg configFile entries for each discovered skill
+  skillConfigFiles = builtins.listToAttrs (map (name: {
+    name = "opencode-skill-${name}";
+    value = {
+      target = "opencode/skills/${name}/SKILL.md";
+      source = "${skillsDir}/${name}/SKILL.md";
+    };
+  }) skillNames);
 in
 {
   options.modules.shell.toolset.AI =
@@ -19,7 +33,7 @@ in
       enable = mkEnableOption "Agentic AI code base helper";
     };
 
-  config = mkIf config.modules.shell.toolset.AI.enable {
-    environment.systemPackages = with pkgs; [ ];
+  config = mkIf cfg.enable {
+    create.configFile = skillConfigFiles;
   };
 }
