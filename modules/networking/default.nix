@@ -54,7 +54,10 @@ in
       };
 
       # A GUI for easier network management:
-      user.packages = [ pkgs.iwgtk ];
+      user.packages = [
+        pkgs.iwgtk
+        pkgs.iw
+      ];
 
       # Launch indicator as a daemon on login:
       systemd.user.services.iwgtk = {
@@ -67,8 +70,7 @@ in
     (mkIf cfg.networkManager.enable {
       systemd.services.NetworkManager-wait-online.enable = false;
 
-      # networking.wireless.iwd.enable = true;
-      # user.packages = [ pkgs.iwgtk ];
+      user.packages = [ pkgs.iw ];
       networking.networkmanager = {
         enable = mkDefault true;
         wifi.backend = "wpa_supplicant";

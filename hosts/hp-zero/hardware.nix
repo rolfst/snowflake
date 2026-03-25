@@ -266,6 +266,16 @@ in
         PCIE_ASPM_ON_AC = "performance";
         PCIE_ASPM_ON_BAT = "powersave";
 
+        # Let NetworkManager handle WiFi exclusively — prevents TLP resume
+        # hook from toggling the radio and causing a spurious disconnect.
+        DEVICES_TO_DISABLE_ON_STARTUP = "";
+        DEVICES_TO_ENABLE_ON_STARTUP = "";
+        RESTORE_DEVICE_STATE_ON_STARTUP = 0;
+        DEVICES_TO_DISABLE_ON_SUSPEND = "";
+        DEVICES_TO_ENABLE_ON_RESUME = "";
+        WIFI_PWR_ON_AC = "off";
+        WIFI_PWR_ON_BAT = "off";
+
         # Prevents bluez from hanging:
         USB_DENYLIST = "8087:0029";
       };

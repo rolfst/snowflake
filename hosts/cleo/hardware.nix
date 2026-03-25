@@ -119,6 +119,22 @@ in
 
   powerManagement.cpuFreqGovernor = mkDefault "schedutil";
 
+  # --- Suspend-only policy ---
+  # This host has no swapfile/resume device, so hibernate is impossible.
+  # Override the shared laptop.nix suspend-then-hibernate defaults.
+  security.protectKernelImage = lib.mkOverride 49 true; # adds "nohibernate" — extra safety (wins over laptop.nix mkForce=50)
+  services.logind.settings.Login = {
+    HandleLidSwitch = lib.mkForce "suspend";
+    HandleLidSwitchExternalPower = lib.mkForce "suspend";
+  };
+  systemd.sleep.extraConfig = lib.mkForce ""; # drop HibernateDelaySec from laptop.nix
+
+  # systemd 256+ freezes user sessions BEFORE nvidia-sleep.sh can write to
+  # /proc/driver/nvidia/suspend, breaking NVIDIA's suspend preparation.
+  # All major distros (Arch, Debian, Gentoo, openSUSE) ship this workaround.
+  # See: https://github.com/NVIDIA/open-gpu-kernel-modules/issues/834
+  systemd.services.systemd-suspend.serviceConfig.Environment = "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false";
+
   # Manage device power-control:
   services = {
     upower.enable = true;
@@ -140,6 +156,16 @@ in
 
         PCIE_ASPM_ON_AC = "performance";
         PCIE_ASPM_ON_BAT = "powersave";
+
+        # Let NetworkManager handle WiFi exclusively — prevents TLP resume
+        # hook from toggling the radio and causing a spurious disconnect.
+        DEVICES_TO_DISABLE_ON_STARTUP = "";
+        DEVICES_TO_ENABLE_ON_STARTUP = "";
+        RESTORE_DEVICE_STATE_ON_STARTUP = 0;
+        DEVICES_TO_DISABLE_ON_SUSPEND = "";
+        DEVICES_TO_ENABLE_ON_RESUME = "";
+        WIFI_PWR_ON_AC = "off";
+        WIFI_PWR_ON_BAT = "off";
 
         # Prevents bluez from hanging:
         USB_DENYLIST = "8087:0029";

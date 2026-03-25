@@ -4,47 +4,60 @@ set -euo pipefail
 ## Defaults
 keepGensDef=30; keepDaysDef=30
 keepGens=$keepGensDef; keepDays=$keepDaysDef
+autoConfirm=false
 
 ## Usage
 usage () {
-    printf "Usage:\n\t ./trim-generations.sh <keep-gernerations> <keep-days> <profile> \n\n
+    printf "Usage:\n\t ./nix-generation-trim.sh [--yes] <keep-generations> <keep-days> <profile> \n\n
 (defaults are: Keep-Gens=$keepGensDef Keep-Days=$keepDaysDef Profile=user)\n\n"
     printf "If you enter any parameters, you must enter all three, or none to use defaults.\n"
-    printf "Example:\n\t trim-generations.sh 15 10 home-manager\n"
+    printf "Example:\n\t nix-generation-trim.sh 15 10 home-manager\n"
     printf "  this will work on the home-manager profile and keep all generations from the\n"
     printf "last 10 days, and keep at least 15 generations no matter how old.\n"
+    printf "\nOptions:\n"
+    printf "  --yes, -y\t Skip all confirmation prompts (for non-interactive/automated use)\n"
     printf "\nProfiles available are:\tuser, home-manager, channels, system (root)\n"
     printf "\n-h or --help prints this help text."
 }
 
+## Parse --yes / -y flag first
+args=()
+for arg in "$@"; do
+    case "$arg" in
+        --yes|-y) autoConfirm=true ;;
+        *) args+=("$arg") ;;
+    esac
+done
+set -- "${args[@]+"${args[@]}"}"
+
 if [ $# -eq 1 ]; then      # if help requested
-    if [ $1 = "-h" ]; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
          usage
          exit 1;
     fi
-    if [ $1 = "--help" ]; then
-         usage
-         exit 2;
-    fi
-    printf "Dont recognise your option exiting..\n\n"
+    printf "Don't recognise your option, exiting..\n\n"
     usage
     exit 3;
 
     elif [ $# -eq 0 ]; then            # print the defaults
-        printf "The current defaults are:\n Keep-Gens=$keepGensDef Keep-Days=$keepDaysDef \n\n"
-        read -p "Keep these defaults? (y/n):" answer
+        if [ "$autoConfirm" = true ]; then
+            printf "Using defaults: Keep-Gens=$keepGensDef Keep-Days=$keepDaysDef\n"
+        else
+            printf "The current defaults are:\n Keep-Gens=$keepGensDef Keep-Days=$keepDaysDef \n\n"
+            read -p "Keep these defaults? (y/n):" answer
 
-        case "$answer" in
-        [yY1] )
-                printf "Using defaults..\n"
-            ;;
-        [nN0] ) printf "ok, doing nothing, exiting..\n"
-            exit 6;
-            ;;
-        *     ) printf "%b" "Doing nothing, exiting.."
-            exit 7;
-            ;;
-        esac
+            case "$answer" in
+            [yY1] )
+                    printf "Using defaults..\n"
+                ;;
+            [nN0] ) printf "ok, doing nothing, exiting..\n"
+                exit 6;
+                ;;
+            *     ) printf "%b" "Doing nothing, exiting.."
+                exit 7;
+                ;;
+            esac
+        fi
 fi
 
 ## Handle parameters (and change if root)
@@ -56,7 +69,7 @@ else
     elif [ -d /nix/var/nix/profiles/default ]; then
         profile="/nix/var/nix/profiles/default"
     else
-        echo "Cant find profile for root. Exiting"
+        echo "Can't find profile for root. Exiting"
         exit 8
     fi
 fi
@@ -73,39 +86,45 @@ elif (( $# > 4)); then
 else
     if [ $1 -lt 1 ]; then
         printf "using Gen numbers less than 1 not recommended. Setting to min=1\n"
-        read -p "is that ok? (y/n): " asnwer
-        #printf "$asnwer"
-        case "$asnwer" in
-        [yY1] )
-            printf "ok, continuing..\n"
-            ;;
-        [nN0] )
-            printf "ok, doing nothing, exiting..\n"
-            exit 6;
-            ;;
-        *     )
-            printf "%b" "Doing nothing, exiting.."
-            exit 7;
-            ;;
-        esac
+        if [ "$autoConfirm" = true ]; then
+            printf "Auto-confirmed (--yes), continuing..\n"
+        else
+            read -p "is that ok? (y/n): " answer
+            case "$answer" in
+            [yY1] )
+                printf "ok, continuing..\n"
+                ;;
+            [nN0] )
+                printf "ok, doing nothing, exiting..\n"
+                exit 6;
+                ;;
+            *     )
+                printf "%b" "Doing nothing, exiting.."
+                exit 7;
+                ;;
+            esac
+        fi
     fi
     if [ $2 -lt 0 ]; then
         printf "using negative days number not recommended. Setting to min=0\n"
-        read -p "is that ok? (y/n): " asnwer
-
-        case "$asnwer" in
-        [yY1] )
-            printf "ok, continuing..\n"
-            ;;
-        [nN0] )
-            printf "ok, doing nothing, exiting..\n"
-            exit 6;
-            ;;
-        *     )
-            printf "%b" "Doing nothing, exiting.."
-            exit 7;
-            ;;
-        esac
+        if [ "$autoConfirm" = true ]; then
+            printf "Auto-confirmed (--yes), continuing..\n"
+        else
+            read -p "is that ok? (y/n): " answer
+            case "$answer" in
+            [yY1] )
+                printf "ok, continuing..\n"
+                ;;
+            [nN0] )
+                printf "ok, doing nothing, exiting..\n"
+                exit 6;
+                ;;
+            *     )
+                printf "%b" "Doing nothing, exiting.."
+                exit 7;
+                ;;
+            esac
+        fi
     fi
     keepGens=$1; keepDays=$2;
     (( keepGens < 1 )) && keepGens=1
@@ -146,13 +165,19 @@ printf "Operating on profile: \t $profile\n\n"
 choose () {
     local default="$1"
     local prompt="$2"
-    local answer
 
+    if [ "$autoConfirm" = true ]; then
+        printf "Auto-confirmed (--yes): deleting generations..\n"
+        nix-env --delete-generations -p $profile ${!gens[@]}
+        exit 0
+    fi
+
+    local answer
     read -p "$prompt" answer
     [ -z "$answer" ] && answer="$default"
 
     case "$answer" in
-        [yY1] ) #printf "answered yes!\n"
+        [yY1] )
              nix-env --delete-generations -p $profile ${!gens[@]}
             exit 0
             ;;
@@ -165,7 +190,6 @@ choose () {
     esac
 } # end of function choose
 
-# printf "profile = $profile\n\n"
 ## Query nix-env for generations list
 IFS=$'\n' nixGens=( $(nix-env --list-generations -p $profile | sed 's:^\s*::; s:\s*$::' | tr '\t' ' ' | tr -s ' ') )
 timeNow=$(date +%s)
@@ -175,7 +199,6 @@ IFS=' ' read -r -a oldestGenArr <<< "${nixGens[0]}"
 oldestGen=${oldestGenArr[0]}
 oldestDate=${oldestGenArr[1]}
 printf "%-30s %s\n" "oldest generation:" $oldestGen
-#oldestDate=${nixGens[0]:3:19}
 printf "%-30s %s\n" "oldest generation created:" $oldestDate
 oldestTime=$(date -d "$oldestDate" +%s)
 oldestElapsedSecs=$((timeNow-oldestTime))
@@ -241,4 +264,3 @@ else
     printf "\n"
     choose "y" "Do you want to delete these? [Y/n]: "
 fi
-

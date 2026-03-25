@@ -119,6 +119,7 @@ in
           ripdrag
           lsof
           file
+          zoxide
           ;
 
         # GNU Alternatives

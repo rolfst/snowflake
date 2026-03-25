@@ -60,7 +60,7 @@ in
       gc = {
         automatic = true;
         dates = "weekly";
-        options = "--delete-older-than-2d";
+        options = "--delete-older-than 2d";
       };
 
       settings = {
@@ -136,23 +136,25 @@ in
   # WARNING: prevent installing pre-defined packages
   environment.defaultPackages = [ ];
 
-  environment.systemPackages = attrValues {
-    inherit (pkgs)
-      cached-nix-shell
-      gnumake
-      unrar
-      xz
-      unzip
-      zip
-      p7zip-rar
-      corefonts
-      udisks
-      udiskie
-      usbutils
-      e2fsprogs
-      dosfstools
-      ;
-  } ++ [
-    inputs.ragenix.packages.${pkgs.stdenv.hostPlatform.system}.default
-  ];
+  environment.systemPackages =
+    attrValues {
+      inherit (pkgs)
+        cached-nix-shell
+        gnumake
+        unrar
+        xz
+        unzip
+        zip
+        p7zip-rar
+        corefonts
+        udisks
+        udiskie
+        usbutils
+        e2fsprogs
+        dosfstools
+        ;
+    }
+    ++ [
+      inputs.ragenix.packages.${pkgs.stdenv.hostPlatform.system}.default
+    ];
 }
