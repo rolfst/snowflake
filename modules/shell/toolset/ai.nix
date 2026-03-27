@@ -35,5 +35,9 @@ in
 
   config = mkIf cfg.enable {
     create.configFile = skillConfigFiles;
+
+    environment.shellAliases = mkIf config.modules.desktop.terminal.kitty.enable {
+      oc = "kitty @ launch --type=os-window --cwd=current opencode";
+    };
   };
 }
