@@ -133,9 +133,17 @@ in
   # /proc/driver/nvidia/suspend, breaking NVIDIA's suspend preparation.
   # All major distros (Arch, Debian, Gentoo, openSUSE) ship this workaround.
   # See: https://github.com/NVIDIA/open-gpu-kernel-modules/issues/834
-  systemd.services.systemd-suspend.serviceConfig.Environment = "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false";
+   systemd.services.systemd-suspend.serviceConfig.Environment = "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false";
 
-  # Manage device power-control:
+  # Deploy NVIDIA's own system-sleep hook from the driver package.
+  # NixOS's systemd.packages only picks up .service/.timer units, not system-sleep hooks.
+  # This hook prepares the GPU (writes to /proc/driver/nvidia/suspend) before the
+  # kernel suspends, preventing the -EIO failure from nv_pmops_suspend.
+  environment.etc."systemd/system-sleep/nvidia" = {
+    source = "${config.hardware.nvidia.package}/lib/systemd/system-sleep/nvidia";
+  };
+
+   # Manage device power-control:
   services = {
     upower.enable = true;
     # power-profiles-daemon.enable = true;
