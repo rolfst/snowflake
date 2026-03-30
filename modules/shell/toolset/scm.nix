@@ -180,6 +180,9 @@ in
           "dist"
           "__pycache__"
 
+          # VCS
+          ".jj/"
+
           # scratch files
           "handoff_*.md"
         ];
