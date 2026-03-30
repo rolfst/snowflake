@@ -35,8 +35,8 @@ in
     snowflake = {
       dir = mkOpt path (
         findFirst pathExists (toString ../.) [
+          "${config.user.home}/workspaces/snowflake"
           "${config.user.home}/snowflake"
-          "/etc/snowflake"
           "/etc/nixos/snowflake"
         ]
       );
