@@ -149,6 +149,13 @@
       podman.enable = true;
       docker.enable = true;
       docker.daemonSettings = true;
+      docker.tokenSecretPath = config.age.secrets."private-tokens".path;
+      docker.registries = {
+        "dhlparcel.pe.jfrog.io" = {
+          email = "rolf.strijdhorst@dhl.com";
+          tokenKey = "jfrog";
+        };
+      };
     };
   };
   fonts.packages = [ pkgs.my."delivery-font" ];
