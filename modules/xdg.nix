@@ -29,6 +29,9 @@
       AZDO_PAT = "$(grep -oP '^azure=\\K[^#]*' ${
         config.age.secrets."private-tokens".path
       } | head -1 | xargs)";
+      JFROG_TOKEN = "$(grep -oP '^jfrog=\\K[^#]*' ${
+        config.age.secrets."private-tokens".path
+      } | head -1 | xargs)";
       __GL_SHADER_DISK_CACHE_PATH = "$XDG_CACHE_HOME/nv";
       ASPELL_CONF = ''
         per-conf $XDG_CONFIG_HOME/aspell/aspell.conf;
