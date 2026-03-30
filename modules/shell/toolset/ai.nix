@@ -12,7 +12,9 @@ let
 
   # Auto-discover all skill directories under config/opencode/skills/
   skillNames = builtins.attrNames (
-    lib.filterAttrs (_: type: type == "directory") (builtins.readDir skillsDir)
+    lib.filterAttrs (_: type: type == "directory") (
+      if builtins.pathExists skillsDir then builtins.readDir skillsDir else { }
+    )
   );
 
   # Generate xdg configFile entries for each discovered skill
