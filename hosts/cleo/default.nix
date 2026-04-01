@@ -10,7 +10,7 @@
 
   modules = {
     shell = {
-      default = "zsh";
+      default = "nushell";
       android.enable = false;
       tmux.enable = true;
       mise.enable = true;
