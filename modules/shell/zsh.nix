@@ -161,6 +161,7 @@ in
       shellAliases = {
         eza = "eza --group-directories-first";
         less = "less -R";
+        y = "yazi";
       };
 
       plugins =

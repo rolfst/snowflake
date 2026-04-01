@@ -39,6 +39,7 @@ in
         less = "less -R";
         wup = "systemctl start wg-quick-Akkadian-VPN.service";
         wud = "systemctl stop wg-quick-Akkadian-VPN.service";
+        y = "yazi";
       };
       bashrcExtra = ''
         # -------===[ Useful Functions ]===------- #

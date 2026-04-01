@@ -8,7 +8,7 @@
 let
   inherit (lib) mkIf mkForce getExe;
   inherit (lib.strings) concatStrings;
-  inherit (lib.attrsets) mapAttrsToList;
+  inherit (lib.attrsets) mapAttrsToList optionalAttrs;
 
   abbrevs = import "${config.snowflake.configDir}/shell-abbr";
 
@@ -161,6 +161,11 @@ in
 
             # -------===[ Develop: Node ]===------- #
             ya = "yarn";
+            y = "yazi";
+          }
+          // optionalAttrs config.modules.shell.toolset.scm.enable {
+            # -------===[ SCM ]===------- #
+            ljj = "lazyjj";
           }
           // simpleAbbrevs;
         in
