@@ -32,8 +32,8 @@ in
 
       functions = {
         fish_title = "echo $argv[1]";
-        sysdate = ''
-          nixos-rebuild switch --use-remote-sudo --flake .#(hostname) --impure
+        sysup = ''
+          nixos-rebuild switch --sudo --flake .#(hostname)
         '';
       };
 

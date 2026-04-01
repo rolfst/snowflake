@@ -114,8 +114,8 @@ in
 
 
           # -------===[ Useful Functions ]===------- #
-          def sysdate():
-              subprocess.run(['nixos-rebuild', 'switch', '--use-remote-sudo', '--flake', '.' + str(subprocess.run(['hostname'], stdout=subprocess.PIPE).stdout.decode().strip()), '--impure'])
+          def sysup():
+              subprocess.run(['nixos-rebuild', 'switch', '--sudo', '--flake', '.' + str(subprocess.run(['hostname'], stdout=subprocess.PIPE).stdout.decode().strip()), '--impure'])
 
           # -------===[ Executing 3rd-Plugins ]===------- #
           execx($(any-nix-shell --info-right))

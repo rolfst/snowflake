@@ -194,8 +194,8 @@ in
             | sort-by sort_key name
             | reject sort_key
         }
-        def sysdate [] {
-          nixos-rebuild switch --use-remote-sudo --flake $".#(hostname)" --impure
+        def sysup [] {
+          nixos-rebuild switch --sudo --flake $".#(hostname)"
         }
 
         def mcdir [...dirs: string] {

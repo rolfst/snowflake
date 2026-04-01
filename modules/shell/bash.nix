@@ -42,8 +42,8 @@ in
       };
       bashrcExtra = ''
         # -------===[ Useful Functions ]===------- #
-        function sysdate {
-            nixos-rebuild switch --use-remote-sudo --flake .#"$(hostname)" --impure
+        function sysup {
+            nixos-rebuild switch --sudo --flake .#"$(hostname)"
         }
 
         # -------===[ External Plugins ]===------- #

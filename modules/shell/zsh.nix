@@ -134,8 +134,8 @@ in
         bindkey -s '^b' 'ks-boot\n'
 
         # -------===[ Useful Functions ]===------- #
-        function sysdate {
-            nixos-rebuild switch --use-remote-sudo --flake .#"$(hostname)" --impure
+        function sysup {
+            nixos-rebuild switch --sudo --flake .#"$(hostname)"
         }
 
         function mcdir {
