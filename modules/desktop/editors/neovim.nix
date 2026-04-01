@@ -30,7 +30,7 @@ in
     {
       user.packages = attrValues (
         {
-          inherit (pkgs.unstable) tree-sitter vectorcode uv;
+          inherit (pkgs.unstable) tree-sitter vectorcode uv vscode-langservers-extracted taplo yaml-language-server;
 
           # inherit (pkgs) neovide;
           # inherit (pkgs.vimPlugins) markdown-preview-nvim;
