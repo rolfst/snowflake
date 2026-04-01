@@ -80,6 +80,11 @@ in
   };
 
   config = mkIf config.modules.services.streaming.enable {
+    # On-screen keyboard for touch/remote input (e.g. phone via Moonlight)
+    environment.systemPackages = mkIf config.modules.services.streaming.sunshine.enable [
+      pkgs.wvkbd
+    ];
+
     services.sunshine = mkIf config.modules.services.streaming.sunshine.enable {
       enable = true;
       autoStart = true;

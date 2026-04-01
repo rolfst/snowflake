@@ -612,6 +612,9 @@ binds {
     // which ensures niri always processes them, even when an inhibitor is active
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
 
+    // On-screen keyboard (wvkbd) toggle for remote/touch input
+    Mod+Alt+V hotkey-overlay-title="Toggle On-Screen Keyboard" { spawn-sh "pkill -RTMIN wvkbd-mobintl || wvkbd-mobintl"; }
+
    // noctalia shell
     Mod+Space hotkey-overlay-title="launcher" { spawn-sh "noctalia-shell ipc call launcher toggle"; }
     Mod+P hotkey-overlay-title="controlCenter" { spawn-sh "noctalia-shell ipc call controlCenter toggle"; }
