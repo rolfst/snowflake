@@ -62,6 +62,14 @@ in
           mgr.prepend_keymap = [
             {
               on = [
+                "o"
+                "c"
+              ];
+              run = "shell 'kitty @ launch --type=tab --tab-title opencode --cwd=\"$PWD\" opencode' --orphan";
+              desc = "Open opencode in new kitty window";
+            }
+            {
+              on = [
                 "c"
                 "a"
                 "a"

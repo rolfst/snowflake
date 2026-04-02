@@ -89,53 +89,6 @@ in
           source = "${inputs.nvim-dir}";
           recursive = true;
         };
-
-        configFile."nvim/after/plugin/dap-js.lua" = {
-          text = ''
-             local status_dap_ok, dap = pcall(require, "dap")
-             if not status_dap_ok then
-                 return
-             end
-             local status_ok, dap_vscode_js = pcall(require, "dap-vscode-js")
-             if not status_ok then
-                 return
-             end
-            for _, adapter in ipairs({
-                "pwa-node",
-                "pwa-chrome",
-                "pwa-msedge",
-                "node-terminal",
-                "pwa-extensionHost",
-            }) do
-                dap.adapters[adapter] = {
-                type = "server",
-                host = "localhost",
-                port = "''${port}",
-                executable = {
-                    command = "node",
-                    args = {
-                    "${pkgs.vscode-js-debug.outPath}" .. "/lib/node_modules/js-debug/dist/src/dapDebugServer.js",
-                    "''${port}",
-                    },
-                },
-                }
-            end
-          '';
-
-          # dap_vscode_js.setup({
-          #     node_path = "node",  -- Path of node executable. Defaults to $NODE_PATH, and then "node"
-          #     debugger_path = "${pkgs.vscode-js-debug.outPath}", -- Path to vscode-js-debug installation.
-          #     -- debugger_cmd = { "js-debug-adapter" }, -- Command to use to launch the debug server. Takes precedence over `node_path` and `debugger_path`.
-          #     port = 8123,
-          #     adapters = {
-          #     "pwa-node",
-          #     "pwa-chrome",
-          #     "pwa-msedge",
-          #     "node-terminal",
-          #     "pwa-extensionHost",
-          #     }, -- which adapters to register in nvim-dap
-          # })
-        };
       };
     })
   ];
