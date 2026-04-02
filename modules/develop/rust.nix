@@ -21,33 +21,40 @@ in
     };
 
   config = mkMerge [
-    (mkIf config.modules.develop.rust.enable {
-      nixpkgs.overlays = [ inputs.rust.overlays.default ];
+    (mkIf config.modules.develop.rust.enable (
+      let
+        codelldb = pkgs.unstable.vscode-extensions.vadimcn.vscode-lldb;
+      in
+      {
+        nixpkgs.overlays = [ inputs.rust.overlays.default ];
 
-      user.packages = attrValues {
-        # rust-package = pkgs.rust-bin.stable.latest.default;
-        rust-package = pkgs.rust-bin.selectLatestNightlyWith (
-          toolchain:
-          toolchain.default.override {
-            extensions = [
-              "rust-analyzer"
-              "rust-src"
-            ];
-          }
-        );
-        inherit (pkgs.unstable) rustup rust-analyzer rust-script;
-        inherit (pkgs.unstable.vscode-extensions.vadimcn) vscode-lldb;
-      };
+        user.packages = attrValues {
+          # rust-package = pkgs.rust-bin.stable.latest.default;
+          rust-package = pkgs.rust-bin.selectLatestNightlyWith (
+            toolchain:
+            toolchain.default.override {
+              extensions = [
+                "rust-analyzer"
+                "rust-src"
+              ];
+            }
+          );
+          inherit (pkgs.unstable) rustup rust-analyzer rust-script;
+          inherit codelldb;
+        };
 
-      environment.shellAliases = {
-        rs = "rustc";
-        ca = "cargo";
-      };
+        home.sessionVariables.CODELLDB_PATH = "${codelldb}/share/vscode/extensions/vadimcn.vscode-lldb/adapter/codelldb";
 
-      hm.programs.vscode.profiles.default.extensions = attrValues {
-        inherit (pkgs.vscode-extensions.rust-lang) rust-analyzer;
-      };
-    })
+        environment.shellAliases = {
+          rs = "rustc";
+          ca = "cargo";
+        };
+
+        hm.programs.vscode.profiles.default.extensions = attrValues {
+          inherit (pkgs.vscode-extensions.rust-lang) rust-analyzer;
+        };
+      }
+    ))
 
     (mkIf config.modules.develop.xdg.enable {
       home = {
