@@ -27,7 +27,7 @@ in {
         inherit (pkgs) imagemagick editorconfig-core-c sqlite deno pandoc markdownlint-cli marksman yamllint;
         aspellPlusDict =
           pkgs.aspellWithDicts
-          (dict: with dict; [en en-computers en-science]);
+          (dict: with dict; [en en-computers en-science nl]);
       };
     })
   ];
