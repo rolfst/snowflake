@@ -183,6 +183,9 @@ in
           # VCS
           ".jj/"
 
+          # AI/Agent
+          ".sisyphus"
+
           # scratch files
           "handoff_*.md"
         ];
