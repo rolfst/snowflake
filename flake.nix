@@ -56,6 +56,7 @@
     };
     # Toolset ++ Application(s)
     rust.url = "github:oxalica/rust-overlay";
+    tree-sitter.url = "github:tree-sitter/tree-sitter";
 
     nvim-dir = {
       # url = "https://rolfst@github.com/rolfst/nvim.git?rev=8bc81eb5c440f832191844458329063586d97511";
