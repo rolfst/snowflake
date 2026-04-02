@@ -277,8 +277,17 @@ in
         ui = {
           default-command = "log";
           diff-editor = ":builtin";
-          merge-editor = "nvim";
+          merge-editor = "vimdiff";
           pager = "diffnav";
+        };
+        merge-tools.vimdiff = {
+          program = "nvim";
+          merge-args = [
+            "-f" "-d" "$output" "-M"
+            "$left" "$base" "$right"
+            "-c" "wincmd J | wincmd ="
+          ];
+          merge-tool-edits-conflict-markers = true;
         };
         merge-tools.mergiraf = {
           program = "mergiraf";
