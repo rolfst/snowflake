@@ -143,6 +143,10 @@ in
           target = "niri/config.kdl";
           source = "${niriDir}/config.kdl";
         };
+        kanshi_conf = {
+          target = "kanshi/config";
+          source = "${config.snowflake.configDir}/kanshi/config";
+        };
       };
       hardware.graphics.enable32Bit = true;
 
@@ -169,14 +173,30 @@ in
       environment.systemPackages = attrValues {
         inherit (pkgs)
           imv
+          kanshi
           libnotify
           playerctl
           wl-clipboard
+          wdisplays
           wf-recorder
           wlr-randr
           gpu-screen-recorder
           swaylock
           ;
+      };
+
+      hm.systemd.user.services.kanshi = {
+        Unit = {
+          Description = "Dynamic output configuration for Wayland compositors";
+          PartOf = [ "graphical-session.target" ];
+          After = [ "graphical-session.target" ];
+        };
+        Service = {
+          ExecStart = "${lib.meta.getExe pkgs.kanshi}";
+          Restart = "on-failure";
+          RestartSec = 5;
+        };
+        Install.WantedBy = [ "graphical-session.target" ];
       };
 
       xdg.portal = {

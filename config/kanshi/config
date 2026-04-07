@@ -1,0 +1,22 @@
+# Laptop only — no external monitor connected
+profile laptop {
+    output eDP-1 enable mode 1920x1080@60.001 position 0,0 scale 1
+}
+
+# Laptop + external HDMI to the right
+profile docked-right {
+    output eDP-1 enable mode 1920x1080@60.001 position 0,0 scale 1
+    output HDMI-A-1 enable position 1920,0 scale 1
+}
+
+# External HDMI only — laptop screen off
+profile external-only {
+    output eDP-1 disable
+    output HDMI-A-1 enable position 0,0 scale 1
+}
+
+# Laptop + external HDMI above (centered)
+profile docked-above {
+    output eDP-1 enable mode 1920x1080@60.001 position 0,1080 scale 1
+    output HDMI-A-1 enable position 0,0 scale 1
+}
