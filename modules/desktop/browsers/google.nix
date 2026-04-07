@@ -37,6 +37,7 @@ in {
       enable = true;
       package = let
         chromeFlags = toString [
+          "--remote-debugging-port=9222"
           "--ozone-platform-hint=auto"
           "--enable-wayland-ime"
           "--force-dark-mode"
