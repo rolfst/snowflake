@@ -300,6 +300,10 @@ in
             "$output"
           ];
         };
+        lazyjj = {
+          layout = "vertical";
+          layout-percent = 40;
+        };
         remotes.origin = {
           auto-track-bookmarks = "*";
         };
