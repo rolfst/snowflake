@@ -76,9 +76,11 @@ in
       modesetting.enable = true;
       # Nvidia power management. Required for suspend/resume to work reliably with PreserveVideoMemoryAllocations.
       powerManagement.enable = true;
-      # Fine-grained power management. Turns off GPU when not in use.
-      # Experimental and only works on modern Nvidia GPUs (Turing or newer).
-      powerManagement.finegrained = true;
+      # Fine-grained power management (runtime D3) disabled: causes -EIO on
+      # S3 suspend because the GPU can't transition from D3cold to suspend.
+      # See boot -3 journal: hundreds of "PM: failed to suspend async: error -5"
+      # retry loops with zero actual sleep.  hp-zero runs fine with this off.
+      powerManagement.finegrained = false;
 
       # Keep NVIDIA kernel module state loaded for faster GPU wake from power-off.
       nvidiaPersistenced = true;
