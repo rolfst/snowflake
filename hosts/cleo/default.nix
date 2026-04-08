@@ -45,6 +45,7 @@
     };
 
     develop = {
+      bun.enable = true;
       node.enable = true;
       haskell.enable = true;
       python.enable = true;
