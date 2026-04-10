@@ -70,6 +70,14 @@ in
             }
             {
               on = [
+                "o"
+                "j"
+              ];
+              run = "shell 'kitty @ launch --type=tab --tab-title lazyjj --cwd=\"$PWD\" lazyjj' --orphan";
+              desc = "Open lazyjj in new kitty window";
+            }
+            {
+              on = [
                 "c"
                 "a"
                 "a"
