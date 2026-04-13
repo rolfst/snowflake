@@ -111,6 +111,12 @@
       ],
       "right": [
         {
+          "id": "CustomButton",
+          "icon": "keyboard",
+          "leftClickExec": "pkill -RTMIN wvkbd-mobintl || wvkbd-mobintl",
+          "generalTooltipText": "Toggle On-Screen Keyboard"
+        },
+        {
           "blacklist": [],
           "chevronColor": "none",
           "colorizeIcons": false,

@@ -76,14 +76,19 @@ in
   options.modules.services.streaming = {
     enable = mkEnableOption "desktop streaming services";
     sunshine.enable = mkEnableOption "Sunshine streaming server";
+    moonlight.enable = mkEnableOption "Moonlight streaming client";
     tailscale.enable = mkEnableOption "Tailscale client";
   };
 
   config = mkIf config.modules.services.streaming.enable {
     # On-screen keyboard for touch/remote input (e.g. phone via Moonlight)
-    environment.systemPackages = mkIf config.modules.services.streaming.sunshine.enable [
-      pkgs.wvkbd
-    ];
+    environment.systemPackages =
+      (lib.optionals config.modules.services.streaming.sunshine.enable [
+        pkgs.wvkbd
+      ])
+      ++ (lib.optionals config.modules.services.streaming.moonlight.enable [
+        pkgs.moonlight-qt
+      ]);
 
     services.sunshine = mkIf config.modules.services.streaming.sunshine.enable {
       enable = true;

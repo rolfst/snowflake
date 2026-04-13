@@ -56,6 +56,7 @@
       streaming = {
         enable = true;
         sunshine.enable = true;
+        moonlight.enable = true;
         tailscale.enable = true;
       };
     };
