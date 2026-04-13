@@ -202,7 +202,11 @@ in
   systemd.services.systemd-hibernate.serviceConfig.Environment = "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false";
   systemd.services.systemd-suspend-then-hibernate.serviceConfig.Environment = "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false";
 
-  # Restore networking after suspend/hibernate resume
+  # Restore networking after suspend/hibernate resume.
+  # When Tailscale is active, it owns DNS via 100.100.100.100. After hibernate
+  # it wakes before WiFi is up, caches "no upstream resolvers" and never
+  # re-evaluates — breaking all DNS. Restarting tailscaled after connectivity
+  # forces it to re-discover upstream resolvers.
   systemd.services.networkmanager-resume = {
     description = "Restart NetworkManager on resume";
     wantedBy = [ "post-resume.target" ];
@@ -212,6 +216,18 @@ in
       ${pkgs.util-linux}/bin/rfkill unblock all
       sleep 2
       ${pkgs.systemd}/bin/systemctl try-restart NetworkManager
+
+      # If Tailscale is running, wait for NM connectivity then restart it
+      # so it re-discovers upstream DNS resolvers.
+      if ${pkgs.systemd}/bin/systemctl is-active --quiet tailscaled.service; then
+        for i in $(seq 1 15); do
+          if ${pkgs.networkmanager}/bin/nmcli networking connectivity check | grep -q "full"; then
+            break
+          fi
+          sleep 1
+        done
+        ${pkgs.systemd}/bin/systemctl restart tailscaled.service
+      fi
     '';
   };
 

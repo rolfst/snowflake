@@ -234,17 +234,38 @@ in
   # Don't restart NetworkManager — that kills the daemon and causes a race
   # condition where the old/new NM instances fight over wlan0, soft-blocking
   # rfkill. Instead, just unblock rfkill and tell NM to reconnect.
+  #
+  # When Tailscale is active, it owns DNS via 100.100.100.100. After hibernate
+  # it wakes before WiFi is up, caches "no upstream resolvers" and never
+  # re-evaluates — breaking all DNS. Restarting tailscaled after connectivity
+  # forces it to re-discover upstream resolvers.
   systemd.services.networkmanager-resume = {
     description = "Reconnect NetworkManager on resume";
     wantedBy = [ "post-resume.target" ];
     after = [ "post-resume.target" ];
     serviceConfig.Type = "oneshot";
-    path = [ pkgs.util-linux pkgs.networkmanager ];
+    path = [
+      pkgs.util-linux
+      pkgs.networkmanager
+      pkgs.systemd
+    ];
     script = ''
       rfkill unblock wifi
       sleep 1
       nmcli networking on
       nmcli radio wifi on
+
+      # If Tailscale is running, wait for NM connectivity then restart it
+      # so it re-discovers upstream DNS resolvers.
+      if systemctl is-active --quiet tailscaled.service; then
+        for i in $(seq 1 15); do
+          if nmcli networking connectivity check | grep -q "full"; then
+            break
+          fi
+          sleep 1
+        done
+        systemctl restart tailscaled.service
+      fi
     '';
   };
 
