@@ -164,9 +164,12 @@ in
           # Ensure Vulkan uses NVIDIA ICD
           export VK_DRIVER_FILES=/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json
 
-          # GBM backend for Wayland EGL (NVIDIA)
-          export GBM_BACKEND=nvidia-drm
-          export __GLX_VENDOR_LIBRARY_NAME=nvidia
+          # GBM backend: do NOT force nvidia-drm on PRIME-offload systems.
+          # The display is driven by the Intel iGPU; forcing GBM to the NVIDIA
+          # dGPU causes pipewire screencasting to capture from the wrong GPU,
+          # resulting in black frames in screen share (Slack, Chrome, etc.).
+          # export GBM_BACKEND=nvidia-drm
+          # export __GLX_VENDOR_LIBRARY_NAME=nvidia
         fi
       '';
 
@@ -200,12 +203,11 @@ in
       };
 
       xdg.portal = {
-        extraPortals = [ pkgs.xdg-desktop-portal-gnome ];
+        extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
         config.niri = {
-          default = [
-            "gnome"
-            "gtk"
-          ];
+          default = [ "hyprland" "gtk" ];
+          "org.freedesktop.impl.portal.Screencast" = [ "hyprland" ];
+          "org.freedesktop.impl.portal.Screenshot" = [ "hyprland" ];
         };
       };
     };
