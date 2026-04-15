@@ -83,10 +83,12 @@ in
         # Conditions:
         #   - Not a dumb terminal (e.g. scp, rsync)
         #   - Not running a bash-command-string (e.g. nix-shell)
-        #   - Only when this is an interactive top-level shell
-        if [[ "$TERM" != "dumb" && -z "$ZSH_EXECUTION_STRING" && -z "$NUSHELL_ACTIVE" ]]; then
-          export NUSHELL_ACTIVE=1
-          exec ${getExe pkgs.nushell}
+        #   - Parent is not nushell (allows escaping to zsh from nu)
+        if [[ "$TERM" != "dumb" && -z "$ZSH_EXECUTION_STRING" ]]; then
+          parent_comm="$(ps -p $PPID -o comm= 2>/dev/null)"
+          if [[ "$parent_comm" != "nu" ]]; then
+            exec ${getExe pkgs.nushell}
+          fi
         fi
       '';
     };
