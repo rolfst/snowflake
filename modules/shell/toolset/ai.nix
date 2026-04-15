@@ -1,6 +1,8 @@
 {
   config,
   lib,
+  pkgs,
+  inputs,
   ...
 }:
 let
@@ -37,6 +39,10 @@ in
 
   config = mkIf cfg.enable {
     create.configFile = skillConfigFiles;
+
+    user.packages = [
+      inputs.mcp-nixos.packages."${pkgs.stdenv.hostPlatform.system}".default
+    ];
 
     environment.shellAliases = mkIf config.modules.desktop.terminal.kitty.enable {
       oc = "kitty @ launch --type=os-window --cwd=current opencode";
