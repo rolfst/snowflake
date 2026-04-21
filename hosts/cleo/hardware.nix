@@ -141,7 +141,11 @@ in
   # NixOS's systemd.packages only picks up .service/.timer units, not system-sleep hooks.
   # This hook prepares the GPU (writes to /proc/driver/nvidia/suspend) before the
   # kernel suspends, preventing the -EIO failure from nv_pmops_suspend.
-  environment.etc."systemd/system-sleep/nvidia" = {
+   # PRIME offload: display is driven by Intel iGPU, so VA-API must use iHD.
+   # Without this, pipewire screen capture uses the NVIDIA dGPU and gets black frames.
+   environment.variables.LIBVA_DRIVER_NAME = "iHD";
+
+   environment.etc."systemd/system-sleep/nvidia" = {
     source = "${config.hardware.nvidia.package}/lib/systemd/system-sleep/nvidia";
   };
 

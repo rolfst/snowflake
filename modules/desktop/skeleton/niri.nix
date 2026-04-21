@@ -164,12 +164,12 @@ in
           # Ensure Vulkan uses NVIDIA ICD
           export VK_DRIVER_FILES=/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json
 
-          # GBM backend: do NOT force nvidia-drm on PRIME-offload systems.
-          # The display is driven by the Intel iGPU; forcing GBM to the NVIDIA
-          # dGPU causes pipewire screencasting to capture from the wrong GPU,
-          # resulting in black frames in screen share (Slack, Chrome, etc.).
-          # export GBM_BACKEND=nvidia-drm
-          # export __GLX_VENDOR_LIBRARY_NAME=nvidia
+          # GBM backend for Wayland EGL (NVIDIA).
+          # Required for xdg-desktop-portal-gnome to deliver PipeWire frames correctly.
+          # Screenshare worked with this set; removing it broke portal capture.
+          export GBM_BACKEND=nvidia-drm
+          export __GLX_VENDOR_LIBRARY_NAME=nvidia
+
         fi
       '';
 
@@ -203,12 +203,23 @@ in
       };
 
       xdg.portal = {
-        extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
+        # niri implements org.gnome.Mutter.ScreenCast natively — xdp-gnome is
+        # the correct portal for screencasting on niri (per niri docs).
+        # xdp-wlr crashes (SIGSEGV in wlr_frame_damage) on niri 25.11.
+        extraPortals = [ pkgs.xdg-desktop-portal-gnome ];
+        # Match upstream NixOS niri module config exactly:
+        # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/nixos/modules/programs/wayland/niri.nix
         config.niri = {
-          default = [ "hyprland" "gtk" ];
-          "org.freedesktop.impl.portal.Screencast" = [ "hyprland" ];
-          "org.freedesktop.impl.portal.Screenshot" = [ "hyprland" ];
+          default = [ "gnome" "gtk" ];
+          "org.freedesktop.impl.portal.Access" = "gtk";
+          "org.freedesktop.impl.portal.Notification" = "gtk";
+          "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
         };
       };
+
+      # Required for xdp-gnome's screencasting to work — niri ships systemd
+      # user units that wire up graphical-session.target correctly.
+      systemd.packages = [ pkgs.niri ];
+
     };
 }

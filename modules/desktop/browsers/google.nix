@@ -52,7 +52,6 @@ in {
           # Performance
           "--enable-gpu-rasterization"
           "--enable-oop-rasterization"
-          "--enable-zero-copy"
           "--ignore-gpu-blocklist"
 
           # Experimental features
@@ -62,14 +61,15 @@ in {
               "CopyLinkToText"
               "OverlayScrollbar"
               "TabHoverCardImages"
-              "AcceleratedVideoDecodeLinuxGL"
-              "AcceleratedVideoDecodeLinuxZeroCopyGL"
               "AcceleratedVideoEncoder"
             ]
           }"
-
-          # Workaround for cross-GPU DMA-BUF compositing on hybrid Intel+NVIDIA
-          "--disable-gpu-compositing"
+          "--disable-features=${
+            concatStringsSep "," [
+              # Prevents blank frames in GPU-accelerated video decode path.
+              "AcceleratedVideoDecodeLinuxGL"
+            ]
+          }"
         ];
       in
         pkgs.google-chrome.override {

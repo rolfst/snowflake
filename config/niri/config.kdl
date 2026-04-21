@@ -377,7 +377,7 @@ binds {
     // Super+Alt+S allow-when-locked=true hotkey-overlay-title=null { spawn-sh "pkill orca || exec orca"; }
 
     // Applications
-    Mod+Alt+G hotkey-overlay-title="Browser: Google chrome"  { spawn "google-chrome-stable"; }
+     Mod+Alt+G hotkey-overlay-title="Browser: Google chrome"  { spawn "google-chrome-stable"; }
     Mod+Alt+F hotkey-overlay-title="Browser: Firefox"  { spawn "firefox"; }
     Mod+Alt+E hotkey-overlay-title="Filemanager: Thunar" { spawn "thunar"; }
 
@@ -631,3 +631,5 @@ binds {
     // moving the mouse or pressing any other key.
     Mod+Shift+M { power-off-monitors; }
 }
+
+// End of config

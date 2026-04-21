@@ -116,7 +116,9 @@ in
           xdg-desktop-portal-gtk
           xdg-desktop-portal
         ];
-        config.common.default = "*";
+        # Do NOT set config.common.default = "*" here — it overrides per-desktop
+        # portal configs (like config.niri set in niri.nix) and breaks screencasting.
+        # Each desktop module sets its own xdg.portal.config.<desktop> instead.
       };
 
       # Retain secrets inside Gnome Keyring

@@ -17,12 +17,23 @@ in {
   config = mkIf cfg.enable {
     services.pipewire.jack.enable = true;
 
+    boot.extraModulePackages = mkIf cfg.video.enable [
+      config.boot.kernelPackages.v4l2loopback
+    ];
+    boot.kernelModules = mkIf cfg.video.enable [ "v4l2loopback" ];
+    boot.extraModprobeConfig = mkIf cfg.video.enable ''
+      options v4l2loopback devices=1 video_nr=10 card_label="OBS Virtual Camera" exclusive_caps=1
+    '';
+
     user.packages = attrValues ({
       inherit (pkgs) ffmpeg;
     } // optionalAttrs cfg.audio.enable {
-      inherit (pkgs.unstable) audacity-gtk3 helvum;
+      inherit (pkgs.unstable) audacity crosspipe;
     } // optionalAttrs cfg.video.enable {
-      inherit (pkgs.unstable) obs-studio handbrake;
+      inherit (pkgs.unstable) handbrake;
+      obs-studio = pkgs.unstable.wrapOBS {
+        plugins = [ pkgs.unstable.obs-studio-plugins.wlrobs ];
+      };
     });
   };
 }

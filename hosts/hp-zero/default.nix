@@ -143,6 +143,14 @@
           raster.enable = true;
         };
         keybase.enable = true;
+        # WORKAROUND: niri + NVIDIA PRIME DMA-BUF bug (niri#2223, niri#3700)
+        # Screen/window sharing via xdg-desktop-portal fails because niri allocates
+        # DMA-BUF with MOD_INVALID modifier, which NVIDIA EGL cannot render into.
+        # OBS captures via wlr-screencopy (bypasses PipeWire DMA-BUF path) and
+        # exposes the screen as a V4L2 virtual camera (/dev/video10) via v4l2loopback.
+        # Use "OBS Virtual Camera" as camera input in Discord/Chrome Meet/Slack.
+        # Remove this workaround once the upstream niri bug is fixed.
+        recorder.enable = true;
       };
     };
     virtualize = {
