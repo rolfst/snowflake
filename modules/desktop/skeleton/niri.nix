@@ -60,7 +60,7 @@ in
         programs = {
           noctalia-shell = {
             enable = true;
-            systemd.enable = true;
+            systemd.enable = false;
             settings = builtins.fromJSON (readFile "${niriDir}/noctalia.json");
             plugins = {
               sources = [
