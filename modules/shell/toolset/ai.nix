@@ -12,6 +12,10 @@ let
   configDir = config.snowflake.configDir;
   skillsDir = "${configDir}/opencode/skills";
 
+  mcp-nixos-pkg = (inputs.mcp-nixos.packages."${pkgs.stdenv.hostPlatform.system}".default).overrideAttrs (_: {
+    doInstallCheck = false;
+  });
+
   # Auto-discover all skill directories under config/opencode/skills/
   skillNames = builtins.attrNames (
     lib.filterAttrs (_: type: type == "directory") (
@@ -41,7 +45,7 @@ in
     create.configFile = skillConfigFiles;
 
     user.packages = [
-      inputs.mcp-nixos.packages."${pkgs.stdenv.hostPlatform.system}".default
+      mcp-nixos-pkg
     ];
 
     environment.shellAliases = mkIf config.modules.desktop.terminal.kitty.enable {
