@@ -278,7 +278,10 @@ in
           default-command = "log";
           diff-editor = ":builtin";
           merge-editor = "vimdiff";
-          pager = "diffnav";
+          pager = "less -FRX";
+        };
+        diff = {
+          tool = "diffnav";
         };
         merge-tools.vimdiff = {
           program = "nvim";

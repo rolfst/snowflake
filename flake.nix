@@ -23,7 +23,6 @@
 
     mcp-nixos = {
       url = "github:utensils/mcp-nixos";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # flatpak
