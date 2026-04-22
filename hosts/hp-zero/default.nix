@@ -70,6 +70,7 @@
       lua.enable = true;
       java.enable = true;
       cc.enable = true;
+      terraform.enable = true;
       xdg.enable = true;
       kubernetes.enable = true;
       documentation.enable = true;
