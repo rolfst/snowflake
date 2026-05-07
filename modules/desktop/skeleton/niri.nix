@@ -150,6 +150,9 @@ in
       };
       hardware.graphics.enable32Bit = true;
 
+      # Allow brightnessctl to adjust backlight without sudo
+      services.udev.packages = [ pkgs.brightnessctl ];
+
       environment.extraInit = ''
         if [ "$XDG_SESSION_DESKTOP" = "niri" ]; then
           export NIXOS_OZONE_WL=1
@@ -175,6 +178,7 @@ in
 
       environment.systemPackages = attrValues {
         inherit (pkgs)
+          brightnessctl
           imv
           kanshi
           libnotify
