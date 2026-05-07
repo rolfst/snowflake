@@ -135,18 +135,81 @@ in
   # /proc/driver/nvidia/suspend, breaking NVIDIA's suspend preparation.
   # All major distros (Arch, Debian, Gentoo, openSUSE) ship this workaround.
   # See: https://github.com/NVIDIA/open-gpu-kernel-modules/issues/834
-   systemd.services.systemd-suspend.serviceConfig.Environment = "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false";
+  systemd.services.systemd-suspend.serviceConfig.Environment = "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false";
 
   # Deploy NVIDIA's own system-sleep hook from the driver package.
   # NixOS's systemd.packages only picks up .service/.timer units, not system-sleep hooks.
   # This hook prepares the GPU (writes to /proc/driver/nvidia/suspend) before the
-  # kernel suspends, preventing the -EIO failure from nv_pmops_suspend.
-   # PRIME offload: display is driven by Intel iGPU, so VA-API must use iHD.
-   # Without this, pipewire screen capture uses the NVIDIA dGPU and gets black frames.
-   environment.variables.LIBVA_DRIVER_NAME = "iHD";
+  # kernel suspends and calls nvidia-sleep.sh 'resume' (+ VT restore) on wake.
+  #
+  # IMPORTANT: nvidia-sleep.sh calls chvt/fgconsole internally (from kbd).  System-sleep
+  # hooks run with a minimal PATH that does not include /run/current-system/sw/bin, so
+  # chvt is not found and VT restore fails on resume → black screen.
+  # We wrap the upstream hook with a script that prepends the kbd store path to PATH.
+  environment.etc."systemd/system-sleep/nvidia" = {
+    mode = "0755";
+    text = ''
+      #!${pkgs.bash}/bin/sh
+      # Wrapper: ensure chvt/fgconsole (kbd) are available for nvidia-sleep.sh.
+      export PATH="${pkgs.kbd}/bin:$PATH"
+      exec ${config.hardware.nvidia.package}/lib/systemd/system-sleep/nvidia "$@"
+    '';
+  };
 
-   environment.etc."systemd/system-sleep/nvidia" = {
-    source = "${config.hardware.nvidia.package}/lib/systemd/system-sleep/nvidia";
+  # The system-sleep hook above already calls nvidia-sleep.sh 'resume' in the
+  # post:suspend phase (VT restore + writes 'resume' to /proc/driver/nvidia/suspend).
+  # nvidia-resume.service runs AFTER systemd-suspend.service and calls the same
+  # script a SECOND time, which hangs because the driver is already resumed.
+  # Override to a no-op: the hook handles resume for plain suspend on this host.
+  systemd.services.nvidia-resume.serviceConfig.ExecStart = [
+    ""
+    "${pkgs.coreutils}/bin/true"
+  ];
+
+  # PRIME offload: display is driven by Intel iGPU, so VA-API must use iHD.
+  # Without this, pipewire screen capture uses the NVIDIA dGPU and gets black frames.
+  environment.variables.LIBVA_DRIVER_NAME = "iHD";
+
+  # Unbind NVIDIA USB controller (01:00.2) before suspend, re-enumerate after resume.
+  #
+  # The GTX 1660 Ti's onboard xHCI controller (TU116 USB 3.1) crashes on S3
+  # resume with USBSTS 0x401 (HCHALTED|HSE), leaving the NVIDIA RM in a broken
+  # state and freezing the display stack.  Cleanly detaching it before the kernel
+  # suspends avoids the failed-resume path entirely.  The controller is only used
+  # for USB-C on the NVIDIA side; in PRIME offload mode it is not needed.
+  #
+  # On resume we use PCI remove + rescan rather than driver bind/unbind.
+  # Binding back a HCHALTED controller leaves xhci_hcd in a Reinit loop which
+  # corrupts the NVIDIA RM state.  Removing and rescanning forces a full PCI
+  # re-enumeration, giving the controller a clean slate before the driver probes it.
+  systemd.services.nvidia-usb-suspend = {
+    description = "Unbind NVIDIA USB controller before suspend";
+    before = [
+      "systemd-suspend.service"
+      "systemd-hibernate.service"
+      "systemd-suspend-then-hibernate.service"
+    ];
+    wantedBy = [
+      "systemd-suspend.service"
+      "systemd-hibernate.service"
+      "systemd-suspend-then-hibernate.service"
+    ];
+    serviceConfig.Type = "oneshot";
+    serviceConfig.RemainAfterExit = true;
+    script = ''
+      if [ -e /sys/bus/pci/devices/0000:01:00.2/driver ]; then
+        echo "0000:01:00.2" > /sys/bus/pci/devices/0000:01:00.2/driver/unbind
+      fi
+      # Also remove the PCI device entirely so the kernel won't try to resume it.
+      if [ -e /sys/bus/pci/devices/0000:01:00.2 ]; then
+        echo 1 > /sys/bus/pci/devices/0000:01:00.2/remove
+      fi
+    '';
+    postStop = ''
+      # Re-enumerate the NVIDIA PCIe slot so xhci_hcd gets a fresh probe.
+      # 0000:00:01.0 is the PCIe root port that owns the 01:xx bus.
+      echo 1 > /sys/bus/pci/devices/0000:00:01.0/rescan 2>/dev/null || true
+    '';
   };
 
   # Restore networking after suspend resume.
