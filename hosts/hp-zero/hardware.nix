@@ -207,10 +207,20 @@ in
   # only writes "resume" to /proc/driver/nvidia/suspend. This avoids switching
   # back to Xorg between the suspend→hibernate transition. The full nvidia-sleep.sh
   # resume (with VT switch) runs via nvidia-resume.service at cycle end.
-  systemd.services.nvidia-suspend.requiredBy = [ "systemd-suspend-then-hibernate.service" ];
-  systemd.services.nvidia-suspend.before = [ "systemd-suspend-then-hibernate.service" ];
-  systemd.services.nvidia-resume.requiredBy = [ "systemd-suspend-then-hibernate.service" ];
-  systemd.services.nvidia-resume.after = [ "systemd-suspend-then-hibernate.service" ];
+  # Wire nvidia-suspend/resume to suspend-then-hibernate (NixOS only wires to
+  # plain suspend/hibernate). Use wantedBy (soft dep) instead of requiredBy so
+  # a transient nvidia-sleep.sh I/O error doesn't permanently block all future
+  # sleep cycles — suspending without GPU prep is better than never sleeping.
+  systemd.services.nvidia-suspend = {
+    wantedBy = [ "systemd-suspend-then-hibernate.service" ];
+    before = [ "systemd-suspend-then-hibernate.service" ];
+    overrideStrategy = "asDropin";
+  };
+  systemd.services.nvidia-resume = {
+    wantedBy = [ "systemd-suspend-then-hibernate.service" ];
+    after = [ "systemd-suspend-then-hibernate.service" ];
+    overrideStrategy = "asDropin";
+  };
 
   # Deploy NVIDIA's own system-sleep hook from the driver package.
   # NixOS's systemd.packages only picks up .service/.timer units, not system-sleep hooks.
