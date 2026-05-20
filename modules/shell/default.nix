@@ -65,7 +65,7 @@ in
                 "o"
                 "c"
               ];
-              run = "shell 'kitty @ launch --type=tab --tab-title opencode --cwd=\"$PWD\" opencode' --orphan";
+              run = "shell 'kitten @ launch --type=tab --tab-title opencode --cwd=\"$PWD\" opencode' --orphan";
               desc = "Open opencode in new kitty window";
             }
             {
@@ -73,8 +73,16 @@ in
                 "o"
                 "j"
               ];
-              run = "shell 'kitty @ launch --type=tab --tab-title lazyjj --cwd=\"$PWD\" lazyjj' --orphan";
+              run = "shell 'kitten @ launch --type=tab --tab-title lazyjj --cwd=\"$PWD\" lazyjj' --orphan";
               desc = "Open lazyjj in new kitty window";
+            }
+            {
+              on = [
+                "o"
+                "t"
+              ];
+              run = "shell 'kitten @ launch --type=tab --cwd=\"$PWD\"' --orphan";
+              desc = "Open new kitty tab in current directory";
             }
             {
               on = [
