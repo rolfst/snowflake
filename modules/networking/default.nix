@@ -19,7 +19,10 @@ in
     {
       iwd.enable = mkEnableOption "wpa_supplicant alt.";
       networkd.enable = mkEnableOption "systemd network manager";
-      networkManager.enable = mkEnableOption "powerful network manager";
+      networkManager = {
+        enable = mkEnableOption "powerful network manager";
+        useIwd = mkEnableOption "use iwd as the wifi backend instead of wpa_supplicant";
+      };
     };
 
   config = mkMerge [
@@ -73,7 +76,7 @@ in
       user.packages = [ pkgs.iw ];
       networking.networkmanager = {
         enable = mkDefault true;
-        wifi.backend = "wpa_supplicant";
+        wifi.backend = if cfg.networkManager.useIwd then "iwd" else "wpa_supplicant";
         settings = {
           connection = {
             "wifi.powersave" = 2;
@@ -86,6 +89,42 @@ in
 
       # Display a network-manager applet:
       hm.services.network-manager-applet.enable = true;
+    })
+
+    (mkIf (cfg.networkManager.enable && cfg.networkManager.useIwd) {
+      # iwd behaves as NetworkManager's WiFi backend; configure it for stability.
+      #
+      # DisablePeriodicScan: prevents iwd from scanning in the background while
+      # connected.  Without this, iwd finds the second mesh BSS and repeatedly
+      # attempts 802.11r Fast Transition to it, always timing out → periodic
+      # deauths.
+      #
+      # RoamRetryInterval: when a roam attempt fails, wait 60 s before retrying
+      # (default is much shorter), reducing the spray of FT failures in the log.
+      networking.wireless.iwd.settings = {
+        General = {
+          AddressRandomization = "network";
+          RoamRetryInterval = 60;
+          Country = "NL"; # regulatory domain (kernel defaults to "country 00: DFS-UNSET")
+        };
+        Scan.DisablePeriodicScan = true;
+        Rank.BandModifier5Ghz = 1.5; # slight 5 GHz preference over 2.4 GHz
+      };
+
+      # On resume from sleep/hibernate iwd's initial scan fires before the
+      # kernel interface is ready → "Network is down" → falls into slow
+      # autoconnect_full (≈20 s).  Restarting iwd 2 s after resume lets it
+      # start with a clean state and reconnects in <5 s.
+      systemd.services."iwd-resume" = {
+        description = "Restart iwd after resume from suspend";
+        after = [ "post-resume.target" ];
+        wantedBy = [ "post-resume.target" ];
+        serviceConfig = {
+          Type = "oneshot";
+          ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
+          ExecStart = "${pkgs.systemd}/bin/systemctl restart iwd";
+        };
+      };
     })
 
     # TODO: add network connections + ragenix.
