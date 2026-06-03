@@ -31,7 +31,10 @@
       kmonad.enable = false;
     };
     networking = {
-      networkManager.enable = true;
+      networkManager = {
+        enable = true;
+        useIwd = true;
+      };
     };
 
     services = {
