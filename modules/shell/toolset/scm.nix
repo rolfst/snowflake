@@ -27,6 +27,7 @@ in
           gitui
           lazygit
           sad
+          tea
           ;
         inherit (pkgs) gh git-open;
         inherit (pkgs) lazyjj mergiraf diffnav;

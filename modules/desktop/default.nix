@@ -94,7 +94,7 @@ in
       fonts = {
         fontDir.enable = true;
         enableGhostscriptFonts = true;
-        packages = attrValues { inherit (pkgs) sarasa-gothic scheherazade-new; };
+        packages = attrValues { inherit (pkgs) sarasa-gothic scheherazade-new inter corefonts; };
       };
 
       hm.qt = {
