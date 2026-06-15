@@ -22,53 +22,54 @@ in
       enable = true;
       settings =
         let
-          inherit (config.modules.themes.colors.main) normal types;
+          inherit (config.modules.themes.colors.main) normal bright types;
         in
         {
+          palette = "noctalia";
           scan_timeout = 10;
           add_newline = true;
           line_break.disabled = true;
 
-          format = "[$directory](fg:${normal.blue}) ($git_branch)($git_status )($nix_shell)($character)";
-          right_format = "[$cmd_duration](bg:none fg:${normal.magenta})";
+          format = "[$directory](fg:blue) ($git_branch)($git_status )($nix_shell)($character)";
+          right_format = "[$cmd_duration](bg:none fg:magenta)";
 
           cmd_duration = {
             min_time = 1;
-            format = "[ $duration]($style)";
+            format = "[ $duration]($style)";
             disabled = false;
-            style = "bg:${normal.magenta} fg:${types.bg}";
+            style = "bg:magenta fg:bg";
           };
 
           directory = {
-            format = "[  $path]($style)";
-            style = "bg:${normal.blue} fg:${types.fg} bold";
+            format = "[  $path]($style)";
+            style = "bg:blue fg:fg bold";
             truncation_length = 2;
             truncation_symbol = "…/";
           };
 
           git_branch = {
-            format = "[[](fg:${types.border})( $branch)[](fg:${types.border})]($style) ";
-            style = "bg:${types.border} fg:${types.fg} bold";
+            format = "[[](fg:border)( $branch)[](fg:border)]($style) ";
+            style = "bg:border fg:fg bold";
           };
 
           git_status = {
-            format = "[([](fg:${types.panelbg})( 『 $all_status$ahead_behind 』)[](fg:${types.panelbg}))]($style)";
-            style = "bg:${types.panelbg} fg:${types.bg} bold";
+            format = "[([](fg:panelbg)( 『 $all_status$ahead_behind 』)[](fg:panelbg))]($style)";
+            style = "bg:panelbg fg:bg bold";
           };
 
           character = {
-            error_symbol = "[](${normal.red})";
-            success_symbol = "[](${normal.green})";
-            vicmd_symbol = "[](${normal.blue})";
+            error_symbol = "[](red)";
+            success_symbol = "[](green)";
+            vicmd_symbol = "[](blue)";
           };
 
           nix_shell = {
             disabled = false;
-            impure_msg = "[impure](${normal.red})";
-            pure_msg = "[pure](${normal.green})";
+            impure_msg = "[impure](red)";
+            pure_msg = "[pure](green)";
             format = "via [$symbol$state( \\($name\\))]($style) ";
-            style = "${normal.blue}";
-            symbol = "[λ ](${types.panelbg})";
+            style = "blue";
+            symbol = "[λ ](panelbg)";
           };
 
           battery = {
@@ -77,10 +78,36 @@ in
             discharging_symbol = "💀";
             display = [
               {
-                style = "${normal.red}";
+                style = "red";
                 threshold = 15;
               }
             ];
+          };
+
+          palettes.noctalia = {
+            # Standard terminal colors
+            black = normal.black;
+            red = normal.red;
+            green = normal.green;
+            yellow = normal.yellow;
+            blue = normal.blue;
+            magenta = normal.magenta;
+            cyan = normal.cyan;
+            white = normal.white;
+            # Bright variants
+            bright-black = bright.black;
+            bright-red = bright.red;
+            bright-green = bright.green;
+            bright-yellow = bright.yellow;
+            bright-blue = bright.blue;
+            bright-magenta = bright.magenta;
+            bright-cyan = bright.cyan;
+            bright-white = bright.white;
+            # Semantic
+            bg = types.bg;
+            fg = types.fg;
+            panelbg = types.panelbg;
+            border = types.border;
           };
         };
     };

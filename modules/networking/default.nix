@@ -77,14 +77,27 @@ in
       networking.networkmanager = {
         enable = mkDefault true;
         wifi.backend = if cfg.networkManager.useIwd then "iwd" else "wpa_supplicant";
+        # Use systemd-resolved for split DNS: VPN domains route to VPN DNS,
+        # Tailscale domains route to Tailscale DNS, no conflicts.
+        dns = "systemd-resolved";
         settings = {
           connection = {
             "wifi.powersave" = 2;
           };
-          # main = {
-          #   auth-polkit = true; # Ensures Gui prompts work properly
-          # };
         };
+      };
+
+      # systemd-resolved provides per-link DNS routing so Tailscale and
+      # the DHL Azure VPN coexist without overwriting each other's DNS.
+      services.resolved = {
+        enable = true;
+        # Fallback DNS when no link-specific server matches.
+        fallbackDns = [
+          "1.1.1.1"
+          "9.9.9.9"
+        ];
+        # DNSSEC causes issues with split-horizon internal zones.
+        dnssec = "false";
       };
 
       # Display a network-manager applet:

@@ -56,37 +56,37 @@ in
 
           "custom/noctalia-recorder" = {
             "format" = " ";
-            "on-click" = "noctalia-shell ipc call plugin:screen-recorder toggle";
+            "on-click" = "noctalia msg panel-toggle screen-recorder";
             "tooltip" = true;
             "tooltip-format" = "Screen Recorder";
           };
           "custom/noctalia-clipper" = {
             "format" = " ";
-            "on-click" = "noctalia-shell ipc call plugin:clipper toggle";
+            "on-click" = "noctalia msg panel-toggle clipper";
             "tooltip" = true;
             "tooltip-format" = "Clipboard Manager";
           };
           "custom/noctalia-notes" = {
             "format" = " ";
-            "on-click" = "noctalia-shell ipc call plugin:notes-scratchpad toggle";
+            "on-click" = "noctalia msg panel-toggle notes-scratchpad";
             "tooltip" = true;
             "tooltip-format" = "Notes";
           };
           "custom/noctalia-todo" = {
             "format" = " ";
-            "on-click" = "noctalia-shell ipc call plugin:todo toggle";
+            "on-click" = "noctalia msg panel-toggle todo";
             "tooltip" = true;
             "tooltip-format" = "Todo List";
           };
           "custom/noctalia-cheatsheet" = {
             "format" = " ";
-            "on-click" = "noctalia-shell ipc call plugin:keybind-cheatsheet toggle";
+            "on-click" = "noctalia msg panel-toggle keybind-cheatsheet";
             "tooltip" = true;
             "tooltip-format" = "Keybindings";
           };
           "custom/noctalia-assistant" = {
             "format" = " ";
-            "on-click" = "noctalia-shell ipc call plugin:assistant-panel toggle";
+            "on-click" = "noctalia msg panel-toggle assistant-panel";
             "tooltip" = true;
             "tooltip-format" = "Assistant";
           };

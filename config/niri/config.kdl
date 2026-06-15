@@ -242,8 +242,7 @@ layout {
 // which may be more convenient to use.
 // See the binds section below for more spawn examples.
 
-// noctalia-shell systemd service was deprecated upstream
-spawn-at-startup "noctalia-shell"
+spawn-at-startup "noctalia"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
@@ -357,7 +356,7 @@ binds {
     // shows a list of important hotkeys.
     // Mod key
     // Mod+Shift+Slash { show-hotkey-overlay; }
-    Mod+Shift+Slash hotkey-overlay-title="key bindings" { spawn-sh "noctalia-shell ipc call plugin:keybind-cheatsheet toggle";}
+    Mod+Shift+Slash hotkey-overlay-title="key bindings" { show-hotkey-overlay; }
 
     // Terminal
     Mod+Shift+Return hotkey-overlay-title="Open a Terminal: Kitty" repeat=false { spawn "kitty"; }
@@ -616,13 +615,15 @@ binds {
     // On-screen keyboard (wvkbd) toggle for remote/touch input
     Mod+Alt+V hotkey-overlay-title="Toggle On-Screen Keyboard" { spawn-sh "pkill -RTMIN wvkbd-mobintl || wvkbd-mobintl"; }
 
-   // noctalia shell
-    Mod+Space hotkey-overlay-title="launcher" { spawn-sh "noctalia-shell ipc call launcher toggle"; }
-    Mod+P hotkey-overlay-title="controlCenter" { spawn-sh "noctalia-shell ipc call controlCenter toggle"; }
-    Mod+Shift+Q hotkey-overlay-title="Session Menu" { spawn-sh "noctalia-shell ipc call sessionMenu toggle"; }
-    Mod+Ctrl+P hotkey-overlay-title="Session Menu" { spawn-sh "noctalia-shell ipc call sessionMenu toggle"; }
-    Mod+Shift+Comma hotkey-overlay-title="Settings" { spawn-sh "noctalia-shell ipc call settings toggle"; }
-    Mod+Alt+N hotkey-overlay-title="scratchpad" { spawn-sh "noctalia-shell ipc call plugin togglePanel notes-scratchpad"; }
+   // noctalia
+    Mod+Space hotkey-overlay-title="launcher" { spawn-sh "noctalia msg panel-toggle launcher"; }
+    Mod+P hotkey-overlay-title="controlCenter" { spawn-sh "noctalia msg panel-toggle control-center"; }
+    Mod+Shift+Q hotkey-overlay-title="Session Menu" { spawn-sh "noctalia msg panel-toggle session"; }
+    Mod+Ctrl+P hotkey-overlay-title="Session Menu" { spawn-sh "noctalia msg panel-toggle session"; }
+    Mod+Shift+Comma hotkey-overlay-title="Settings" { spawn-sh "noctalia msg settings-toggle"; }
+    // noctalia v5: notes-scratchpad plugin not yet available
+    // Mod+Alt+N hotkey-overlay-title="scratchpad" { spawn-sh "noctalia msg panel-toggle notes-scratchpad"; }
+    Mod+Alt+N hotkey-overlay-title="clipboard" { spawn-sh "noctalia msg panel-toggle clipboard"; }
 
     // Quit Niri
     Mod+Shift+E { quit; }

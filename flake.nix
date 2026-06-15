@@ -55,8 +55,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
-      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:noctalia-dev/noctalia";
+      # Don't follow our nixpkgs — noctalia 5.0 needs newer wayland-protocols
+      # than our pin provides (ZWP_TEXT_INPUT_V3_CONTENT_HINT_PREEDIT_SHOWN etc.)
     };
     # Toolset ++ Application(s)
     rust.url = "github:oxalica/rust-overlay";

@@ -39,7 +39,7 @@ in
           mimeApps.enable = true; # mimeApps -> default launch application
           dunst.enable = false;
           waybar.enable = false;
-          elkowar.enable = false; # noctalia-shell uses quickshell, not eww
+          elkowar.enable = false; # noctalia v5 is native C++, not eww/quickshell
           rofi.enable = true;
         };
       };
@@ -58,57 +58,10 @@ in
           inputs.noctalia.homeModules.default
         ];
         programs = {
-          noctalia-shell = {
+          noctalia = {
             enable = true;
             systemd.enable = false;
             settings = builtins.fromJSON (readFile "${niriDir}/noctalia.json");
-            plugins = {
-              sources = [
-                {
-                  enabled = true;
-                  name = "Official Noctalia Plugins";
-                  url = "https://github.com/noctalia-dev/noctalia-plugins";
-                }
-              ];
-              states = {
-                screen-recorder = {
-                  enabled = true;
-                  sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
-                };
-                keybind-cheatsheet = {
-                  enabled = true;
-                  sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
-                };
-                clipper = {
-                  enabled = true;
-                  sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
-                };
-                notes-scratchpad = {
-                  enabled = true;
-                  sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
-                };
-                screenshot = {
-                  enabled = true;
-                  sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
-                };
-                assistant-panel = {
-                  enabled = true;
-                  sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
-                };
-                todo = {
-                  enabled = true;
-                  sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
-                };
-                network-manager-vpn = {
-                  enabled = true;
-                  sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
-                };
-                tailscale = {
-                  enabled = true;
-                  sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
-                };
-              };
-            };
           };
         };
       };
@@ -147,6 +100,11 @@ in
           target = "kanshi/config";
           source = "${config.snowflake.configDir}/kanshi/config";
         };
+        # NOTE: noctalia v5 manages plugins via `noctalia msg plugins` IPC.
+        # Do NOT generate plugins.json — a read-only nix-store symlink blocks
+        # v5 from writing its own plugin state.  After rebuild, enable plugins:
+        #   noctalia msg plugins source add "Official" "https://github.com/noctalia-dev/official-plugins"
+        #   noctalia msg plugins enable noctalia/screen_recorder
       };
       hardware.graphics.enable32Bit = true;
 

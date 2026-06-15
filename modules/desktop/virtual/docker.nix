@@ -55,7 +55,7 @@ in
 
   config = mkIf cfg.enable (mkMerge [
     {
-      user.packages = attrValues { inherit (pkgs) docker docker-compose; };
+      user.packages = attrValues { inherit (pkgs) docker_29 docker-compose; };
 
       home.sessionVariables = {
         DOCKER_CONFIG = "$XDG_CONFIG_HOME/docker";
@@ -67,6 +67,7 @@ in
       virtualisation = {
         docker = {
           enable = true;
+          package = pkgs.docker_29;
           autoPrune.enable = true;
           enableOnBoot = false;
           daemon = mkIf cfg.daemonSettings {
