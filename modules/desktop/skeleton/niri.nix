@@ -175,6 +175,7 @@ in
 
       environment.systemPackages = attrValues {
         inherit (pkgs)
+          brightnessctl
           imv
           kanshi
           libnotify

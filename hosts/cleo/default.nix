@@ -81,7 +81,7 @@
         vscodium.enable = true;
       };
       browsers = {
-        default = "firefox";
+        default = "google";
         google.enable = true;
         firefox.enable = true;
         zen.enable = false;

@@ -13,6 +13,8 @@ in {
 
   config = mkIf config.modules.hardware.pointer.enable (mkMerge [
     {
+      services.xserver.wacom.enable = true;
+
       services.libinput = {
         enable = true;
         mouse = {
