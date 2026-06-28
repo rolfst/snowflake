@@ -31,9 +31,19 @@ in {
       inherit (pkgs.unstable) audacity crosspipe;
     } // optionalAttrs cfg.video.enable {
       inherit (pkgs.unstable) handbrake;
-      obs-studio = pkgs.unstable.wrapOBS {
-        plugins = [ pkgs.unstable.obs-studio-plugins.wlrobs ];
-      };
+      obs-studio =
+        let base = pkgs.unstable.wrapOBS {
+          plugins = [ pkgs.unstable.obs-studio-plugins.wlrobs ];
+        };
+        in pkgs.unstable.symlinkJoin {
+          name = "obs-studio-no-fcitx";
+          paths = [ base ];
+          nativeBuildInputs = [ pkgs.makeWrapper ];
+          postBuild = ''
+            wrapProgram $out/bin/obs \
+              --unset QT_IM_MODULE
+          '';
+        };
     });
   };
 }

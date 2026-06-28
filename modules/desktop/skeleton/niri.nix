@@ -162,23 +162,38 @@ in
       };
 
       xdg.portal = {
-        # niri implements org.gnome.Mutter.ScreenCast natively — xdp-gnome is
-        # the correct portal for screencasting on niri (per niri docs).
-        # xdp-wlr crashes (SIGSEGV in wlr_frame_damage) on niri 25.11.
+        # Screen/window sharing via xdg-desktop-portal is broken on niri+NVIDIA PRIME
+        # (niri#2223, niri#3700) — unresolved upstream. The bug: niri exports DMA-BUF
+        # with MOD_INVALID modifier; apps using the other GPU's EGL cannot import it.
+        # Workaround: use OBS wlr-screencopy capture + v4l2loopback virtual camera.
         extraPortals = [ pkgs.xdg-desktop-portal-gnome ];
-        # Match upstream NixOS niri module config exactly:
-        # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/nixos/modules/programs/wayland/niri.nix
         config.niri = {
           default = [ "gnome" "gtk" ];
           "org.freedesktop.impl.portal.Access" = "gtk";
           "org.freedesktop.impl.portal.Notification" = "gtk";
           "org.freedesktop.impl.portal.Secret" = "gnome-keyring";
+          "org.freedesktop.impl.portal.ScreenCast" = "gnome";
+          "org.freedesktop.impl.portal.Screenshot" = "gnome";
         };
       };
 
       # Required for xdp-gnome's screencasting to work — niri ships systemd
       # user units that wire up graphical-session.target correctly.
       systemd.packages = [ pkgs.niri ];
+
+      # xdg-desktop-portal-gnome renders its own GTK4/Vulkan picker window.
+      # The global NVIDIA env vars (GBM_BACKEND, VK_DRIVER_FILES, etc.) that we
+      # set for niri + the screencasting pipeline leak into xdp-gnome and cause
+      # VK_SUBOPTIMAL_KHR swapchain errors that prevent the picker from rendering.
+      # Unset them for the portal so it falls back to the Intel iGPU for its UI.
+      hm.xdg.configFile."systemd/user/xdg-desktop-portal-gnome.service.d/unset-nvidia.conf".text = ''
+        [Service]
+        Environment="GBM_BACKEND="
+        Environment="VK_DRIVER_FILES="
+        Environment="__GLX_VENDOR_LIBRARY_NAME="
+        Environment="DXVK_FILTER_DEVICE_NAME="
+        Environment="__VK_LAYER_NV_optimus="
+      '';
 
     };
 }
