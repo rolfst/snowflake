@@ -407,11 +407,11 @@ in {
       }))
     ]))
 
-    # Wallpaper data file — shared by X11 (feh) and Wayland (noctalia-shell)
+    # Wallpaper data file — shared by X11 (feh) and Wayland (noctalia)
     (mkIf (cfg.wallpaper != null) {
       create.dataFile = {
         "wallpaper".source = cfg.wallpaper;
-        # Symlink into backgrounds/ for noctalia-shell's wallpaper engine
+        # Symlink into backgrounds/ for noctalia's wallpaper engine
         "backgrounds/wallpaper".source = cfg.wallpaper;
       };
     })

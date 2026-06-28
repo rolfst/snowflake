@@ -102,7 +102,7 @@
             ];
 
           config.permittedInsecurePackages = [
-            "electron-25.9.0"
+            "electron-39.8.10"
             "libsoup-2.74.3"
           ];
           overlays = extraOverlays ++ (lib.attrValues self.overlays);
