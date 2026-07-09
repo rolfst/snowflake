@@ -59,15 +59,15 @@
       "center": [
         "workspaces"
       ],
-      "end": [
-        "keyboard_toggle",
-        "tray",
-        "notifications",
-        "battery",
-        "volume",
-        "brightness",
-        "control-center"
-      ]
+       "end": [
+         "keyboard_toggle",
+         "tray",
+         "notifications",
+         "battery",
+         "volume",
+         "brightness",
+         "control-center"
+        ]
     }
   },
 

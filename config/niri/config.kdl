@@ -388,6 +388,9 @@ binds {
     Mod+Alt+K hotkey-overlay-title="element"   { spawn "element-desktop"; }
     Mod+Alt+H hotkey-overlay-title="Telegram"   { spawn "telegram-desktop"; } // Replaced custom emacs/telega binding with standard client
 
+    // Screen Recording
+    Mod+F10 hotkey-overlay-title="Toggle Screen Recording" repeat=false { spawn-sh "noctalia msg plugin noctalia/screen_recorder:service all toggle"; }
+
     // Media Keys
     // Example volume keys mappings for PipeWire & WirePlumber.
     // The allow-when-locked=true property makes them work even when the session is locked.
