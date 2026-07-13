@@ -95,7 +95,6 @@ in
 
     # Necessary for nixos-rebuild build-vm to work.
     home-manager.useUserPackages = true;
-    home-manager.backupFileExtension = "backup";
     home-manager.useGlobalPkgs = true;
 
     home = {
