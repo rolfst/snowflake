@@ -22,6 +22,7 @@ in {
     user.packages = let
       inherit (pkgs) makeDesktopItem google-chrome writeShellScriptBin;
     in [
+      pkgs.my.browser-tools
       (writeShellScriptBin "google-chrome" ''exec google-chrome-stable "$@"'')
       (makeDesktopItem {
         name = "google-private";
