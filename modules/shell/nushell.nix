@@ -79,7 +79,7 @@ in
       dotDir = "${config.home.homeDirectory}/.config/zsh";
 
       initContent = ''
-        # Exec nushell for interactive sessions.
+        # Exec into tmux for interactive sessions, then nushell inside tmux.
         # Conditions:
         #   - Not a dumb terminal (e.g. scp, rsync)
         #   - Not running a bash-command-string (e.g. nix-shell)
@@ -87,7 +87,11 @@ in
         if [[ "$TERM" != "dumb" && -z "$ZSH_EXECUTION_STRING" ]]; then
           parent_comm="$(ps -p $PPID -o comm= 2>/dev/null)"
           if [[ "$parent_comm" != "nu" ]]; then
-            exec ${getExe pkgs.nushell}
+            if [[ -z "$TMUX" ]]; then
+              exec tmux new-session -A -s default
+            else
+              exec ${getExe pkgs.nushell}
+            fi
           fi
         fi
       '';
@@ -219,36 +223,28 @@ in
           git worktree remove ...$args
         }
 
-        # -------===[ Kitty Session Keybindings ]===------- #
+        # -------===[ Tmux Session Keybindings ]===------- #
+        # Note: Primary session switching is via tmux prefix + T (popup).
+        # These nushell bindings provide shell-level shortcuts as fallback.
         $env.config.keybindings ++= [
           {
-            name: kitty_session_launcher
+            name: tmux_session_launcher
             modifier: control
             keycode: char_l
             mode: [vi_insert vi_normal]
             event: {
               send: executehostcommand
-              cmd: "kittysession-l"
+              cmd: "tsession"
             }
           }
           {
-            name: kitty_session_remove
+            name: tmux_session_remove
             modifier: control
             keycode: char_d
             mode: [vi_insert vi_normal]
             event: {
               send: executehostcommand
-              cmd: "kittysession-rm"
-            }
-          }
-          {
-            name: kitty_session_boot
-            modifier: control
-            keycode: char_b
-            mode: [vi_insert vi_normal]
-            event: {
-              send: executehostcommand
-              cmd: "ks-boot"
+              cmd: "tsession-rm"
             }
           }
         ]

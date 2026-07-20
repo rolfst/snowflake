@@ -19,6 +19,9 @@ in
     };
 
   config = mkIf config.modules.shell.toolset.btop.enable {
+    # btop writes to its config at runtime; force home-manager to always overwrite
+    hm.xdg.configFile."btop/btop.conf".force = true;
+
     hm.programs.btop =
       let
         inherit (config.modules.themes) active;

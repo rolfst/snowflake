@@ -65,24 +65,24 @@ in
                 "o"
                 "c"
               ];
-              run = "shell 'kitten @ launch --type=tab --tab-title opencode --cwd=\"$PWD\" opencode' --orphan";
-              desc = "Open opencode in new kitty window";
+              run = "shell 'tmux new-window -n \"$(basename $PWD)-opencode\" -c \"$PWD\" opencode' --orphan";
+              desc = "Open opencode in new tmux window";
             }
             {
               on = [
                 "o"
                 "j"
               ];
-              run = "shell 'kitten @ launch --type=tab --tab-title lazyjj --cwd=\"$PWD\" lazyjj' --orphan";
-              desc = "Open lazyjj in new kitty window";
+              run = "shell 'tmux new-window -n \"$(basename $PWD)-lazyjj\" -c \"$PWD\" lazyjj' --orphan";
+              desc = "Open lazyjj in new tmux window";
             }
             {
               on = [
                 "o"
                 "t"
               ];
-              run = "shell 'kitten @ launch --type=tab --cwd=\"$PWD\"' --orphan";
-              desc = "Open new kitty tab in current directory";
+              run = "shell 'tmux new-window -n \"$(basename $PWD)\" -c \"$PWD\"' --orphan";
+              desc = "Open new tmux window in current directory";
             }
             {
               on = [

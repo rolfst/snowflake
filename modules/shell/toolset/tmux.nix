@@ -67,6 +67,14 @@ in {
           set-window-option -g monitor-activity off
 
           # -------===[ Keybindings ]===------- #
+          # Workspace/Session management:
+          unbind-key t
+          unbind-key T
+          bind-key t display-popup -E -w 60% -h 60% "tsession"
+          bind-key X display-popup -E -w 60% -h 40% "tsession-rm"
+          bind-key T clock-mode
+          bind-key r source-file ~/.config/tmux/tmux.conf \; display-message "Config reloaded"
+
           # Window Control(s):
           bind-key Q kill-session
           # bind-key Q kill-server
@@ -215,7 +223,7 @@ in {
 #  tmux "$${tmux_commands[@]}"
           set-option -g status-left "#[fg=${types.bg}]#[bg=${normal.blue}]#[bold]   #[fg=${normal.blue}]#[bg=default]"
           set-option -g status-bg default
-          set-option -g status-right "#[italics,fg=${normal.blue},bg=default]#[fg=${types.bg},bg=${normal.blue}]#H | %b %d, %H:%M  #[fg=${types.bg},bg=${normal.blue},bold,italics] base-#S "
+          set-option -g status-right "#[italics,fg=${normal.blue},bg=default]#[fg=${types.bg},bg=${normal.blue}]#H | %b %d, %H:%M  #[fg=${types.bg},bg=${normal.blue},bold,italics] #S "
 
           # -------===[ Clock & Selection ]===------- #
           set-window-option -g clock-mode-colour "${types.border}"

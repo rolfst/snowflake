@@ -8,7 +8,6 @@
 let
   inherit (builtins) toString;
   inherit (lib.modules) mkIf mkMerge;
-  inherit (pkgs) python3 writeScriptBin;
 in
 {
   options.modules.desktop.terminal.kitty =
@@ -23,160 +22,6 @@ in
     user.packages = [
       pkgs.chafa
       pkgs.viu
-      (writeScriptBin "kittysession-l" ''
-            #!/usr/bin/env bash
-
-            SESSION_DIR="$HOME/.local/share/kitty/sessions"
-            WORKSPACE_DIR="$HOME/workspaces"
-            mkdir -p "$SESSION_DIR"
-
-            # ------------------------------------------------------------------
-            # STAP 1: Verzamel bestaande Sessies
-            # ------------------------------------------------------------------
-            LIST_SESSIONS=$(find "$SESSION_DIR" -maxdepth 1 -type f -not -name '.*' | while read -r filepath; do
-                filename=$(basename "$filepath")
-                clean_name="''${filename%.*}"
-                echo -e "  $clean_name (Sessie)\t$filepath"
-            done)
-
-            # ------------------------------------------------------------------
-            # STAP 2: Verzamel Mappen
-            # ------------------------------------------------------------------
-            LIST_DIRS=$(${pkgs.fd}/bin/fd -td . "$WORKSPACE_DIR" \
-                --min-depth 1 \
-                --max-depth 3 \
-                --exclude={node_modules,src,build,dist,bin,.git} | while read -r dirpath; do
-                    echo -e "  $dirpath\t$dirpath"
-                done)
-
-            # ------------------------------------------------------------------
-            # STAP 3: Selectie
-            # ------------------------------------------------------------------
-            SELECTION=$(echo -e "$LIST_SESSIONS\n$LIST_DIRS" | ${pkgs.fzf}/bin/fzf \
-                --delimiter='\t' \
-                --with-nth=1 \
-                --height=40% \
-                --reverse \
-                --header="Selecteer Project of Sessie")
-
-            if [ -z "$SELECTION" ]; then exit 0; fi
-
-            TARGET_PATH=$(echo "$SELECTION" | cut -f2)
-
-            # ------------------------------------------------------------------
-            # STAP 4: Actie
-            # ------------------------------------------------------------------
-
-            if [ -f "$TARGET_PATH" ]; then
-                # === GEVAL A: Bestaande sessie ===
-                echo "Laden bestaande sessie..."
-                kitten @ action goto_session "$TARGET_PATH"
-
-            elif [ -d "$TARGET_PATH" ]; then
-                # === GEVAL B: Directory -> Maak nieuwe sessie met TEMPLATE ===
-
-                DIR_NAME=$(basename "$TARGET_PATH")
-                NEW_SESSION_FILE="$SESSION_DIR/$DIR_NAME"
-
-                if [ ! -f "$NEW_SESSION_FILE" ]; then
-                    echo "Nieuwe sessie aanmaken met template: $DIR_NAME"
-
-                    # Hier schrijven we jouw template naar het bestand.
-                    # $TARGET_PATH wordt automatisch vervangen door de gekozen map.
-                    cat > "$NEW_SESSION_FILE" <<EOF
-        new_tab
-        layout fat
-        enabled_layouts fat,grid,horizontal,splits,stack,tall,vertical
-        set_layout_state {"main_bias": [0.5, 0.5], "biased_map": {}, "opts": {"full_size": 1, "bias": 50, "mirrored": "n"}, "class": "Fat", "all_windows": {"active_group_idx": 0, "active_group_history": [1], "window_groups": [{"id": 1, "window_ids": [1]}]}}
-        cd $TARGET_PATH
-        launch 'kitty-unserialize-data={"id": 1}'
-        focus
-
-        focus_tab 0
-        EOF
-                else
-                    echo "Sessiebestand bestond al ($DIR_NAME), wordt geladen..."
-                fi
-
-                # Laad de (nieuwe) file
-                kitten @ action goto_session "$NEW_SESSION_FILE"
-            fi
-      '')
-      # Het KS-RM (Remove) Script
-      (writeScriptBin "kittysession-rm" ''
-        SESSION_DIR="$HOME/.local/share/kitty/sessions"
-        [ ! -d "$SESSION_DIR" ] && exit 0
-        cd "$SESSION_DIR"
-
-        SELECTION=$(find . -maxdepth 1 -type f -not -name '.*' | sed 's|^\./||' | while read -r file; do
-            echo -e "''${file%.*}\t$file"
-        done | ${pkgs.fzf}/bin/fzf -m --delimiter='\t' --with-nth=1 --height=40% --reverse --header="REMOVE SESSION(S)" --color=header:red | cut -f2)
-
-        if [ -n "$SELECTION" ]; then
-            echo "To be removed:"
-            echo "$SELECTION"
-            read -p "Confirm (y/N): " CONFIRM
-            if [[ "$CONFIRM" =~ ^[yY]$ ]]; then
-                echo "$SELECTION" | xargs rm
-                echo "Removed."
-            fi
-        fi
-      '')
-      (writeScriptBin "ks-boot" ''
-        SESSION_DIR="$HOME/.local/share/kitty/sessions"
-
-        # Check of map bestaat
-        if [ ! -d "$SESSION_DIR" ]; then echo "Geen sessiemap gevonden"; exit 1; fi
-
-        # Maak een array van alle bestanden (gesorteerd)
-        FILES=($(ls "$SESSION_DIR"/* | sort))
-
-        if [ ''${#FILES[@]} -eq 0 ]; then echo "Geen sessies gevonden."; exit 1; fi
-
-        # ---------------------------------------------------------
-        # STAP 1: Start de EERSTE sessie (Master Window)
-        # ---------------------------------------------------------
-        FIRST_FILE="''${FILES[0]}"
-        SOCKET_ADDR="unix:/tmp/kitty-boot-$$"
-
-        echo "🚀 Master venster starten met: $FIRST_FILE"
-
-        # We starten het nieuwe venster en geven het een socket
-        kitty --session "$FIRST_FILE" --detach --listen-on "$SOCKET_ADDR"
-
-        echo "Wachten op initialisatie..."
-        while [ ! -S "/tmp/kitty-boot-$$" ]; do
-            sleep 0.1
-        done
-
-        # ---------------------------------------------------------
-        # STAP 2: Laad de OVERIGE files in dat nieuwe venster
-        # ---------------------------------------------------------
-
-        # Loop door de rest van de bestanden
-        for ((i=1; i<''${#FILES[@]}; i++)); do
-            FILE_PATH="''${FILES[$i]}"
-            echo "📥 Inladen: $FILE_PATH"
-
-            # Stuur goto_session commando naar de nieuwe socket
-            kitten @ --to "$SOCKET_ADDR" action goto_session "$FILE_PATH"
-        done
-
-        # ---------------------------------------------------------
-        # STAP 3: Sluit HUIDIG venster (De harde manier)
-        # ---------------------------------------------------------
-        echo "👋 Oude venster sluiten..."
-
-        # We gebruiken 'kill' op de eigen PID.
-        # Dit omzeilt de "Are you sure?" popup van Kitty.
-        if [ -n "$KITTY_PID" ]; then
-            kill "$KITTY_PID"
-        else
-            # Fallback voor als om de een of andere reden KITTY_PID leeg is
-            # (Sluit netjes, maar riskeert popup)
-            kitten @ action close-os-window
-        fi
-      '')
     ];
 
     hm.programs.kitty = {
@@ -237,20 +82,11 @@ in
 
         window_border_width = "1.0";
         window_margin_width = "0.0";
-        window_padding_width = "15.00";
+        window_padding_width = "15 15 0 15";
         placement_strategy = "top-left";
         draw_minimal_borders = "yes";
 
-        tab_bar_style = "custom";
-        tab_separator = ''""'';
-        tab_fade = "0 0 0 0";
-        tab_activity_symbol = "none";
-        tab_bar_edge = "top";
-        tab_bar_margin_height = "0.0 0.0";
-        active_tab_font_style = "bold-italic";
-        inactive_tab_font_style = "normal";
-        tab_bar_min_tabs = 1;
-        tab_bar_filter = "session:current";
+        tab_bar_min_tabs = 2;
       };
 
       keybindings = {
@@ -258,7 +94,6 @@ in
         "ctrl+shift+0" = "restore_font_size";
         "middle release ungrabbed" = "paste_from_selection";
 
-        "ctrl+shift+t" = "new_tab_with_cwd";
         "ctrl+shift+/" = "new_window";
 
         "ctrl+shift+p" = "nth_window -1";
@@ -267,18 +102,11 @@ in
         "shift+left" = "move_window right";
         "ctrl+down" = "neighboring_window down";
         "shift+down" = "move_window up";
-        "shift+alt+t" = "select_tab";
 
-        "ctrl+shift+f5" =
-          "save_as_session --use-foreground-process --base-dir=~/.local/share/kitty/sessions/";
-        "ctrl+shift+f7" = "goto_session";
-        "ctrl+shift+f8" = "close_session";
         "ctrl+shift+f10" = "close_os_window";
 
         # nvim hangs too often
         "ctrl+alt+k" = "launch --type=background sh -c 'pkill -u $(whoami) -x nvim'";
-        # "ctrl+shift+f7>p" = "goto_session ~/.local/share/kitty";
-        # "ctrl+shift+f7>-" = "goto_session -1";
       };
 
       extraConfig =
