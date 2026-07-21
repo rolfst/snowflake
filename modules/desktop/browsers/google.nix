@@ -20,8 +20,9 @@ in {
   config = mkIf cfg.google.enable (mkMerge [
     {
     user.packages = let
-      inherit (pkgs) makeDesktopItem google-chrome;
+      inherit (pkgs) makeDesktopItem google-chrome writeShellScriptBin;
     in [
+      (writeShellScriptBin "google-chrome" ''exec google-chrome-stable "$@"'')
       (makeDesktopItem {
         name = "google-private";
         desktopName = "Googled Web Browser (Private)";
