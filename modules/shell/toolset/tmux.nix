@@ -70,24 +70,26 @@ in {
           # Workspace/Session management:
           unbind-key t
           unbind-key T
-          bind-key t display-popup -E -w 60% -h 60% "tsession"
-          bind-key X display-popup -E -w 60% -h 40% "tsession-rm"
-          bind-key T clock-mode
-          bind-key r source-file ~/.config/tmux/tmux.conf \; display-message "Config reloaded"
+          bind-key -N "Session picker"       t display-popup -E -w 60% -h 60% "tsession"
+          bind-key -N "Remove session"       X display-popup -E -w 60% -h 40% "tsession-rm"
+          bind-key -N "Clock mode"           T clock-mode
+          bind-key -N "Reload config"        r source-file ~/.config/tmux/tmux.conf \; display-message "Config reloaded"
 
           # Window Control(s):
-          bind-key Q kill-session
-          # bind-key Q kill-server
-          bind-key c new-window -c '#{pane_current_path}'
+          bind-key -N "Kill session"         Q kill-session
+          bind-key -N "New window (cwd)"     c new-window -c '#{pane_current_path}'
 
           # Buffers:
-          bind-key b list-buffers
-          bind-key p paste-buffer
-          bind-key P choose-buffer
+          bind-key -N "List buffers"         b list-buffers
+          bind-key -N "Paste buffer"         p paste-buffer
+          bind-key -N "Choose buffer"        P choose-buffer
 
           # Split bindings:
-          bind-key - split-window -v -c '#{pane_current_path}'
-          bind-key / split-window -h -c '#{pane_current_path}'
+          bind-key -N "Split vertical"       - split-window -v -c '#{pane_current_path}'
+          bind-key -N "Split horizontal"     / split-window -h -c '#{pane_current_path}'
+
+          # Help:
+          bind-key -N "Show keybindings"     ? list-keys -N
 
           # Copy/Paste bindings:
           bind-key -T copy-mode-vi v send-keys -X begin-selection     -N "Start visual mode for selection"

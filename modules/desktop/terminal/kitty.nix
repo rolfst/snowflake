@@ -35,7 +35,7 @@ in
         allow_remote_control = "yes";
         listen_on = "unix:@mykitty";
         close_on_child_death = "no";
-        shell_integration = "no-cursor";
+        shell_integration = "no-cursor no-title";
         confirm_os_window_close = -1;
 
         background_opacity = "0.8";
