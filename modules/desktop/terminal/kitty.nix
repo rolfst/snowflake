@@ -107,6 +107,10 @@ in
 
         # nvim hangs too often
         "ctrl+alt+k" = "launch --type=background sh -c 'pkill -u $(whoami) -x nvim'";
+
+        # Send ctrl+enter and shift+enter as CSI u sequence for TUI apps (e.g. opencode in tmux)
+        "ctrl+enter" = "send_text all \\x1b[13;5u";
+        "shift+enter" = "send_text all \\x1b[13;2u";
       };
 
       extraConfig =

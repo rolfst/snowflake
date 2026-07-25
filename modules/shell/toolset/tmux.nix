@@ -49,6 +49,11 @@ in {
           set-option -ga terminal-overrides '*:Ss=\E[%p1%d q:Se=\E[ q'
           set-environment -g COLORTERM "truecolor"
 
+          # -------===[ Extended Keys (Kitty keyboard protocol) ]===------- #
+          set-option -g allow-passthrough on
+          bind-key -n C-Enter send-keys Escape "[13;5u"
+          bind-key -n S-Enter send-keys Escape "[13;2u"
+
           # -------===[ General-Configurations ]===------- #
           set-option -g renumber-windows on
           set-window-option -g automatic-rename on
