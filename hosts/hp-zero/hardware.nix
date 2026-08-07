@@ -114,10 +114,10 @@ in
       "resume_offset=533760" # REPLACE with output from 'btrfs inspect-internal map-swapfile'
       "mem_sleep_default=s2idle" # Use s2idle for S0ix support with NVIDIA open driver
       "nvidia.NVreg_EnableS0ixPowerManagement=1" # Enable S0ix power management (NVIDIA 570+)
-      # Override NixOS nvidia module's PreserveVideoMemoryAllocations=1:
-      # powerManagement.enable injects =1, but S0ix self-refresh handles VRAM natively;
-      # the preserve path triggers open-driver bug #472. Kernel uses LAST cmdline value.
-      "nvidia.NVreg_PreserveVideoMemoryAllocations=0"
+      # Driver 580+ fixes open-driver bug #472 — safe to let NixOS's
+      # powerManagement.enable set PreserveVideoMemoryAllocations=1.
+      # This preserves VRAM across suspend/hibernate and prevents the
+      # nvidia-drm driver from going unresponsive after resume.
     ];
     kernel.sysctl = {
       "net.ipv4.icmp_echo_ignore_broadcasts" = 1; # Refuse ICMP echo requests
@@ -142,8 +142,7 @@ in
     nvidia = {
       modesetting.enable = true;
       # Nvidia power management. Creates nvidia-suspend/hibernate/resume systemd services.
-      # Note: this also injects NVreg_PreserveVideoMemoryAllocations=1, which we override
-      # to =0 in kernelParams (S0ix self-refresh handles VRAM instead).
+      # Injects NVreg_PreserveVideoMemoryAllocations=1 to preserve VRAM across suspend.
       powerManagement.enable = true;
       # Fine-grained power management. Turns off GPU when not in use.
       # Experimental and only works on modern Nvidia GPUs (Turing or newer).
@@ -211,15 +210,24 @@ in
   # plain suspend/hibernate). Use wantedBy (soft dep) instead of requiredBy so
   # a transient nvidia-sleep.sh I/O error doesn't permanently block all future
   # sleep cycles — suspending without GPU prep is better than never sleeping.
+  # NOTE: do NOT set overrideStrategy = "asDropin" here. The nvidia module
+  # (nixos/modules/hardware/video/nvidia.nix) already defines nvidia-suspend
+  # and nvidia-resume as full units via systemd.services (default
+  # overrideStrategy "asDropinIfExists", not backed by a systemd.packages
+  # unit file). Forcing "asDropin" on the *merged* unit config makes
+  # systemd-lib.nix write only a `.service.d/overrides.conf` and skip writing
+  # the base unit entirely — so the units silently stop existing
+  # (`systemctl` reports them "not-found"), NVIDIA's suspend-prep hook never
+  # runs, and the kernel then refuses to suspend at all
+  # ("nv_pmops_suspend returns -5" / "Input/output error"). Plain attrset
+  # merging (default strategy) is enough to add the extra wantedBy/before/after.
   systemd.services.nvidia-suspend = {
     wantedBy = [ "systemd-suspend-then-hibernate.service" ];
     before = [ "systemd-suspend-then-hibernate.service" ];
-    overrideStrategy = "asDropin";
   };
   systemd.services.nvidia-resume = {
     wantedBy = [ "systemd-suspend-then-hibernate.service" ];
     after = [ "systemd-suspend-then-hibernate.service" ];
-    overrideStrategy = "asDropin";
   };
 
   # Deploy NVIDIA's own system-sleep hook from the driver package.
@@ -232,13 +240,14 @@ in
     mode = "0755";
   };
 
-  # systemd 256+ freezes user sessions BEFORE nvidia-sleep.sh can write to
-  # /proc/driver/nvidia/suspend, breaking NVIDIA's suspend preparation.
-  # All major distros (Arch, Debian, Gentoo, openSUSE) ship this workaround.
-  # See: https://github.com/NVIDIA/open-gpu-kernel-modules/issues/834
-  systemd.services.systemd-suspend.serviceConfig.Environment = "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false";
-  systemd.services.systemd-hibernate.serviceConfig.Environment = "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false";
-  systemd.services.systemd-suspend-then-hibernate.serviceConfig.Environment = "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false";
+  # NOTE: We previously set SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false here to let
+  # nvidia-sleep.sh write to /proc/driver/nvidia/suspend before sessions freeze
+  # (see https://github.com/NVIDIA/open-gpu-kernel-modules/issues/834). On this
+  # kernel/systemd combo it instead made the actual suspend syscall fail outright
+  # ("Failed to put system to sleep. System resumed again: Input/output error"),
+  # so lid-close silently did nothing beyond locking the screen. Removed; if the
+  # freeze-ordering issue needs solving again, do it via unit ordering
+  # (Before=/After= on the nvidia-sleep hook) instead of disabling the freeze.
 
   # Restore networking after suspend/hibernate resume:
   # Don't restart NetworkManager — that kills the daemon and causes a race

@@ -131,11 +131,14 @@ in
   };
   systemd.sleep.extraConfig = lib.mkForce ""; # drop HibernateDelaySec from laptop.nix
 
-  # systemd 256+ freezes user sessions BEFORE nvidia-sleep.sh can write to
-  # /proc/driver/nvidia/suspend, breaking NVIDIA's suspend preparation.
-  # All major distros (Arch, Debian, Gentoo, openSUSE) ship this workaround.
-  # See: https://github.com/NVIDIA/open-gpu-kernel-modules/issues/834
-  systemd.services.systemd-suspend.serviceConfig.Environment = "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false";
+  # NOTE: We previously set SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false here to let
+  # nvidia-sleep.sh write to /proc/driver/nvidia/suspend before sessions freeze
+  # (see https://github.com/NVIDIA/open-gpu-kernel-modules/issues/834). On this
+  # kernel/systemd combo it instead made the actual suspend syscall fail outright
+  # ("Failed to put system to sleep. System resumed again: Input/output error"),
+  # so lid-close silently did nothing beyond locking the screen. Removed; if the
+  # freeze-ordering issue needs solving again, do it via unit ordering
+  # (Before=/After= on the nvidia-sleep hook) instead of disabling the freeze.
 
   # Deploy NVIDIA's own system-sleep hook from the driver package.
   # NixOS's systemd.packages only picks up .service/.timer units, not system-sleep hooks.

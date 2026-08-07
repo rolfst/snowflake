@@ -195,12 +195,14 @@ in
     mode = "0755";
   };
 
-  # systemd 256+ freezes user sessions BEFORE nvidia-sleep.sh can write to
-  # /proc/driver/nvidia/suspend, breaking NVIDIA's suspend preparation.
-  # See: https://github.com/NVIDIA/open-gpu-kernel-modules/issues/834
-  systemd.services.systemd-suspend.serviceConfig.Environment = "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false";
-  systemd.services.systemd-hibernate.serviceConfig.Environment = "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false";
-  systemd.services.systemd-suspend-then-hibernate.serviceConfig.Environment = "SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false";
+  # NOTE: We previously set SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false here to let
+  # nvidia-sleep.sh write to /proc/driver/nvidia/suspend before sessions freeze
+  # (see https://github.com/NVIDIA/open-gpu-kernel-modules/issues/834). On this
+  # kernel/systemd combo it instead made the actual suspend syscall fail outright
+  # ("Failed to put system to sleep. System resumed again: Input/output error"),
+  # so lid-close silently did nothing beyond locking the screen. Removed; if the
+  # freeze-ordering issue needs solving again, do it via unit ordering
+  # (Before=/After= on the nvidia-sleep hook) instead of disabling the freeze.
 
   # Restore networking after suspend/hibernate resume.
   # When Tailscale is active, it owns DNS via 100.100.100.100. After hibernate
