@@ -20,6 +20,9 @@
         AI.enable = true;
         fastfetch.enable = true;
       };
+      scripts = {
+        gemini-intake.enable = true;
+      };
     };
     hardware = {
       laptop.enable = true;
