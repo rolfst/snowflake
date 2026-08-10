@@ -603,7 +603,9 @@ binds {
     // Alt+Print { spawn "captScr" "system" "--active-window"; }
     Ctrl+Alt+Print { spawn "captScr" "clipboard" "--active-window"; }
     Shift+Print { spawn "captScr" "system" "--selection"; }
-    Ctrl+Shift+Print { spawn "captScr" "clipboard" "--selection"; }
+     Ctrl+Shift+Print { spawn "captScr" "clipboard" "--selection"; }
+     Mod+Print hotkey-overlay-title="Record Screen: toggle wf-recorder" { spawn-sh "pkill -INT wf-recorder || wf-recorder -f ~/Videos/Screencasts/$(date '+%Y-%m-%d_%H-%M-%S').mp4"; }
+
 
     // Applications such as remote-desktop clients and software KVM switches may
     // request that niri stops processing the keyboard shortcuts defined here

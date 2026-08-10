@@ -24,7 +24,7 @@ in {
       historyLimit = 5000;
       newSession = true;
 
-      plugins = let inherit (pkgs.tmuxPlugins) resurrect continuum sensible vim-tmux-navigator;
+      plugins = let inherit (pkgs.tmuxPlugins) resurrect continuum sensible;
       in [
         {
           plugin = resurrect;
@@ -38,7 +38,6 @@ in {
           '';
         }
         { plugin = sensible; }
-        { plugin = vim-tmux-navigator; }
       ];
 
       extraConfig =
@@ -86,8 +85,16 @@ in {
 
           # Buffers:
           bind-key -N "List buffers"         b list-buffers
-          bind-key -N "Paste buffer"         p paste-buffer
           bind-key -N "Choose buffer"        P choose-buffer
+
+          # Window cycling:
+          bind-key -N "Previous window"      p previous-window
+
+          # Zoom-aware pane navigation:
+          bind-key -n C-h if -F '#{window_zoomed_flag}' 'resize-pane -Z; select-pane -L; resize-pane -Z' 'select-pane -L'
+          bind-key -n C-j if -F '#{window_zoomed_flag}' 'resize-pane -Z; select-pane -D; resize-pane -Z' 'select-pane -D'
+          bind-key -n C-k if -F '#{window_zoomed_flag}' 'resize-pane -Z; select-pane -U; resize-pane -Z' 'select-pane -U'
+          bind-key -n C-l if -F '#{window_zoomed_flag}' 'resize-pane -Z; select-pane -R; resize-pane -Z' 'select-pane -R'
 
           # Split bindings:
           bind-key -N "Split vertical"       - split-window -v -c '#{pane_current_path}'
