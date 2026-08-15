@@ -10,4 +10,5 @@ let
 in {
   "company-vpn.ovpn.age".publicKeys = allKeys;
   "private-tokens.age".publicKeys = allKeys;
+  "rclone-gdrive.age".publicKeys = allKeys;
 }

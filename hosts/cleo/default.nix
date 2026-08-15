@@ -43,6 +43,12 @@
     services = {
       ssh.enable = true;
       flatpak.enable = true;
+      rclone-gdrive = {
+        enable = true;
+        directories = [
+          "/home/rolfst/workspaces/Astra-Europa/Policies"
+        ];
+      };
       streaming = {
         enable = true;
         sunshine.enable = true;
