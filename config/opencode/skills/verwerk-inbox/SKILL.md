@@ -86,6 +86,10 @@ Lees alle bestanden in:
 - `/home/rolfst/workspaces/Astra-Europa/Policies/.sisyphus/plans/`
 - `/home/rolfst/workspaces/rolfst-essays/` (top-level mappen per essay)
 
+Voor elke essay-map in `rolfst-essays/`: lees `status.md` als die bestaat. Relevante velden:
+- `published: true` -- artikel is live; voeg geen inhoud toe, stel hooguit een follow-up artikel voor
+- `published: false` of geen `status.md` -- toevoeging is mogelijk
+
 Voor elk extracted insight:
 
 | Insight type | Mapping logic |
@@ -95,13 +99,23 @@ Voor elk extracted insight:
 | Nieuw concept zonder passend plan | Stel nieuw plan voor in juist project |
 | Politieke framing | `Policies`: neogeorgisme of blog plan |
 | Rekenvoorbeeld | `Policies`: begrotingsfeasibility of blog plan |
-| Uitgewerkte blogtekst | `rolfst-essays`: nieuw artikel of update bestaand |
+| Uitgewerkte blogtekst, nog niet gepubliceerd | `rolfst-essays`: toevoegen aan bestaand artikel |
+| Uitgewerkte blogtekst, al gepubliceerd | `rolfst-essays`: nieuw artikel voorstellen als follow-up |
+| Uitgewerkte blogtekst, geen passend artikel | `rolfst-essays`: nieuw artikel, nieuwe map |
 
 ## Step 4: Present overview — STOP EN WACHT
 
 Presenteer het volgende overzicht aan de gebruiker en **stop**. Schrijf nog niets.
 
-Voor elk inzicht dat naar `rolfst-essays` gaat: vermeld expliciet of het een nieuw artikel (nieuwe map) of een toevoeging aan een bestaand artikel is. Als onduidelijk: stel de vraag in het overzicht.
+Voor elk inzicht dat naar `rolfst-essays` gaat: lees `status.md` in de betreffende map.
+
+| Situatie | Actie |
+|---|---|
+| Geen passend artikel gevonden | Nieuw artikel voorstellen, nieuwe map |
+| Passend artikel, geen `status.md` of `published: false` | Toevoeging aan bestaand artikel voorstellen |
+| Passend artikel, `published: true` | Nieuw follow-up artikel voorstellen |
+
+De vraag "nieuw artikel of toevoegen aan bestaand?" wordt nooit gesteld -- de status geeft het antwoord.
 
 ```
 ## Inbox verwerking — overzicht
@@ -110,14 +124,12 @@ Voor elk inzicht dat naar `rolfst-essays` gaat: vermeld expliciet of het een nie
 **Nieuwe inzichten:**
 - [inzicht 1] → [Policies] toevoegen aan [plan X]
 - [inzicht 2] → [rolfst-essays] nieuw artikel → nieuwe map `[voorgestelde-mapnaam]`
-- [inzicht 3] → [rolfst-essays] toevoegen aan bestaand artikel `[mapnaam]`
-- [inzicht 4] → [Policies] nieuw plan voorgesteld: [titel]
+- [inzicht 3] → [rolfst-essays] toevoegen aan `[mapnaam]` (niet gepubliceerd)
+- [inzicht 4] → [rolfst-essays] nieuw follow-up artikel op `[mapnaam]` (gepubliceerd)
+- [inzicht 5] → [Policies] nieuw plan voorgesteld: [titel]
 
 **Niet bruikbaar:**
 - [onderwerp] — buiten scope
-
-**Vragen:**
-- [inzicht X] → [rolfst-essays]: nieuw artikel of toevoegen aan `[bestaand]`?
 
 ---
 Wil je dat ik bovenstaande verwerk? Je kunt ook aangeven welke punten je wil overslaan of aanpassen.
