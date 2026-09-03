@@ -184,8 +184,16 @@ in
           # VCS
           ".jj/"
 
-          # AI/Agent
+          # AI/Agent — session state is ignored, but plans are documentation
+          # and should be committed. Negation order matters: git requires
+          # parent directories to be un-ignored before their contents can be.
           ".sisyphus"
+          ".omo/*"
+          "!.omo/plans/"
+          "!.omo/plans/**"
+          "!.omo/superpowers/"
+          "!.omo/superpowers/plans/"
+          "!.omo/superpowers/plans/**"
 
           # scratch files
           "handoff_*.md"
