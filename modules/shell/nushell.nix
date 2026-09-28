@@ -223,6 +223,16 @@ in
           git worktree remove ...$args
         }
 
+        # -------===[ GitHub: Separate Admin Profile ]===------- #
+        # Keeps admin `gh` auth fully isolated from the default developer
+        # account by pointing it at its own config directory. First-time
+        # setup: `gh-admin auth login`.
+        $env.GH_ADMIN_CONFIG_DIR = ($env.HOME | path join ".config" "gh-admin")
+        def gh-admin [...args] {
+          with-env { GH_CONFIG_DIR: $env.GH_ADMIN_CONFIG_DIR } { ^gh ...$args }
+        }
+        def gh-admin-status [] { gh-admin auth status }
+
         # -------===[ Tmux Session Keybindings ]===------- #
         # Note: Primary session switching is via tmux prefix + T (popup).
         # These nushell bindings provide shell-level shortcuts as fallback.
