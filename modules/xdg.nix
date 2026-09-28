@@ -1,5 +1,4 @@
-{ config, ... }:
-{
+{ config, ... }: {
   hm.xdg.enable = true;
 
   environment = {
@@ -12,6 +11,9 @@
 
     variables = {
       GEMINI_API_KEY = "$(grep -oP '^gemini=\\K[^#]*' ${
+        config.age.secrets."private-tokens".path
+      } | head -1 | xargs)";
+      GOOGLE_GENERATIVE_AI_API_KEY = "$(grep -oP '^gemini=\\K[^#]*' ${
         config.age.secrets."private-tokens".path
       } | head -1 | xargs)";
       CONFLUENCE_API_TOKEN = "$(grep -oP '^atlassian=\\K[^#]*' ${
