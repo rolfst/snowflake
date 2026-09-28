@@ -96,6 +96,10 @@ in
     # Necessary for nixos-rebuild build-vm to work.
     home-manager.useUserPackages = true;
     home-manager.useGlobalPkgs = true;
+    # Don't abort the whole switch when an unmanaged file sits where home-manager
+    # wants to place a symlink — back it up instead. Without this, a single
+    # hand-edited dotfile fails home-manager-<user>.service and the rebuild.
+    home-manager.backupFileExtension = "hm-bak";
 
     home = {
       stateVersion = config.system.stateVersion;
