@@ -42,6 +42,7 @@ in
 
     user.packages = [
       inputs.mcp-nixos.packages."${pkgs.stdenv.hostPlatform.system}".default
+      inputs.herdr-nix.packages."${pkgs.stdenv.hostPlatform.system}".default
     ];
 
     environment.shellAliases = mkIf config.modules.desktop.terminal.kitty.enable {
