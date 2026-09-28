@@ -9,7 +9,6 @@ let
   inherit (lib)
     mkIf
     mkEnableOption
-    attrValues
     mkMerge
     ;
 
@@ -21,24 +20,14 @@ in
   };
   config = mkMerge [
     (mkIf cfg.enable {
-      # The package ships Citrix-mime_types.xml in share/applications/
-      # but shared-mime-info expects it in share/mime/packages/.
-      # Also, ctxwebhelper (receiver:// URL handler) is not exposed in bin/.
+      # ctxwebhelper (receiver:// URL handler) is not exposed in bin/.
       environment.systemPackages = let
-        citrix = pkgs.unstable.citrix_workspace;
-        citrixMime = pkgs.runCommand "citrix-mime" {} ''
-          mkdir -p $out/share/mime/packages
-          cp ${citrix}/share/applications/Citrix-mime_types.xml \
-             $out/share/mime/packages/
-        '';
+        citrix = pkgs.unstable.citrix-workspace;
         citrixWebHelper = pkgs.writeShellScriptBin "ctxwebhelper" ''
           exec ${citrix}/opt/citrix-icaclient/util/ctxwebhelper "$@"
         '';
       in
-        (attrValues {
-          inherit (pkgs.unstable) citrix_workspace;
-        })
-        ++ [citrixMime citrixWebHelper];
+        [citrix citrixWebHelper];
 
       # Register handlers for ICA files and Citrix URL schemes
       hm.xdg.mimeApps.defaultApplications = {
