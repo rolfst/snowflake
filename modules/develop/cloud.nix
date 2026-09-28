@@ -24,9 +24,11 @@ in {
     })
 
     (mkIf cfg.azure.enable {
-      user.packages = attrValues {
-        inherit (pkgs) azure-cli;
-      };
+      user.packages = [
+        (pkgs.azure-cli.withExtensions [
+          pkgs.azure-cli.extensions.azure-devops
+        ])
+      ];
     })
   ];
 }
