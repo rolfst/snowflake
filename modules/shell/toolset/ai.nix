@@ -20,13 +20,15 @@ let
   );
 
   # Generate xdg configFile entries for each discovered skill
-  skillConfigFiles = builtins.listToAttrs (map (name: {
-    name = "opencode-skill-${name}";
-    value = {
-      target = "opencode/skills/${name}/SKILL.md";
-      source = "${skillsDir}/${name}/SKILL.md";
-    };
-  }) skillNames);
+  skillConfigFiles = builtins.listToAttrs (
+    map (name: {
+      name = "opencode-skill-${name}";
+      value = {
+        target = "opencode/skills/${name}/SKILL.md";
+        source = "${skillsDir}/${name}/SKILL.md";
+      };
+    }) skillNames
+  );
 in
 {
   options.modules.shell.toolset.AI =
@@ -42,7 +44,6 @@ in
 
     user.packages = [
       inputs.mcp-nixos.packages."${pkgs.stdenv.hostPlatform.system}".default
-      inputs.herdr-nix.packages."${pkgs.stdenv.hostPlatform.system}".default
     ];
 
     environment.shellAliases = mkIf config.modules.desktop.terminal.kitty.enable {

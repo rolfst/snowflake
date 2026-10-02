@@ -9,6 +9,7 @@ let
     google-api-python-client
     google-auth-oauthlib
     google-auth-httplib2
+    httplib2
   ]);
 in
 python3.pkgs.buildPythonApplication {
@@ -23,6 +24,7 @@ python3.pkgs.buildPythonApplication {
     google-api-python-client
     google-auth-oauthlib
     google-auth-httplib2
+    httplib2
   ];
 
   installPhase = ''

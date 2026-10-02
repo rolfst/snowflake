@@ -14,6 +14,8 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+import google_auth_httplib2
+import httplib2
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -26,6 +28,7 @@ CREDENTIALS_FILE = CONFIG_DIR / "credentials.json"
 TOKEN_FILE = CONFIG_DIR / "token.json"
 PROCESSED_FILE = CONFIG_DIR / "processed.json"
 INBOX_DIR = Path.home() / "inbox" / "gemini"
+REQUEST_TIMEOUT_SECONDS = 300
 
 
 def get_credentials():
@@ -62,8 +65,9 @@ def export_as_markdown(service, file_id):
             .export(fileId=file_id, mimeType="text/markdown")
             .execute()
         )
-    except HttpError:
-        # Fallback to plain text if markdown export not available
+    except Exception as e:
+        # Fallback to plain text if markdown export fails or times out
+        print(f"  Warning: markdown export failed ({type(e).__name__}: {e}), falling back to text/plain...", file=sys.stderr)
         content = (
             service.files()
             .export(fileId=file_id, mimeType="text/plain")
@@ -88,7 +92,9 @@ def main():
 
     INBOX_DIR.mkdir(parents=True, exist_ok=True)
     creds = get_credentials()
-    service = build("drive", "v3", credentials=creds)
+    http = httplib2.Http(timeout=REQUEST_TIMEOUT_SECONDS)
+    auth_http = google_auth_httplib2.AuthorizedHttp(creds, http=http)
+    service = build("drive", "v3", http=auth_http)
     processed = load_processed()
 
     results = (
@@ -114,28 +120,31 @@ def main():
             skipped_count += 1
             continue
 
-        print(f"Downloading: {name} ...")
-        content = export_as_markdown(service, file_id)
-        filename = safe_filename(name)
-        output_path = INBOX_DIR / filename
+        try:
+            print(f"Downloading: {name} ...")
+            content = export_as_markdown(service, file_id)
+            filename = safe_filename(name)
+            output_path = INBOX_DIR / filename
 
-        counter = 1
-        while output_path.exists():
-            stem = safe_filename(name).replace(".md", "")
-            output_path = INBOX_DIR / f"{stem}-{counter}.md"
-            counter += 1
+            counter = 1
+            while output_path.exists():
+                stem = safe_filename(name).replace(".md", "")
+                output_path = INBOX_DIR / f"{stem}-{counter}.md"
+                counter += 1
 
-        output_path.write_text(content, encoding="utf-8")
-        print(f"  -> saved to {output_path}")
+            output_path.write_text(content, encoding="utf-8")
+            print(f"  -> saved to {output_path}")
 
-        processed[file_id] = {
-            "name": name,
-            "status": "downloaded",
-            "output": str(output_path),
-            "downloaded_at": datetime.now(timezone.utc).isoformat(),
-        }
-        save_processed(processed)
-        new_count += 1
+            processed[file_id] = {
+                "name": name,
+                "status": "downloaded",
+                "output": str(output_path),
+                "downloaded_at": datetime.now(timezone.utc).isoformat(),
+            }
+            save_processed(processed)
+            new_count += 1
+        except Exception as e:
+            print(f"  ERROR: Failed to download {name} ({file_id}): {e}", file=sys.stderr)
 
     print(f"\nDone. {new_count} new Gemini exports downloaded, {skipped_count} already processed.")
 
