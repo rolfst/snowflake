@@ -38,7 +38,7 @@ in {
         '';
       };
 
-      hm.programs.vscode.profiles.default.extensions = with pkgs.vscode-extensions; [
+      hm.programs.vscodium.profiles.default.extensions = with pkgs.vscode-extensions; [
         haskell.haskell
         justusadam.language-haskell # syntax-highlighting
       ];

@@ -46,6 +46,7 @@ in
 
       hm.programs.yazi = {
         enable = true;
+        shellWrapperName = "yy";
         # enableZshItegration = true;
         # enableBashIntegration = true;
         # enableNushellIntegration = true;

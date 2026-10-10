@@ -46,6 +46,8 @@ in
 
       hm.programs.neovim = {
         enable = true;
+        withRuby = true;
+        withPython3 = true;
         package = cfg.package;
         viAlias = true;
         vimAlias = true;

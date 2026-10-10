@@ -18,7 +18,7 @@ in {
   config = mkIf cfg.enable (mkMerge [
     {
       user.packages = attrValues {
-        inherit (pkgs) youtube-music;
+        inherit (pkgs) pear-desktop;
       };
     }
   ]);

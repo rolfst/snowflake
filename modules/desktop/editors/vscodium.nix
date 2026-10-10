@@ -15,7 +15,7 @@ in {
   };
 
   config = mkIf config.modules.desktop.editors.vscodium.enable {
-    hm.programs.vscode = {
+    hm.programs.vscodium = {
       enable = true;
       package = pkgs.vscodium;
       mutableExtensionsDir = true;

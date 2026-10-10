@@ -32,7 +32,7 @@ in {
         ipylab = "ipython --pylab=qt5 --no-banner";
       };
 
-      hm.programs.vscode.profiles.default.extensions = attrValues {
+      hm.programs.vscodium.profiles.default.extensions = attrValues {
         inherit (pkgs.vscode-extensions.ms-python) python;
         inherit (pkgs.vscode-extensions.ms-toolsai) jupyter;
       };

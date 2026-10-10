@@ -92,12 +92,14 @@ in
       services.resolved = {
         enable = true;
         # Fallback DNS when no link-specific server matches.
-        fallbackDns = [
-          "1.1.1.1"
-          "9.9.9.9"
-        ];
-        # DNSSEC causes issues with split-horizon internal zones.
-        dnssec = "false";
+        settings.Resolve = {
+          FallbackDNS = [
+            "1.1.1.1"
+            "9.9.9.9"
+          ];
+          # DNSSEC causes issues with split-horizon internal zones.
+          DNSSEC = "false";
+        };
       };
 
       # Display a network-manager applet:

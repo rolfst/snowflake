@@ -219,6 +219,7 @@ in {
           name = name;
           package = package;
         };
+        gtk4.theme = config.hm.gtk.theme;
         gtk4.extraConfig = {
           gtk-cursor-blink = false;
           # gtk-recent-files-limit = 20;

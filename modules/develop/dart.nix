@@ -17,7 +17,7 @@ in {
     (mkIf config.modules.develop.dart.enable {
       user.packages = attrValues {inherit (pkgs) dart flutter;};
 
-      hm.programs.vscode.profiles.default.extensions = pkgs.vscode-utils.extensionsFromVscodeMarketplace [
+      hm.programs.vscodium.profiles.default.extensions = pkgs.vscode-utils.extensionsFromVscodeMarketplace [
         {
           name = "dart-code";
           publisher = "dart-code";

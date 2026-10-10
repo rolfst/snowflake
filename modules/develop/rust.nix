@@ -50,7 +50,7 @@ in
           ca = "cargo";
         };
 
-        hm.programs.vscode.profiles.default.extensions = attrValues {
+        hm.programs.vscodium.profiles.default.extensions = attrValues {
           inherit (pkgs.vscode-extensions.rust-lang) rust-analyzer;
         };
       }

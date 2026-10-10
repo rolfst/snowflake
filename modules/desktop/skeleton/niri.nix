@@ -138,6 +138,7 @@ in
           imv
           kanshi
           libnotify
+          mpvpaper
           playerctl
           wl-clipboard
           wdisplays
