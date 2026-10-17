@@ -38,15 +38,12 @@ in
       services.gvfs.enable = true;
 
       environment.systemPackages = attrValues (
-        { }
+        { inherit (pkgs) engrampa; }
         // optionalAttrs (cfg.program == "dolphin") {
           inherit (pkgs) dolphin dolphin-plugins;
         }
         // optionalAttrs (cfg.program == "nautilus") {
           inherit (pkgs.gnome) nautilus;
-        }
-        // optionalAttrs (cfg.program == "thunar") {
-          inherit (pkgs) file-roller;
         }
       );
     }

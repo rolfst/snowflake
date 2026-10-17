@@ -143,6 +143,7 @@ in
           csview
           ripdrag
           lsof
+          lshw
           file
           zoxide
           ;
