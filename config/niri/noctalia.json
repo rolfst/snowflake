@@ -8,7 +8,6 @@
     "clipboard_enabled": true,
     "settings_show_advanced": true,
     "show_location": true,
-    "middle_click_opens_widget_settings": true,
     "niri_overview_type_to_launch_enabled": true,
     "animation": {
       "enabled": true,
@@ -85,7 +84,9 @@
       "type": "custom_button",
       "glyph": "keyboard",
       "tooltip": "Toggle On-Screen Keyboard",
-      "command": "pkill -RTMIN wvkbd-mobintl || wvkbd-mobintl"
+      "actions": {
+        "left": "exec pkill -RTMIN wvkbd-mobintl || wvkbd-mobintl"
+      }
     }
   },
 
