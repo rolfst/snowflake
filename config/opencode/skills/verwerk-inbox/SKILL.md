@@ -67,6 +67,11 @@ For each file, identify:
 | Neogeorgisme, fiscaal kader, LVT | `Policies` | `.sisyphus/plans/` |
 | Communicatiestrategie, forum-reacties | `Policies` | `.sisyphus/plans/` |
 | Begrotingsberekeningen, rekenvoorbeelden | `Policies` | `.sisyphus/plans/` |
+| Gracchus Institute-inhoud | `gracchus` | `~/workspaces/gracchus/` |
+| Gracchus Institute-inhoud | `Fair_Europe` | `~/workspaces/gracchus/` |
+| Zettel | `notes` | zettels/ |
+
+Het project `gracchus` heeft de meerdere mappen. De skill schrijft niet naar `website/`. `website/` is code en valt buiten de inbox-verwerking.
 
 **Signaaltermen voor `rolfst-essays`:**
 - "blog", "essay", "substack", "linkedin", "publiek artikel"
@@ -78,13 +83,22 @@ For each file, identify:
 - Technische economische analyse
 - Argumentatie voor de policy-groep of economen
 
-**Bij twijfel:** vraag de gebruiker voor de bevestigingsstap welk project het betreft.
+Signaaltermen voor Zettels:
+- "zettel"
+- notities die nog uitgewerkt moeten worden
+
+**Signaaltermen voor `gracchus`:**
+- "gracchus", "gracchus institute", "instituut", "the institute", "compiler"
+
+**Bij twijfel:** vraag de gebruiker voor de bevestigingsstap welk project het betreft. Dit geldt ook als een bestand signaaltermen van meerdere projecten bevat, of van geen enkel project. Kies nooit zelf.
 
 ### Plan mapping
 
 Lees alle bestanden in:
-- `/home/rolfst/workspaces/Astra-Europa/Policies/.sisyphus/plans/`
+- `/home/rolfst/workspaces/gracchus/Policies/.sisyphus/plans/`
 - `/home/rolfst/workspaces/rolfst-essays/` (top-level mappen per essay)
+- `/home/rolfst/workspaces/gracchus/content/` (als de map bestaat)
+- `/home/rolfst/notes/zettels/` (als de map bestaat)
 
 Voor elke essay-map in `rolfst-essays/`: lees `status.md` als die bestaat. Relevante velden:
 - `published: true` -- artikel is live; voeg geen inhoud toe, stel hooguit een follow-up artikel voor
@@ -102,6 +116,10 @@ Voor elk extracted insight:
 | Uitgewerkte blogtekst, nog niet gepubliceerd | `rolfst-essays`: toevoegen aan bestaand artikel |
 | Uitgewerkte blogtekst, al gepubliceerd | `rolfst-essays`: nieuw artikel voorstellen als follow-up |
 | Uitgewerkte blogtekst, geen passend artikel | `rolfst-essays`: nieuw artikel, nieuwe map |
+| Gracchus-inhoud, passend bestand in `content/` | `gracchus`: toevoegen aan dat bestand |
+| Gracchus-inhoud, geen passend bestand of `content/` bestaat niet | `gracchus`: nieuw bestand of nieuwe submap voorstellen in `content/` |
+
+Voor `gracchus/content/` bestaat nog geen vaste submapstructuur. Lees wat er staat en volg dat. Maak niets aan voor de bevestiging in stap 4.
 
 ## Step 4: Present overview — STOP EN WACHT
 
@@ -127,6 +145,8 @@ De vraag "nieuw artikel of toevoegen aan bestaand?" wordt nooit gesteld -- de st
 - [inzicht 3] → [rolfst-essays] toevoegen aan `[mapnaam]` (niet gepubliceerd)
 - [inzicht 4] → [rolfst-essays] nieuw follow-up artikel op `[mapnaam]` (gepubliceerd)
 - [inzicht 5] → [Policies] nieuw plan voorgesteld: [titel]
+- [inzicht 6] → [gracchus] nieuw in `content/[voorstel]`
+- [inzicht 7] → [gracchus] toevoegen aan `content/[bestand]`
 
 **Niet bruikbaar:**
 - [onderwerp] — buiten scope
