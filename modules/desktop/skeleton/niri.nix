@@ -120,7 +120,7 @@ in
           export MOZ_DISABLE_RDD_SANDBOX=1
 
           # Ensure Vulkan uses NVIDIA ICD
-          export VK_DRIVER_FILES=/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json
+          export VK_DRIVER_FILES=/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.json
 
           # GBM backend for Wayland EGL (NVIDIA).
           # Required for xdg-desktop-portal-gnome to deliver PipeWire frames correctly.
