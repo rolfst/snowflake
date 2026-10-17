@@ -26,7 +26,7 @@ in {
         }
         // optionalAttrs (wineCfg.enable == false) {
           inherit (pkgs) winetricks;
-          inherit (pkgs.wineWowPackages) fonts stagingFull;
+          inherit (pkgs.wineWow64Packages) fonts stagingFull;
         });
     })
 

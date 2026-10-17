@@ -32,9 +32,7 @@ in
           HandleLidSwitchDocked = "ignore"; # Act as docked: no suspend when external monitor attached
         };
       };
-      systemd.sleep.extraConfig = ''
-        HibernateDelaySec=15min
-      '';
+      systemd.sleep.settings.Sleep.HibernateDelaySec = "15min";
       services.auto-cpufreq.enable = true;
       services.auto-cpufreq.settings = {
         battery = {

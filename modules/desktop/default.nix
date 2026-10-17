@@ -135,8 +135,6 @@ in
         module: ${pkgs.gnome-keyring}/lib/pkcs11/gnome-keyring-pkcs11.so
       '';
 
-      # Functional `pkgs.light` for `/bin/brightctl`
-      programs.light.enable = true;
 
       # KDE-Connect + Start-up indicator
       # programs.kdeconnect = {

@@ -129,7 +129,7 @@ in
     HandleLidSwitch = lib.mkForce "suspend";
     HandleLidSwitchExternalPower = lib.mkForce "suspend";
   };
-  systemd.sleep.extraConfig = lib.mkForce ""; # drop HibernateDelaySec from laptop.nix
+  systemd.sleep.settings.Sleep.HibernateDelaySec = lib.mkForce null; # drop HibernateDelaySec from laptop.nix
 
   # NOTE: We previously set SYSTEMD_SLEEP_FREEZE_USER_SESSIONS=false here to let
   # nvidia-sleep.sh write to /proc/driver/nvidia/suspend before sessions freeze

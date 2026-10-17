@@ -10,8 +10,9 @@ in {
     in { enable = mkEnableOption "brightness control"; };
 
   config = mkIf config.modules.shell.scripts.brightness.enable {
-    # WARNING: won't work unless light -> udev..
-    programs.light.enable = true;
+    # brightnessctl ships udev rules for non-root access (programs.light was removed)
+    hardware.acpilight.enable = true;
+    services.udev.packages = [ pkgs.brightnessctl ];
 
     user.packages = [
       (writeScriptBin "brightctl" ''
@@ -50,8 +51,13 @@ in {
 
         args = parser.parse_args()
 
-        get_brightness = subprocess.check_output(["light", "-G"], shell=True).strip()
-        brightness_level = str(float(get_brightness))
+        def get_level() -> str:
+            cur = int(subprocess.check_output(["brightnessctl", "get"]).strip())
+            top = int(subprocess.check_output(["brightnessctl", "max"]).strip())
+            return str(round(cur * 100 / top))
+
+
+        brightness_level = get_level()
 
 
         def notify(message):
@@ -72,16 +78,16 @@ in {
 
 
         def light(param: str):
-            subprocess.run(["light", param, str(args.level)])
+            subprocess.run(["brightnessctl", "set", str(args.level) + "%" + param])
 
 
         def change_brightness():
             if args.command == "increase":
                 ICON = "  "
-                light("-A")
+                light("+")
             elif args.command == "decrease":
                 ICON = "  "
-                light("-U")
+                light("-")
             else:
                 return
 

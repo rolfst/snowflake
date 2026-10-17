@@ -11,7 +11,7 @@ in {
   config = mkIf config.modules.desktop.virtual.wine.enable {
     user.packages = attrValues ({
       inherit (pkgs) bottles winetricks;
-      inherit (pkgs.wineWowPackages) fonts stagingFull;
+      inherit (pkgs.wineWow64Packages) fonts stagingFull;
     });
   };
 }
