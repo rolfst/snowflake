@@ -96,9 +96,16 @@ in
       capSysAdmin = true;
       openFirewall = true;
       settings = {
+        # eDP-1 is driven by the Intel iGPU, so capture and encode must both stay
+        # on Intel. Capturing on Intel and encoding on NVIDIA (NVENC/Vulkan) either
+        # fails ("Couldn't import RGB Image: 0000300C" -> black screen, or leaking
+        # fds until the connection dies) or produces scrambled blocks.
         capture = "kms";
-        encoder = "nvenc";                # Use NVIDIA NVENC for HW encoding
-        adapter_name = "/dev/dri/renderD129";  # NVIDIA render node (Intel = renderD128)
+        # Software encode: VA-API (Intel) aborts in ffmpeg on the first frame and
+        # NVENC/Vulkan cannot import the Intel-driven eDP framebuffer.
+        encoder = "software";
+        # by-path: renderD128/129 numbering swaps between boots.
+        adapter_name = "/dev/dri/by-path/pci-0000:00:02.0-render"; # Intel iGPU
         output_name = "0";
         min_fps_factor = 1;               # Don't drop below target FPS
       };
