@@ -52,6 +52,7 @@
 
     services = {
       ssh.enable = true;
+      rclone-onedrive.enable = true;
       flatpak.enable = true;
       streaming = {
         enable = true;
